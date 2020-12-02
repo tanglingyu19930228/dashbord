@@ -1,5 +1,7 @@
 package com.search.controller;
 
+import cn.hutool.core.lang.Snowflake;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
+    @Autowired
+    Snowflake snowflake;
+
     @RequestMapping("/test")
     public String helloWorld() {
-        return "Hello World";
+        final long l = snowflake.nextId();
+        return "Hello World" + l;
     }
 }
