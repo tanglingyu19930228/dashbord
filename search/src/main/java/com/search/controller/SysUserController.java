@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.search.entity.SysUserEntity;
 import com.search.service.SysUserService;
 import com.search.common.utils.R;
+
 import javax.validation.Valid;
 
 
@@ -56,7 +57,7 @@ public class SysUserController extends BaseController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody SysUserEntity sysUser) {
+    public R save(@RequestBody @Valid SysUserEntity sysUser) {
         sysUserService.save(sysUser);
 
         return R.ok();
@@ -66,7 +67,7 @@ public class SysUserController extends BaseController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody SysUserEntity sysUser) {
+    public R update(@RequestBody @Valid SysUserEntity sysUser) {
         sysUserService.updateById(sysUser);
         return R.ok();
     }
@@ -76,9 +77,9 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/delete")
     @Deprecated
-    public R delete(@RequestBody Integer[] ids) {
+    public R delete(@RequestBody @Valid Integer[] ids) {
         boolean result = sysUserService.removeByIds(Arrays.asList(ids));
-        if(result){
+        if (result) {
             return R.ok();
         }
         return R.error("删除失败");
