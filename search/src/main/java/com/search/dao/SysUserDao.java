@@ -3,6 +3,7 @@ package com.search.dao;
 import com.search.entity.SysUserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户表
@@ -12,5 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysUserDao extends BaseMapper<SysUserEntity> {
-	
+
+    SysUserEntity selectOneByUserName(@Param("userName") String userName);
 }

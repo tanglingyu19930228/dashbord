@@ -3,7 +3,7 @@
 
 <mapper namespace="com.search.dao.SysUserDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.search.entity.SysUserEntity" id="sysUserMap">
         <result property="id" column="id"/>
         <result property="userName" column="user_name"/>
@@ -13,6 +13,23 @@
         <result property="delFlag" column="del_flag"/>
         <result property="isAdmin" column="is_admin"/>
     </resultMap>
+
+
+    <sql id="all_column">
+        id,
+        user_name,
+        phone,
+        name,
+        password,
+        del_flag,
+        is_admin,
+    </sql>
+
+    <select id="selectOneByUserName" resultType="com.search.entity.SysUserEntity">
+        select
+        <include refid="all_column"/>
+        from sys_user where `name`=#{userName}
+    </select>
 
 
 </mapper>

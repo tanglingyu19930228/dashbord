@@ -1,27 +1,29 @@
 package com.search.common.utils;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * AES加密器
- * @author yangzhichao
  *
+ * @author yangzhichao
  */
 public class AESUtil {
-    
+
     public static final String CHAR_ENCODING = "UTF-8";
 
     public static final String AES_ALGORITHM = "AES";
 
     /**
      * 加密
-     * 
-     * @param data
-     *            待加密内容
-     * @param key
-     *            加密秘钥
+     *
+     * @param data 待加密内容
+     * @param key  加密秘钥
      * @return 十六进制字符串
      */
     public static String encrypt(String data, String key) {
@@ -44,11 +46,9 @@ public class AESUtil {
 
     /**
      * 解密
-     * 
-     * @param data
-     *            待解密内容(十六进制字符串)
-     * @param key
-     *            加密秘钥
+     *
+     * @param data 待解密内容(十六进制字符串)
+     * @param key  加密秘钥
      * @return
      */
     public static String decrypt(String data, String key) {
@@ -70,9 +70,8 @@ public class AESUtil {
 
     /**
      * 创建加密解密密钥
-     * 
-     * @param key
-     *            加密解密密钥
+     *
+     * @param key 加密解密密钥
      * @return
      */
     private static SecretKeySpec genKey(String key) {
@@ -89,7 +88,7 @@ public class AESUtil {
 
     /**
      * 将二进制转换成16进制
-     * 
+     *
      * @param buf
      * @return
      */
@@ -107,7 +106,7 @@ public class AESUtil {
 
     /**
      * 将16进制转换为二进制
-     * 
+     *
      * @param hexStr
      * @return
      */
@@ -123,13 +122,75 @@ public class AESUtil {
         return result;
     }
 
-    // 测试
+    /**
+     * 随机生成秘钥
+     */
+    public static String getKey() {
+        try {
+            KeyGenerator kg = KeyGenerator.getInstance(AES_ALGORITHM);
+            kg.init(192);
+            //要生成多少位，只需要修改这里即可128, 192或256
+            SecretKey sk = kg.generateKey();
+            byte[] b = sk.getEncoded();
+            String key = byteToHexString(b);
+            return key;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println("没有此算法");
+            return null;
+        }
+    }
+
+    /**
+     * 使用指定的字符串生成秘钥
+     */
+    public static String getKeyByPass() {
+        //生成秘钥
+        String password = "tang";
+        try {
+            KeyGenerator kg = KeyGenerator.getInstance(AES_ALGORITHM);
+            // kg.init(128);//要生成多少位，只需要修改这里即可128, 192或256
+            //SecureRandom是生成安全随机数序列，password.getBytes()是种子，只要种子相同，序列就一样，所以生成的秘钥就一样。
+            kg.init(128, new SecureRandom(password.getBytes()));
+            SecretKey sk = kg.generateKey();
+            byte[] b = sk.getEncoded();
+            String key = byteToHexString(b);
+            return key;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println("没有此算法");
+            return null;
+        }
+    }
+
+    /**
+     * byte数组转化为16进制字符串
+     *
+     * @param bytes
+     * @return
+     */
+    public static String byteToHexString(byte[] bytes) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < bytes.length; i++) {
+            String strHex = Integer.toHexString(bytes[i]);
+            if (strHex.length() > 3) {
+                sb.append(strHex.substring(6));
+            } else {
+                if (strHex.length() < 2) {
+                    sb.append("0" + strHex);
+                } else {
+                    sb.append(strHex);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
-//        String key = "W8p102YW9AZQ117g4t4z241pr6IM9oF49Q3L4pwsuWRE0E7Z04GM1819A217";
-        String key = "W8p102YW9AZQ117g4t4z241pr6IM9oF49Q3L4pwsuWRE0E7Z04GM1819A219";
-        String encodeStr = AESUtil.encrypt("100023", key);
+        String key=getKey();
+        System.out.println(key);
+        String encodeStr = AESUtil.encrypt("test", key);
         System.out.println(encodeStr);
         System.out.println(AESUtil.decrypt(encodeStr, key));
-      }
-
+    }
 }
