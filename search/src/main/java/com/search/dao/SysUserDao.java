@@ -15,4 +15,6 @@ import org.apache.ibatis.annotations.Param;
 public interface SysUserDao extends BaseMapper<SysUserEntity> {
 
     SysUserEntity selectOneByUserName(@Param("userName") String userName);
+
+    SysUserEntity getUserInfoByUserId(@Param("id") Integer id);
 }

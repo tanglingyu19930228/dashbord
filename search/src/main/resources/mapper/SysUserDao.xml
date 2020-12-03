@@ -22,13 +22,20 @@
         name,
         password,
         del_flag,
-        is_admin,
+        is_admin
     </sql>
 
     <select id="selectOneByUserName" resultType="com.search.entity.SysUserEntity">
         select
         <include refid="all_column"/>
         from sys_user where `name`=#{userName}
+    </select>
+
+
+    <select id="getUserInfoByUserId" resultType="com.search.entity.SysUserEntity">
+        select
+        <include refid="all_column"/>
+        from sys_user where `id`=#{id}
     </select>
 
 

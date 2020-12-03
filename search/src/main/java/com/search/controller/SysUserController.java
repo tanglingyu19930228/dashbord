@@ -46,7 +46,8 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/info/{id}")
     public R info(@PathVariable("id") @Valid Integer id) {
-        SysUserEntity sysUser = sysUserService.getById(id);
+        logger.info("查询用户详细信息,用户id={}",id);
+        SysUserEntity sysUser = sysUserService.getUserInfoByUserId(id);
         if (sysUser == null) {
             return R.ok("信息不存在");
         }
@@ -58,8 +59,7 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody @Valid SysUserEntity sysUser) {
-        sysUserService.save(sysUser);
-
+        int result=sysUserService.saveUser(sysUser);
         return R.ok();
     }
 

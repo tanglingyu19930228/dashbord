@@ -58,6 +58,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
                 log.error("用户名不存在:userName={}", sysUserEntity.getUserName());
                 return R.error("用户名不存在,请输入正确的用户名");
             }
+            if (result.getDelFlag() == 1) {
+                return R.error("该用户已经被删除");
+            }
             //校验password
             String password = result.getPassword();
             if (StringUtils.isEmpty(AES_KEY)) {
@@ -79,6 +82,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         }
         log.info("用户名不能为空");
         return R.error("用户名不能为空,请输入用户名");
+    }
+
+    @Override
+    public SysUserEntity getUserInfoByUserId(Integer id) {
+        return sysUserDao.getUserInfoByUserId(id);
+    }
+
+    /**
+     * 用户入库
+     * @param sysUser
+     * @return
+     */
+    @Override
+    public int saveUser(SysUserEntity sysUser) {
+        return 0;
     }
 
     private R checkEmail(String userName) {

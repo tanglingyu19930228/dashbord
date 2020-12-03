@@ -14,5 +14,9 @@ import java.util.Map;
 public interface SysUserService extends IService<SysUserEntity> {
 
     R login(SysUserEntity sysUserEntity);
+
+    SysUserEntity getUserInfoByUserId(Integer id);
+
+    int saveUser(SysUserEntity sysUser);
 }
 
