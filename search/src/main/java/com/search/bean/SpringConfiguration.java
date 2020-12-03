@@ -10,4 +10,7 @@ public class SpringConfiguration {
 
     @Value("${AES.PASSWORD}")
     private String key;
+
+    @Value("${EMAIL_REGEXP}")
+    private String email;
 }
