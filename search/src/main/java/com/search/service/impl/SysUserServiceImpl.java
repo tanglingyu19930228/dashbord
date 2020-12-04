@@ -3,14 +3,12 @@ package com.search.service.impl;
 import com.search.bean.SpringConfiguration;
 import com.search.common.utils.R;
 import com.search.common.utils.StringUtils;
-import com.search.entity.QueryReq;
-import com.search.entity.UserRoleResp;
+import com.search.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.search.dao.SysUserDao;
-import com.search.entity.SysUserEntity;
 import com.search.service.SysUserService;
 
 import javax.annotation.PostConstruct;
@@ -92,8 +90,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 
     @Override
-    public R queryByUserNameOrId(QueryReq queryReq) {
+    public R queryByUserNameOrId(UserQueryReq queryReq) {
         UserRoleResp resp=sysUserDao.queryByUserNameOrId(queryReq);
+        return R.ok(resp);
+    }
+
+    @Override
+    public R queryByRoleNameOrId(RoleQueryReq queryReq) {
+        RoleUserResp resp=sysUserDao.queryByRoleNameOrId(queryReq);
         return R.ok(resp);
     }
 

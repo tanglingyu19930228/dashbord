@@ -5,7 +5,8 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.search.common.controller.BaseController;
-import com.search.entity.QueryReq;
+import com.search.entity.RoleQueryReq;
+import com.search.entity.UserQueryReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.search.entity.SysUserEntity;
@@ -43,10 +44,23 @@ public class SysUserController extends BaseController {
      */
 
     @PostMapping("/queryByUserNameOrId")
-    public R queryByUserNameOrId(@RequestBody @Valid QueryReq queryReq){
+    public R queryByUserNameOrId(@RequestBody @Valid UserQueryReq queryReq){
         logger.info("根据用户id或者userName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
         return sysUserService.queryByUserNameOrId(queryReq);
     }
+
+    /**
+     * 根据角色id或者roleName查询该角色对应的用户信息
+     */
+
+    @PostMapping("/queryByRoleNameOrId")
+    public R queryByRoleNameOrId(@RequestBody @Valid RoleQueryReq queryReq){
+        logger.info("根据角色id或者roleName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
+        return sysUserService.queryByRoleNameOrId(queryReq);
+    }
+
+
+
 
     /**
      * 列表

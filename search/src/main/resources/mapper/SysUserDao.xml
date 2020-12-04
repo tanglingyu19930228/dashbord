@@ -52,6 +52,37 @@
         </where>
     </select>
 
+    <select id="queryByRoleNameOrId" resultMap="association">
+        select su.*,sr.id as roleId,sr.name as roleName,sr.create_by,sr.create_date,sr.del_flag as delFlag from sys_user su join sys_role_user
+        sru on su.id=sru.user_id join sys_role sr on sru.role_id=sr.id
+        <where>
+            <if test="queryReq.roleName!=null and queryReq.roleName!=''">
+                sr.name like concat('%',#{queryReq.roleName},'%')
+            </if>
+            <if test="queryReq.roleId!=null">
+                and sr.id=#{queryReq.roleId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="association" type="com.search.entity.RoleUserResp">
+        <id column="roleId" property="id" jdbcType="BIGINT"/>
+        <result column="roleName" property="name" jdbcType="VARCHAR"/>
+        <result column="create_by" property="createBy" jdbcType="BIGINT"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="delFlag" property="delFlag" jdbcType="TINYINT"/>
+        <collection property="userList" ofType="com.search.entity.SysUserEntity">
+            <result property="id" column="id"/>
+            <result property="userName" column="user_name"/>
+            <result property="phone" column="phone"/>
+            <result property="name" column="name"/>
+            <result property="password" column="password"/>
+            <result property="delFlag" column="del_flag"/>
+            <result property="isAdmin" column="is_admin"/>
+        </collection>
+    </resultMap>
+
+
     <resultMap id="collection" type="com.search.entity.UserRoleResp">
         <result property="id" column="id"/>
         <result property="userName" column="user_name"/>

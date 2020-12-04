@@ -1,12 +1,10 @@
 package com.search.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.search.common.utils.PageUtils;
 import com.search.common.utils.R;
-import com.search.entity.QueryReq;
+import com.search.entity.RoleQueryReq;
+import com.search.entity.UserQueryReq;
 import com.search.entity.SysUserEntity;
-
-import java.util.Map;
 
 /**
  * 用户表
@@ -20,6 +18,8 @@ public interface SysUserService extends IService<SysUserEntity> {
 
     int saveUser(SysUserEntity sysUser);
 
-    R queryByUserNameOrId(QueryReq queryReq);
+    R queryByUserNameOrId(UserQueryReq queryReq);
+
+    R queryByRoleNameOrId(RoleQueryReq queryReq);
 }
 

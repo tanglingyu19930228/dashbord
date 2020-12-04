@@ -1,9 +1,7 @@
 package com.search.dao;
 
-import com.search.entity.QueryReq;
-import com.search.entity.SysUserEntity;
+import com.search.entity.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.search.entity.UserRoleResp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,5 +18,7 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 
     SysUserEntity getUserInfoByUserId(@Param("id") Integer id);
 
-    UserRoleResp queryByUserNameOrId(@Param("queryReq") QueryReq queryReq);
+    UserRoleResp queryByUserNameOrId(@Param("queryReq") UserQueryReq queryReq);
+
+    RoleUserResp queryByRoleNameOrId(@Param("queryReq") RoleQueryReq queryReq);
 }
