@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.search.common.controller.BaseController;
+import com.search.entity.QueryReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.search.entity.SysUserEntity;
@@ -26,10 +27,25 @@ public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
 
+    /**
+     * 登录
+     * @param sysUserEntity
+     * @return
+     */
     @PostMapping(value = "/login")
     public R login(@RequestBody @Valid SysUserEntity sysUserEntity) {
         logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
         return sysUserService.login(sysUserEntity);
+    }
+
+    /**
+     * 根据用户id或者userName查询该用户的角色信息
+     */
+
+    @PostMapping("/queryByUserNameOrId")
+    public R queryByUserNameOrId(@RequestBody @Valid QueryReq queryReq){
+        logger.info("根据用户id或者userName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
+        return sysUserService.queryByUserNameOrId(queryReq);
     }
 
     /**
@@ -53,6 +69,7 @@ public class SysUserController extends BaseController {
         }
         return R.ok(sysUser);
     }
+
 
     /**
      * 保存

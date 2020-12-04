@@ -1,11 +1,11 @@
 package com.search.service.impl;
 
 import com.search.bean.SpringConfiguration;
-import com.search.common.utils.AESUtil;
 import com.search.common.utils.R;
 import com.search.common.utils.StringUtils;
+import com.search.entity.QueryReq;
+import com.search.entity.UserRoleResp;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -33,12 +33,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     @Resource
     private SpringConfiguration springConfiguration;
 
-    private String AES_KEY = null;
     private String REGEXP = null;
 
     @PostConstruct
     public void initParameters() {
-        AES_KEY = springConfiguration.getKey();
         REGEXP = springConfiguration.getEmail();
     }
 
@@ -63,22 +61,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
             }
             //校验password
             String password = result.getPassword();
-            if (StringUtils.isEmpty(AES_KEY)) {
-                return R.error("系统异常");
+            String webPassword=sysUserEntity.getPassword();
+            if (StringUtils.isEmpty(webPassword)) {
+                return R.error("用户密码不能为空");
             }
-            if (StringUtils.isEmpty(password)) {
-                return R.error("密码不能为空");
+            if (password.equals(sysUserEntity.getPassword())) {
+                return R.ok("登录成功");
             }
-            try {
-                String originPassword = AESUtil.decrypt(password, AES_KEY);
-                if (password.equals(originPassword)) {
-                    return R.ok("登录成功");
-                }
-                return R.ok("密码错误,请输入正确的密码");
-            } catch (Exception e) {
-                log.info("解密异常");
-                return R.error("系统异常");
-            }
+            return R.ok("密码错误,请输入正确的密码");
         }
         log.info("用户名不能为空");
         return R.error("用户名不能为空,请输入用户名");
@@ -91,12 +81,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
     /**
      * 用户入库
+     *
      * @param sysUser
      * @return
      */
     @Override
     public int saveUser(SysUserEntity sysUser) {
         return 0;
+    }
+
+
+    @Override
+    public R queryByUserNameOrId(QueryReq queryReq) {
+        UserRoleResp resp=sysUserDao.queryByUserNameOrId(queryReq);
+        return R.ok(resp);
     }
 
     private R checkEmail(String userName) {

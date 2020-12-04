@@ -39,4 +39,33 @@
     </select>
 
 
+    <select id="queryByUserNameOrId" resultMap="collection">
+        select su.*,sr.id as role_id,sr.name,sr.create_by,sr.create_date,sr.del_flag from sys_user su join sys_role_user
+        sru on su.id=sru.user_id join sys_role sr on sru.role_id=sr.id
+        <where>
+            <if test="queryReq.userName!=null and queryReq.userName!=''">
+                su.userName like concat('%',#{queryReq.userName},'%')
+            </if>
+            <if test="queryReq.userId!=null">
+                and su.id=#{queryReq.userId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="collection" type="com.search.entity.UserRoleResp">
+        <result property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="phone" column="phone"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="isAdmin" column="is_admin"/>
+        <collection property="roleList" ofType="com.search.entity.RoleEntity">
+            <id column="role_id" property="roleId" jdbcType="BIGINT"/>
+            <result column="name" property="name" jdbcType="VARCHAR"/>
+            <result column="create_by" property="createBy" jdbcType="BIGINT"/>
+            <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+            <result column="del_flag" property="delFlag" jdbcType="TINYINT"/>
+        </collection>
+    </resultMap>
 </mapper>

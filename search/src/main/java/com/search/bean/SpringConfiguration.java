@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Data
 public class SpringConfiguration {
 
-    @Value("${AES.PASSWORD}")
-    private String key;
+//    @Value("${AES.PASSWORD}")
+//    private String key;
 
     @Value("${EMAIL_REGEXP}")
     private String email;
