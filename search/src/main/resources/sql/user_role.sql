@@ -25,4 +25,4 @@ CREATE TABLE `sys_role_user` (
   `role_id` int(11) DEFAULT NULL,
   `del_flag` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB 4 DEFAULT CHARSET=utf8 COMMENT='角色-用户表';
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='角色-用户表';
