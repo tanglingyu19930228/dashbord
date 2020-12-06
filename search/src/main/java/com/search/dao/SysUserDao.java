@@ -27,7 +27,7 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 
     int updateByUserId(@Param("sysUser") SysUserEntity sysUser);
 
-    int deleteByUserIds(List<Integer> userIds);
+    int deleteByUserIds(@Param("userIds") List<Integer> userIds);
 
     List<SysUserEntity> listByPage();
 }

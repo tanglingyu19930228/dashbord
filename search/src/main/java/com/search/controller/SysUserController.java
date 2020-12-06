@@ -113,7 +113,6 @@ public class SysUserController extends BaseController {
     @PostMapping("/delete")
     public R delete(@RequestBody @Valid Integer[] ids) {
         int result = sysUserService.deleteByUserIds(Arrays.asList(ids));
-        System.out.println(result);
         if (result == ids.length) {
             return R.ok();
         }

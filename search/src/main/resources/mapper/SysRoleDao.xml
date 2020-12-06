@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.search.dao.SysRoleDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.search.entity.RoleEntity" id="baseMap">
+        <result property="roleId" column="id"/>
+        <result property="name" column="name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="all_column">
+        id,
+        name,
+        create_by,
+        create_date,
+        del_flag
+    </sql>
+    <update id="updateRole">
+        update sys_role
+        <set>
+            <if test="roleEntity.name!=null  and roleEntity.name!=''">
+                name=#{roleEntity.name},
+            </if>
+            <if test="roleEntity.createBy!=null">
+                create_by=#{roleEntity.createBy},
+            </if>
+            <if test="roleEntity.delFlag!=null">
+                del_flag=#{roleEntity.delFlag}
+            </if>
+        </set>
+        where id=#{roleEntity.roleId}
+    </update>
+    <delete id="batchDeleteRole">
+        delete from sys_role
+        where
+        <if test="roleIds!=null and roleIds.length>0">
+            id in
+            <foreach collection="roleIds" item="roleId" separator="," open="("
+                     close=")">
+                #{roleId}
+            </foreach>
+        </if>
+    </delete>
+    <select id="queryRoleByLike" resultMap="baseMap">
+        select
+        <include refid="all_column"/>
+        from sys_role
+        <where>
+            <if test="roleEntity.roleId!=null">
+                id=#{roleEntity.roleId}
+            </if>
+            <if test="roleEntity.name!=null and roleEntity.name!=''">
+                and name like concat('%',#{roleEntity.name},'%')
+            </if>
+        </where>
+    </select>
+    <select id="queryRolePage"
+            resultMap="baseMap">
+        select
+        <include refid="all_column"/>
+        from sys_role
+    </select>
+</mapper>
