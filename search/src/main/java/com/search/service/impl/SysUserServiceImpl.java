@@ -13,6 +13,9 @@ import com.search.service.SysUserService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,34 +45,35 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     @Override
     public R login(SysUserEntity sysUserEntity) {
         String userName = sysUserEntity.getUserName();
-        if (StringUtils.isNotEmpty(userName)) {
-            //校验邮箱
-            R r = checkEmail(userName);
-            if (r != null) {
-                return r;
-            }
-            //根据用户名查用户
-            SysUserEntity result = sysUserDao.selectOneByUserName(userName);
-            if (result == null) {
-                log.error("用户名不存在:userName={}", sysUserEntity.getUserName());
-                return R.error("用户名不存在,请输入正确的用户名");
-            }
-            if (result.getDelFlag() == 1) {
-                return R.error("该用户已经被删除");
-            }
-            //校验password
-            String password = result.getPassword();
-            String webPassword=sysUserEntity.getPassword();
-            if (StringUtils.isEmpty(webPassword)) {
-                return R.error("用户密码不能为空");
-            }
-            if (password.equals(sysUserEntity.getPassword())) {
-                return R.ok("登录成功");
-            }
-            return R.ok("密码错误,请输入正确的密码");
+        if(StringUtils.isBlank(userName)){
+            log.info("用户名不能为空");
+            return R.error("用户名不能为空,请输入用户名");
         }
-        log.info("用户名不能为空");
-        return R.error("用户名不能为空,请输入用户名");
+        //校验邮箱
+        R r = checkEmail(userName);
+        if (!r.isSuccess()) {
+            return r;
+        }
+        //根据用户名查用户
+        SysUserEntity result = sysUserDao.selectOneByUserName(userName);
+        if (result == null) {
+            log.error("用户名不存在:userName={}", sysUserEntity.getUserName());
+            return R.error("用户名不存在,请输入正确的用户名");
+        }
+        if (result.getDelFlag() == 1) {
+            return R.error("该用户已经被删除");
+        }
+        //校验password
+        String password = result.getPassword();
+        String webPassword=sysUserEntity.getPassword();
+        if (StringUtils.isEmpty(webPassword)) {
+            return R.error("用户密码不能为空");
+        }
+        if (password.equals(sysUserEntity.getPassword())) {
+            return R.ok("登录成功").setData(result.getId());
+        }
+        return R.ok("密码错误,请输入正确的密码");
+
     }
 
     @Override
@@ -79,9 +83,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
     /**
      * 用户入库
-     *
-     * @param sysUser
-     * @return
      */
     @Override
     public int saveUser(SysUserEntity sysUser) {
@@ -91,9 +92,46 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
     @Override
     public R queryByUserNameOrId(UserQueryReq queryReq) {
-        UserRoleResp resp=sysUserDao.queryByUserNameOrId(queryReq);
-        return R.ok(resp);
+        try {
+            UserRoleResp resp=sysUserDao.queryByUserNameOrId(queryReq);
+            if(Objects.isNull(resp)){
+                log.error("查询权限无数据");
+                return R.error("查询无数据");
+            }
+            List<RoleEntity> roleList = resp.getRoleList();
+            if(Objects.isNull(roleList)){
+                return R.error("查询无数据");
+            }
+            resp.setRoleList(convertTree(roleList,-1));
+            return R.ok(resp);
+        } catch (Exception e) {
+            log.error("查询异常");
+            return R.error("服务器异常");
+        }
     }
+
+    /**
+     * 此处 -1 表示根 即 品牌 产品 其他
+     * @param roleList 权限集合
+     * @param parentId 父id
+     * @return 递归返回树
+     */
+    private List<RoleEntity> convertTree(List<RoleEntity> roleList,Integer parentId){
+        List<RoleEntity> result =new ArrayList<>();
+        List<RoleEntity> temp  = new ArrayList<>();
+        for (RoleEntity one : roleList) {
+            if (one.getParentId().equals(parentId)) {
+                temp = convertTree(roleList, one.getRoleId());
+                if (!temp.isEmpty()) {
+                    one.setRoleEntityList(temp);
+                }
+                result.add(one);
+            }
+
+        }
+        return  result;
+    }
+
 
     @Override
     public R queryByRoleNameOrId(RoleQueryReq queryReq) {
@@ -107,10 +145,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         }
         Pattern p = Pattern.compile(REGEXP);
         Matcher m = p.matcher(userName);
-        if (m.matches()) {
-            return null;
-        } else {
-            return R.error("邮箱格式不正确,请输入正确的邮箱格式");
-        }
+        return m.matches()? R.ok() : R.error("邮箱格式不正确,请输入正确的邮箱格式");
     }
 }

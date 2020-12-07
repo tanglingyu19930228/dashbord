@@ -12,17 +12,18 @@ CREATE TABLE `sys_user` (
 
 CREATE TABLE `sys_role` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
+  `name` varchar(30) DEFAULT NULL COMMENT '权限名称',
+  `create_by` int(11) DEFAULT NULL COMMENT '创建人',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `parent_id` int(20) DEFAULT NULL COMMENT '父id',
   `del_flag` tinyint(1) DEFAULT '0' COMMENT '是否禁用',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 CREATE TABLE `sys_role_user` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `del_flag` tinyint(1) DEFAULT '0',
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `role_id` int(11) DEFAULT NULL COMMENT '权限id',
+  `del_flag` tinyint(1) DEFAULT '0' COMMENT '是否禁用',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB 4 DEFAULT CHARSET=utf8 COMMENT='角色-用户表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色-用户表';

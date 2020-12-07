@@ -30,8 +30,8 @@ public class SysUserController extends BaseController {
 
     /**
      * 登录
-     * @param sysUserEntity
-     * @return
+     * @param sysUserEntity 请求user对象
+     * @return 返回结果
      */
     @PostMapping(value = "/login")
     public R login(@RequestBody @Valid SysUserEntity sysUserEntity) {
@@ -42,7 +42,6 @@ public class SysUserController extends BaseController {
     /**
      * 根据用户id或者userName查询该用户的角色信息
      */
-
     @PostMapping("/queryByUserNameOrId")
     public R queryByUserNameOrId(@RequestBody @Valid UserQueryReq queryReq){
         logger.info("根据用户id或者userName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
