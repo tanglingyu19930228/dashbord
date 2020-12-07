@@ -1,10 +1,13 @@
 package com.search.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.search.biz.RoleService;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
 import com.search.entity.RoleEntity;
 import com.search.service.SysRoleService;
+import com.search.vo.RoleVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +27,10 @@ public class SysRoleController {
 
     @Resource
     private SysRoleService sysRoleService;
+
     @Autowired
     RoleService roleService;
+
     @PostMapping(value = "/addUserRole")
     public R addUserRole(@RequestBody RoleVO roleVO){
 

@@ -2,6 +2,7 @@ package com.search.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.search.entity.RoleEntity;
+import com.search.entity.SysRoleEntity;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface SysRoleDao  extends BaseMapper<RoleEntity> {
     int updateRole(@Param("roleEntity") RoleEntity roleEntity);
 
     int batchDeleteRole(@Param("roleIds") Integer[] roleIds);
+
+    int insert(SysRoleEntity item);
 }
