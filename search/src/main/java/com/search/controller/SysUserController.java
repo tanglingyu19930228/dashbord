@@ -1,19 +1,19 @@
 package com.search.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
 import com.search.common.controller.BaseController;
+import com.search.common.page.PageDomain;
+import com.search.common.utils.R;
 import com.search.entity.RoleQueryReq;
+import com.search.entity.SysUserEntity;
 import com.search.entity.UserQueryReq;
+import com.search.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.search.entity.SysUserEntity;
-import com.search.service.SysUserService;
-import com.search.common.utils.R;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 
 /**
@@ -42,8 +42,9 @@ public class SysUserController extends BaseController {
     /**
      * 根据用户id或者userName查询该用户的角色信息
      */
+
     @PostMapping("/queryByUserNameOrId")
-    public R queryByUserNameOrId(@RequestBody @Valid UserQueryReq queryReq){
+    public R queryByUserNameOrId(@RequestBody @Valid UserQueryReq queryReq) {
         logger.info("根据用户id或者userName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
         return sysUserService.queryByUserNameOrId(queryReq);
     }
@@ -53,20 +54,21 @@ public class SysUserController extends BaseController {
      */
 
     @PostMapping("/queryByRoleNameOrId")
-    public R queryByRoleNameOrId(@RequestBody @Valid RoleQueryReq queryReq){
+    public R queryByRoleNameOrId(@RequestBody @Valid RoleQueryReq queryReq) {
         logger.info("根据角色id或者roleName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
         return sysUserService.queryByRoleNameOrId(queryReq);
     }
 
 
-
-
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    public R list(@RequestParam(value = "params") @Valid Map<String, Object> params) {
-        return R.ok();
+    @PostMapping("/list")
+    public R list(@RequestBody @Valid PageDomain pageDomain) {
+        //分页查询用户列表
+        logger.info("分页查询用户列表");
+        PageInfo<SysUserEntity> sysUserEntityPageInfo = sysUserService.listByPage(pageDomain.getPageNum(), pageDomain.getPageSize());
+        return R.ok(sysUserEntityPageInfo);
     }
 
 
@@ -75,7 +77,7 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/info/{id}")
     public R info(@PathVariable("id") @Valid Integer id) {
-        logger.info("查询用户详细信息,用户id={}",id);
+        logger.info("查询用户详细信息,用户id={}", id);
         SysUserEntity sysUser = sysUserService.getUserInfoByUserId(id);
         if (sysUser == null) {
             return R.ok("信息不存在");
@@ -88,31 +90,34 @@ public class SysUserController extends BaseController {
      * 保存
      */
     @RequestMapping("/save")
+    @Deprecated
     public R save(@RequestBody @Valid SysUserEntity sysUser) {
-        int result=sysUserService.saveUser(sysUser);
+        int result = sysUserService.saveUser(sysUser);
         return R.ok();
     }
 
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     public R update(@RequestBody @Valid SysUserEntity sysUser) {
-        sysUserService.updateById(sysUser);
-        return R.ok();
+        logger.info("更新用户信息,更新信息sysUser={}", JSONObject.toJSONString(sysUser));
+        int result = sysUserService.updateByUserId(sysUser);
+        return result == 1 ? R.ok() : R.error("系统异常");
     }
 
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    @Deprecated
+    @PostMapping("/delete")
     public R delete(@RequestBody @Valid Integer[] ids) {
-        boolean result = sysUserService.removeByIds(Arrays.asList(ids));
-        if (result) {
+        int result = sysUserService.deleteByUserIds(Arrays.asList(ids));
+        if (result == ids.length) {
             return R.ok();
         }
-        return R.error("删除失败");
+        if (result == 0) {
+            return R.error("删除失败");
+        }
+        return R.error("部分删除成功,部分删除失败");
     }
-
 }

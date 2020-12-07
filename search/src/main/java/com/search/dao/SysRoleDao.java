@@ -1,16 +1,22 @@
 package com.search.dao;
 
-import com.search.entity.SysRoleEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import com.search.entity.RoleEntity;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
- * 角色表
- * 
- * @author Administrator
- * @date 2020-12-03 18:40:58
+ * @description:
+ * @author: Tanglingyu
+ * @time: 2020/12/6 19:24
  */
-@Mapper
-public interface SysRoleDao extends BaseMapper<SysRoleEntity> {
-	
+public interface SysRoleDao  extends BaseMapper<RoleEntity> {
+    List<RoleEntity> queryRoleByLike(@Param("roleEntity") RoleEntity roleEntity);
+
+    List<RoleEntity> queryRolePage();
+
+    int updateRole(@Param("roleEntity") RoleEntity roleEntity);
+
+    int batchDeleteRole(@Param("roleIds") Integer[] roleIds);
 }

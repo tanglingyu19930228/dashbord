@@ -25,7 +25,21 @@
         is_admin
     </sql>
 
-    <select id="selectOneByUserName" resultType="com.search.entity.SysUserEntity">
+    <delete id="deleteByUserIds">
+        delete from sys_user
+        <where>
+            <if test="_parameter!=null">
+                id in
+                <foreach collection="userIds" separator="," open="(" close=")"
+                         item="id">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
+    <select id="selectOneByUserName"
+            resultType="com.search.entity.SysUserEntity">
         select
         <include refid="all_column"/>
         from sys_user where `name`=#{userName}
@@ -72,6 +86,12 @@
             </if>
         </where>
     </select>
+    <select id="listByPage"
+            resultMap="sysUserMap">
+        select
+        <include refid="all_column"/>
+        from sys_user
+    </select>
 
     <resultMap id="association" type="com.search.entity.RoleUserResp">
         <id column="roleId" property="id" jdbcType="BIGINT"/>
@@ -102,7 +122,6 @@
         <result property="isAdmin" column="is_admin"/>
         <collection property="roleList" ofType="com.search.entity.RoleEntity">
             <id column="role_id" property="roleId" jdbcType="BIGINT"/>
-            <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
             <result column="name" property="name" jdbcType="VARCHAR"/>
             <result column="create_by" property="createBy" jdbcType="BIGINT"/>
             <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
