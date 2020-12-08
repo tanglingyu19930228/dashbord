@@ -25,6 +25,34 @@
         is_admin
     </sql>
 
+    <update id="updateByUserId">
+        update sys_user
+        <set>
+            <if test="sysUser.userName!=null and sysUser.userName!=''">
+                user_name=#{sysUser.userName},
+            </if>
+            <if test="sysUser.phone!=null and sysUser.phone!=''">
+                phone=#{sysUser.name},
+            </if>
+            <if test="sysUser.name!=null and sysUser.name!=''">
+                name=#{sysUser.name},
+            </if>
+            <if test="sysUser.password!=null and sysUser.password!=''">
+                password=#{sysUser.password},
+            </if>
+            <if test="sysUser.delFlag!=null and sysUser.delFlag!=''">
+                del_flag=#{sysUser.delFlag},
+            </if>
+            <if test="sysUser.isAdmin!=null and sysUser.isAdmin!=''">
+                is_admin=#{sysUser.isAdmin}
+            </if>
+        </set>
+        where
+        <if test="sysUser.id!=null">
+            id=#{sysUser.id}
+        </if>
+    </update>
+
     <delete id="deleteByUserIds">
         delete from sys_user
         <where>
@@ -55,8 +83,8 @@
 
     <select id="queryByUserNameOrId" resultMap="collection">
         select
-            su.*,
-            sr.id as role_id,sr.name,sr.create_by,sr.create_date,sr.del_flag,sr.parent_id
+        su.*,
+        sr.id as role_id,sr.name,sr.create_by,sr.create_date,sr.del_flag,sr.parent_id
         from sys_user su
         join sys_role_user sru on su.id=sru.user_id
         join sys_role sr on sru.role_id=sr.id
@@ -72,8 +100,8 @@
 
     <select id="queryByRoleNameOrId" resultMap="association">
         select
-            su.*,
-            sr.id as roleId,sr.name as roleName,sr.create_by,sr.create_date,sr.del_flag as delFlag,sr.parent_id parentId
+        su.*,
+        sr.id as roleId,sr.name as roleName,sr.create_by,sr.create_date,sr.del_flag as delFlag,sr.parent_id parentId
         from sys_user su
         join sys_role_user sru on su.id=sru.user_id
         join sys_role sr on sru.role_id=sr.id
