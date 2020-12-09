@@ -18,7 +18,8 @@ public class RoleEntity {
     private int createBy;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
     private Date createDate;
-    private boolean delFlag;
+    private Integer delFlag;
 
+    private boolean show;
     private List<RoleEntity> roleEntityList;
 }

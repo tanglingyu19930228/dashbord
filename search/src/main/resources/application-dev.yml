@@ -10,19 +10,24 @@ server:
       context-path: /
 
 spring:
+  mail:
+    host: smtp.qq.com
+    username: xuxiaoby@qq.com
+    password: iggtelienmqibbid
+    protocol: smtp
+    default-encoding: UTF-8
   datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://127.0.0.1:3306/shopping?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&serverTimezone=GMT
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: sdm619094438
+    password: Yichen360
+    url: jdbc:mysql://sdm619094438.my3w.com:3306/sdm619094438_db?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&serverTimezone=GMT
+    driver-class-name: com.mysql.jdbc.Driver
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
 pagehelper:
-  helperDialect:
-  reasonable: true
-  pagehelper:
-    supportMethodsArguments: true
-    pageSizeZero: false #pageSize=0
+  helperDialect: mysql
+  pageSizeZero: false
+  reasonable: true #pageSize=0
+  supportMethodsArguments: true
 workId: 1
 dataCenter: 1
 EMAIL_REGEXP: ^(\\s)*|^([a-z0-9A-Z]|-|\\.|_|!)+@[a-z0-9A-Z]+\\.[a-z0-9A-Z]{2,}$
@@ -31,4 +36,4 @@ logging:
   config: classpath:config/spring/logback.xml
   level:
     com.search: debug # 开发环境调试
-    org.mybatis: debug # 开发环境调试
+    com.baomidou: debug # 开发环境调试

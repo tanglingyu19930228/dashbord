@@ -9,7 +9,6 @@ import com.search.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.search.dao.SysUserDao;
 import com.search.service.SysUserService;
@@ -29,7 +28,7 @@ import java.util.regex.Pattern;
  */
 @Service("sysUserService")
 @Slf4j
-public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> implements SysUserService {
+public class SysUserServiceImpl  implements SysUserService {
 
 
     @Resource
@@ -167,8 +166,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         if (StringUtils.isEmpty(REGEXP)) {
             return R.error("系统异常");
         }
-        Pattern p = Pattern.compile(REGEXP);
-        Matcher m = p.matcher(userName);
-        return m.matches()? R.ok() : R.error("邮箱格式不正确,请输入正确的邮箱格式");
+        boolean flag = StringUtils.checkMail(REGEXP,userName);
+        return flag ? R.ok() : R.error("邮箱格式不正确,请输入正确的邮箱格式");
     }
 }

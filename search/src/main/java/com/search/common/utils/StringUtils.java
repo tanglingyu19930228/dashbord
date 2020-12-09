@@ -386,4 +386,10 @@ public class StringUtils  extends org.apache.commons.lang3.StringUtils {
         return true;
     }
 
+    public static boolean checkMail(String regexp, String userName) {
+
+        Pattern p = Pattern.compile(regexp);
+        Matcher m = p.matcher(userName);
+        return m.matches();
+    }
 }

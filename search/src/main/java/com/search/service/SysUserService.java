@@ -1,6 +1,5 @@
 package com.search.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
@@ -14,7 +13,7 @@ import java.util.List;
  * 用户表
  * @author Administrator
  */
-public interface SysUserService extends IService<SysUserEntity> {
+public interface SysUserService  {
 
     R login(SysUserEntity sysUserEntity);
 

@@ -1,6 +1,5 @@
 package com.search.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.List;

@@ -19,7 +19,7 @@ CREATE TABLE `sys_role` (
   `del_flag` tinyint(1) DEFAULT '0' COMMENT '是否禁用',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
-
+jnmzzhcfptjcbbaa
 CREATE TABLE `sys_role_user` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL COMMENT '用户id',

@@ -1,8 +1,8 @@
 package com.search.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.search.entity.RoleEntity;
 import com.search.entity.SysRoleEntity;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,7 +12,8 @@ import java.util.List;
  * @author: Tanglingyu
  * @time: 2020/12/6 19:24
  */
-public interface SysRoleDao  extends BaseMapper<RoleEntity> {
+@Mapper
+public interface SysRoleDao {
     List<RoleEntity> queryRoleByLike(@Param("roleEntity") RoleEntity roleEntity);
 
     List<RoleEntity> queryRolePage();
@@ -21,5 +22,35 @@ public interface SysRoleDao  extends BaseMapper<RoleEntity> {
 
     int batchDeleteRole(@Param("roleIds") Integer[] roleIds);
 
-    int insert(SysRoleEntity item);
+    /**
+     * 查询SysRoleEntity
+     *
+     * @param sysRoleEntity
+     * @return SysRoleEntity
+     */
+    public SysRoleEntity selectSysRoleOne(SysRoleEntity sysRoleEntity);
+
+    /**
+     * 查询SysRoleEntity列表
+     *
+     * @param sysRoleEntity
+     * @return SysRoleEntity 集合
+     */
+    public List<SysRoleEntity> selectSysRoleList(SysRoleEntity sysRoleEntity);
+
+    /**
+     * 新增SysRoleEntity
+     *
+     * @param sysRoleEntity
+     * @return 结果
+     */
+    public int insertSysRole(List<SysRoleEntity> list);
+
+    /**
+     * 修改sysRole
+     *
+     * @param sysRoleEntity
+     * @return 结果
+     */
+    public int updateSysRole(List<SysRoleEntity> list);
 }

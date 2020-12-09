@@ -2,7 +2,6 @@ package com.search.dao;
 
 import com.github.pagehelper.PageInfo;
 import com.search.entity.*;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +14,7 @@ import java.util.List;
  * @date 2020-12-02 12:13:22
  */
 @Mapper
-public interface SysUserDao extends BaseMapper<SysUserEntity> {
+public interface SysUserDao {
 
     SysUserEntity selectOneByUserName(@Param("userName") String userName);
 

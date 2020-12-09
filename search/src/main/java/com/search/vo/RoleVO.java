@@ -1,5 +1,6 @@
 package com.search.vo;
 
+import com.search.entity.RoleEntity;
 import com.search.entity.SysRoleEntity;
 import lombok.Getter;
 import lombok.Setter;
