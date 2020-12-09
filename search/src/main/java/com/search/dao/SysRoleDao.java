@@ -22,6 +22,8 @@ public interface SysRoleDao {
 
     int batchDeleteRole(@Param("roleIds") Integer[] roleIds);
 
+    List<SysRoleEntity> selectRoleListByUser(SysRoleEntity sysRoleEntity);
+
     /**
      * 查询SysRoleEntity
      *

@@ -92,6 +92,13 @@
         <if test="delFlag != null "> and del_flag = #{delFlag}</if>
     </sql>
 
+    <select id="selectRoleListByUser" parameterType="com.search.entity.SysRoleEntity" resultMap="sysRoleEntityResult">
+        select r.* from sys_user u
+        left join sys_role_user ur on u.id = ur.user_id
+        left join sys_role r on ur.role_id = r.id
+        where u.id = #{createBy}
+    </select>
+
     <!-- 分页查询 -->
     <select id="selectSysRoleList_Count" parameterType="com.search.entity.SysRoleEntity" resultType="java.lang.Integer">
         select count(1) from sys_role where 1=1 <include refid="baseWhere"/>

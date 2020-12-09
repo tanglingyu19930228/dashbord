@@ -1,4 +1,6 @@
 server:
+  servlet:
+    contextPath: /
   port: 19999
   undertow:
     buffer-size: 1024
@@ -6,9 +8,6 @@ server:
     threads:
       io: 4
       worker: 20
-    servlet:
-      context-path: /
-
 spring:
   mail:
     host: smtp.qq.com
@@ -30,7 +29,7 @@ pagehelper:
   supportMethodsArguments: true
 workId: 1
 dataCenter: 1
-EMAIL_REGEXP: ^(\\s)*|^([a-z0-9A-Z]|-|\\.|_|!)+@[a-z0-9A-Z]+\\.[a-z0-9A-Z]{2,}$
+EMAIL_REGEXP: "^(\\s)*|^([a-z0-9A-Z]|-|\\.|_|!)+@[a-z0-9A-Z]+\\.[a-z0-9A-Z]{2,}$"
 
 logging:
   config: classpath:config/spring/logback.xml

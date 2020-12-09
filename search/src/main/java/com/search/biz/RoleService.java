@@ -41,7 +41,7 @@ public class RoleService {
 
             SysRoleEntity sysRoleEntity = new SysRoleEntity();
             sysRoleEntity.setCreateBy(userId);
-            List<SysRoleEntity> roleDb = this.sysRoleDao.selectSysRoleList(sysRoleEntity);
+            List<SysRoleEntity> roleDb = this.sysRoleDao.selectRoleListByUser(sysRoleEntity);
             Map<Integer, List<SysRoleEntity>> dbMap = roleDb.stream().collect(Collectors.groupingBy(SysRoleEntity::getId));
             Map<Integer, List<SysRoleEntity>> pageMap = rolePage.stream().collect(Collectors.groupingBy(SysRoleEntity::getId));
 //
@@ -94,7 +94,7 @@ public class RoleService {
             List<SysRoleEntity> allRole = this.sysRoleDao.selectSysRoleList(new SysRoleEntity());
             SysRoleEntity sysRoleEntity = new SysRoleEntity();
             sysRoleEntity.setCreateBy(roleVO.getUserId());
-            List<SysRoleEntity> userRole = this.sysRoleDao.selectSysRoleList(sysRoleEntity);
+            List<SysRoleEntity> userRole = this.sysRoleDao.selectRoleListByUser(sysRoleEntity);
             for (SysRoleEntity allOne : allRole){
                 for (SysRoleEntity userOne : userRole){
                     if(allOne.getId().equals(userOne.getId())){

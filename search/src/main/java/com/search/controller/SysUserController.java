@@ -9,6 +9,9 @@ import com.search.entity.RoleQueryReq;
 import com.search.entity.SysUserEntity;
 import com.search.entity.UserQueryReq;
 import com.search.service.SysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +27,7 @@ import java.util.Arrays;
  */
 @RestController
 @RequestMapping("/sysUser")
+@Api(tags = "系统用户接口")
 public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
@@ -34,6 +38,7 @@ public class SysUserController extends BaseController {
      * @return 返回结果
      */
     @PostMapping(value = "/login")
+    @ApiOperation(value = "用户登录接口", tags = {"用户登录接口"})
     public R login(@RequestBody @Valid SysUserEntity sysUserEntity) {
         logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
         return sysUserService.login(sysUserEntity);
@@ -44,6 +49,7 @@ public class SysUserController extends BaseController {
      */
 
     @PostMapping("/queryByUserNameOrId")
+    @ApiOperation(value = "根据用户id或者userName查询该用户的角色信息", tags = {"根据用户id或者userName查询该用户的角色信息"})
     public R queryByUserNameOrId(@RequestBody @Valid UserQueryReq queryReq) {
         logger.info("根据用户id或者userName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
         return sysUserService.queryByUserNameOrId(queryReq);
@@ -54,6 +60,7 @@ public class SysUserController extends BaseController {
      */
 
     @PostMapping("/queryByRoleNameOrId")
+    @ApiOperation(value = "根据角色id或者roleName查询该角色对应的用户信息", tags = {"根据角色id或者roleName查询该角色对应的用户信息"})
     public R queryByRoleNameOrId(@RequestBody @Valid RoleQueryReq queryReq) {
         logger.info("根据角色id或者roleName查询该用户的角色信息,请求参数={}", JSONObject.toJSONString(queryReq));
         return sysUserService.queryByRoleNameOrId(queryReq);

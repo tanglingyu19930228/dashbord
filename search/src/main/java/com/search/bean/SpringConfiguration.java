@@ -13,4 +13,5 @@ public class SpringConfiguration {
 
     @Value("${EMAIL_REGEXP}")
     private String email;
+
 }

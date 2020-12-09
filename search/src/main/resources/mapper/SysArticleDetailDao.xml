@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.search.dao.SysArticleDetailDao">
+
+    <resultMap type="com.search.entity.SysArticleDetailEntity" id="sysArticleDetailEntityResult">
+        <result property="publisherId"    column="publisher_id"    />
+        <result property="publisher"    column="publisher"    />
+        <result property="publisherUrl"    column="publisher_url"    />
+        <result property="publisherUserType"    column="publisher_user_type"    />
+        <result property="publisherTime"    column="publisher_time"    />
+    </resultMap>
+
+	<!-- 查询的基础列 -->
+    <sql id="baseColumns">
+         publisher_id, publisher, publisher_url, publisher_user_type, publisher_time    </sql>
+
+    <!-- 筛选条件 -->
+    <sql id="baseWhere">
+    <if test="publisherId != null "> and publisher_id = #{publisherId}</if>
+    <if test="publisher != null  and publisher != ''"> and publisher = #{publisher}</if>
+    <if test="publisherUrl != null  and publisherUrl != ''"> and publisher_url = #{publisherUrl}</if>
+    <if test="publisherUserType != null "> and publisher_user_type = #{publisherUserType}</if>
+    <if test="publisherTime != null "> and publisher_time = #{publisherTime}</if>
+    </sql>
+
+	<!-- 分页查询 -->
+    <select id="selectSysArticleDetailList_Count" parameterType="com.search.entity.SysArticleDetailEntity" resultType="java.lang.Integer">
+        select count(1) from sys_article_detail where 1=1 <include refid="baseWhere"/>
+    </select>
+	<!-- 数据查询 -->
+    <select id="selectSysArticleDetailList" parameterType="com.search.entity.SysArticleDetailEntity" resultMap="sysArticleDetailEntityResult">
+        select <include refid="baseColumns"/> from sys_article_detail where 1=1 <include refid="baseWhere"/>
+		order by  publisher_id desc
+    </select>
+    <!-- 单个数据查询 -->
+    <select id="selectSysArticleDetailOne" parameterType="com.search.entity.SysArticleDetailEntity" resultMap="sysArticleDetailEntityResult">
+		select <include refid="baseColumns"/> from sys_article_detail where 1=1 <include refid="baseWhere"/> limit 1
+    </select>
+
+    <!-- 批量插入 -->
+    <insert id="insertSysArticleDetail" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="publisherId">
+        insert into sys_article_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            publisher,
+            publisher_url,
+            publisher_user_type,
+            publisher_time,
+         </trim>
+         values
+         <foreach collection="list" item="item" index="index" separator=",">
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{item.publisher},
+            #{item.publisherUrl},
+            #{item.publisherUserType},
+            #{item.publisherTime},
+         </trim>
+         </foreach>
+    </insert>
+
+	<!-- 根据主键更新 -->
+    <update id="updateSysArticleDetail" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" separator=";">
+        update sys_article_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="item.publisherId != null ">publisher_id = #{item.publisherId},</if>
+            <if test="item.publisher != null  and item.publisher != ''">publisher = #{item.publisher},</if>
+            <if test="item.publisherUrl != null  and item.publisherUrl != ''">publisher_url = #{item.publisherUrl},</if>
+            <if test="item.publisherUserType != null ">publisher_user_type = #{item.publisherUserType},</if>
+            <if test="item.publisherTime != null ">publisher_time = #{item.publisherTime},</if>
+        </trim>
+        where publisher_id = #{item.publisherId}
+        </foreach>
+    </update>
+
+
+</mapper>

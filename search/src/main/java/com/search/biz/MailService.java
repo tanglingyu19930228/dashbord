@@ -32,6 +32,7 @@ public class MailService {
         SimpleMailMessage simpleMessage=new SimpleMailMessage();
         simpleMessage.setFrom(fromEmail);
         simpleMessage.setTo(to);
+        String redirectUrl = "https://127.0.0.1:19999/login";
         simpleMessage.setSubject(subject);
         simpleMessage.setText(content);
         try{

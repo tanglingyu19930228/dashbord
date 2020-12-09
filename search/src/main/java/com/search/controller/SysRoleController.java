@@ -7,6 +7,10 @@ import com.search.common.utils.R;
 import com.search.entity.RoleEntity;
 import com.search.service.SysRoleService;
 import com.search.vo.RoleVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +27,9 @@ import java.util.List;
  * @time: 2020/12/6 19:18
  */
 
-@RestController()
+@RestController
 @RequestMapping(value = "/sysRole")
+@Api(tags = "用户权限接口")
 public class SysRoleController {
 
     @Resource
@@ -34,13 +39,15 @@ public class SysRoleController {
     RoleService roleService;
 
     @PostMapping(value = "/addUserRole")
-    public R addUserRole(@RequestBody RoleVO roleVO){
+    @ApiOperation(value = "增加权限接口", tags = {"增加权限接口"})
+    public R addUserRole(@RequestBody @ApiParam(value = "用户角色实体") RoleVO roleVO){
 
         return roleService.addUserRole(roleVO);
     }
 
+    @ApiOperation(value = "获取权限类别", tags = {"获取权限类别"})
     @PostMapping(value = "/getRoleList")
-    public R selectRoleList(@RequestBody RoleVO roleVO){
+    public R selectRoleList(@RequestBody @ApiParam(value = "用户角色实体") RoleVO roleVO){
         return roleService.selectRoleList(roleVO);
     }
 

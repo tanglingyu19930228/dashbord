@@ -392,4 +392,9 @@ public class StringUtils  extends org.apache.commons.lang3.StringUtils {
         Matcher m = p.matcher(userName);
         return m.matches();
     }
+
+    public static void main(String[] args) {
+        String s = "^(\\s)*|^([a-z0-9A-Z]|-|\\.|_|!)+@[a-z0-9A-Z]+\\.[a-z0-9A-Z]{2,}$";
+        System.out.println(checkMail(s,"xuxiaoby@qq.com"));
+    }
 }
