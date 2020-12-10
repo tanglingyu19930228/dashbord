@@ -17,9 +17,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.reporting.outputEncoding>UTF-8
+        </project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <sharding.version>4.0.1</sharding.version>
+        <sharding-sphere.version>4.0.1</sharding-sphere.version>
         <commons-collections4.version>4.1</commons-collections4.version>
     </properties>
 
@@ -115,21 +116,16 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <!--暂时注释启动问题-->
-<!--        <dependency>
+        <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-            <version>${sharding.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>shardingsphere-sql-parser-sqlserver</artifactId>
-                    <groupId>org.apache.shardingsphere</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>shardingsphere-sql-parser-oracle</artifactId>
-                    <groupId>org.apache.shardingsphere</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
+            <version>${sharding-sphere.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-namespace</artifactId>
+            <version>${sharding-sphere.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
