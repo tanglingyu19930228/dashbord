@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Param;
  * @author: Tanglingyu
  * @time: 2020/12/10 22:23
  */
-public interface OrderMapper  {
-  int save(@Param("entity") Order entity);
+public interface OrderMapper {
+    int save(@Param("entity") Order entity);
+
+    Order getById(@Param("id") long id);
 }

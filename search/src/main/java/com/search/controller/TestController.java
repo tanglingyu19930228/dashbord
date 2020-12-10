@@ -48,8 +48,8 @@ public class TestController {
 
     @RequestMapping("/testGetById")
     public void testGetById() {
-//        long id = 1337025437775204353L;
-//        Order order = orderService.getById(id);
-//        System.out.println(order.toString());
+        long id = 543931333139759104L;
+        Order order = orderService.getById(id);
+        System.out.println(order.toString());
     }
 }

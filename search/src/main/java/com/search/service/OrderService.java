@@ -12,4 +12,5 @@ public interface OrderService  {
 
     int save(Order entity);
 
+    Order getById(long id);
 }

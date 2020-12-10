@@ -11,8 +11,16 @@
         <result property="gmtCreate" column="gmt_create"/>
     </resultMap>
 
+    <sql id="All_COLUMN">
+        id,name,type,gmt_create
+    </sql>
+
     <insert id="save">
         insert into t_order(name,type) values(#{entity.name},#{entity.type})
     </insert>
+    <select id="getById" resultType="com.search.entity.Order">
+       select <include refid="All_COLUMN"/>
+       from t_order where id=#{id}
+    </select>
 
 </mapper>
