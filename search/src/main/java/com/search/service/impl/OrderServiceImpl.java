@@ -3,6 +3,8 @@ package com.search.service.impl;
 import com.search.dao.OrderMapper;
 import com.search.entity.Order;
 import com.search.service.OrderService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,7 +25,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Cacheable(cacheNames = "TangLingYu", key = "#id")
     public Order getById(long id) {
-        return orderMapper.getById(id);
+        System.out.println("查询没走缓存,查询id=" + id + "");
+        Order order = orderMapper.getById(id);
+        return order;
     }
 }
