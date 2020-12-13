@@ -48,7 +48,7 @@ public class SysArticleController {
      *
      * @Return List
      */
-    @RequestMapping("/selectSysArticleList")
+    @PostMapping("/selectSysArticleList")
     @ApiOperation("sys_article信息查询(多条记录)")
     public R selectSysArticleList(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("查询sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
@@ -61,7 +61,7 @@ public class SysArticleController {
      *
      * @Return singleton
      */
-    @RequestMapping("/selectSysArticleSingleton")
+    @PostMapping("/selectSysArticleSingleton")
     @ApiOperation("sys_article信息查询(单条记录)")
     public R selectSysArticleSingleton(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("单条记录查询sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
@@ -72,7 +72,7 @@ public class SysArticleController {
     /**
      * 新增SysArticleEntity
      */
-    @RequestMapping("/addSysArticle")
+    @PostMapping("/addSysArticle")
     @ApiOperation("新增sys_article信息")
     public R addSysArticle(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("新增sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
@@ -83,7 +83,7 @@ public class SysArticleController {
     /**
      * 批量新增SysArticleEntity
      */
-    @RequestMapping("/batchAddSysArticle")
+    @PostMapping("/batchAddSysArticle")
     @ApiOperation("批量新增sys_article信息")
     public R batchAddSysArticle(@RequestBody @Valid List<SysArticleEntity> sysArticleEntityList) {
         if (CollectionUtils.isEmpty(sysArticleEntityList)) {
@@ -99,7 +99,7 @@ public class SysArticleController {
     /**
      * 修改sys_article
      */
-    @RequestMapping("/updateSysArticle")
+    @PostMapping("/updateSysArticle")
     @ApiOperation("修改sys_article")
     public R updateSysArticle(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("修改sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
@@ -110,7 +110,7 @@ public class SysArticleController {
     /**
      * 根据id批量更新sys_article
      */
-    @RequestMapping("/batchUpdateSysArticle")
+    @PostMapping("/batchUpdateSysArticle")
     @ApiOperation("批量修改sys_article")
     public R batchUpdateSysArticle(@RequestBody @Valid List<SysArticleEntity> sysArticleEntityList) {
         if (CollectionUtils.isEmpty(sysArticleEntityList)) {

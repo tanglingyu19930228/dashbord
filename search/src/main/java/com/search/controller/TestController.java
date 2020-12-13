@@ -8,6 +8,7 @@ import com.search.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 
@@ -16,8 +17,8 @@ import javax.annotation.Resource;
  * @author: Tanglingyu
  * @time: 2020/11/28 12:27
  */
-@RestController
-@RequestMapping("/test")
+@RestController("/test")
+@ApiIgnore
 public class TestController {
 
     @Autowired

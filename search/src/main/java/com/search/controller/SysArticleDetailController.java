@@ -48,7 +48,7 @@ public class SysArticleDetailController {
      *
      * @Return List
      */
-    @RequestMapping("/selectSysArticleDetailList")
+    @PostMapping("/selectSysArticleDetailList")
     @ApiOperation("sys_article_detail信息查询(多条记录)")
     public R selectSysArticleDetailList(@RequestBody @Valid SysArticleDetailEntity sysArticleDetailEntity) {
         log.info("查询sys_article_detail信息sysArticleDetailEntity={}", JSONObject.toJSON(sysArticleDetailEntity));
@@ -61,7 +61,7 @@ public class SysArticleDetailController {
      *
      * @Return singleton
      */
-    @RequestMapping("/selectSysArticleDetailSingleton")
+    @PostMapping("/selectSysArticleDetailSingleton")
     @ApiOperation("sys_article_detail信息查询(单条记录)")
     public R selectSysArticleDetailSingleton(@RequestBody @Valid SysArticleDetailEntity sysArticleDetailEntity) {
         log.info("单条记录查询sys_article_detail信息sysArticleDetailEntity={}", JSONObject.toJSON(sysArticleDetailEntity));
@@ -72,7 +72,7 @@ public class SysArticleDetailController {
     /**
      * 新增SysArticleDetailEntity
      */
-    @RequestMapping("/addSysArticleDetail")
+    @PostMapping("/addSysArticleDetail")
     @ApiOperation("新增SysArticleDetailEntity")
     public R addSysArticleDetail(@RequestBody @Valid SysArticleDetailEntity sysArticleDetailEntity) {
         log.info("新增sys_article_detail信息sysArticleDetailEntity={}", JSONObject.toJSON(sysArticleDetailEntity));
@@ -83,7 +83,7 @@ public class SysArticleDetailController {
     /**
      * 批量新增SysArticleDetailEntity
      */
-    @RequestMapping("/batchAddSysArticleDetail")
+    @PostMapping("/batchAddSysArticleDetail")
     @ApiOperation("批量新增SysArticleDetailEntity")
     public R batchAddSysArticleDetail(@RequestBody @Valid List<SysArticleDetailEntity> sysArticleDetailEntities) {
         if (CollectionUtils.isEmpty(sysArticleDetailEntities)) {
@@ -99,7 +99,7 @@ public class SysArticleDetailController {
     /**
      * 修改sys_article_detail
      */
-    @RequestMapping("/updateSysArticleDetail")
+    @PostMapping("/updateSysArticleDetail")
     @ApiOperation("修改sys_article_detail")
     public R updateSysArticleDetail(@RequestBody @Valid SysArticleDetailEntity sysArticleDetailEntity) {
         log.info("修改sys_article_detail信息sysArticleDetailEntity={}", JSONObject.toJSON(sysArticleDetailEntity));
@@ -110,7 +110,7 @@ public class SysArticleDetailController {
     /**
      * 根据id批量更新sys_article_detail
      */
-    @RequestMapping("/batchUpdateSysArticleDetail")
+    @PostMapping("/batchUpdateSysArticleDetail")
     @ApiOperation("根据id批量更新sys_article_detail")
     public R batchUpdateSysArticleDetail(@RequestBody @Valid List<SysArticleDetailEntity> sysArticleDetailEntities) {
         if (CollectionUtils.isEmpty(sysArticleDetailEntities)) {

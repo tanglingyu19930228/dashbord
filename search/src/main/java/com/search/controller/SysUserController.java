@@ -24,8 +24,7 @@ import java.util.Arrays;
  * @author Administrator
  * @date 2020-12-02 12:13:22
  */
-@RestController
-@RequestMapping("/sysUser")
+@RestController("/sysUser")
 @Api(tags = "系统用户接口")
 public class SysUserController extends BaseController {
     @Autowired

@@ -1,5 +1,6 @@
 package com.search.bean;
 
+import io.swagger.annotations.Api;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -23,6 +24,7 @@ public class Swagger2Configuration {
                 .apiInfo(buildApiInf())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.search.controller"))
+                //.apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.any())
                 .build();
     }
