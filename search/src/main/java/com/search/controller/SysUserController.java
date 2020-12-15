@@ -2,6 +2,7 @@ package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.search.annotation.NoNeedLogin;
 import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
@@ -37,6 +38,7 @@ public class SysUserController extends BaseController {
      */
     @PostMapping(value = "/login")
     @ApiOperation(value = "用户登录接口", tags = {"用户登录接口"})
+    @NoNeedLogin
     public R login(@RequestBody @Valid SysUserEntity sysUserEntity) {
         logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
         return sysUserService.login(sysUserEntity);
