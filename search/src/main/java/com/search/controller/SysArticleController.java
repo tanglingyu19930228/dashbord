@@ -1,6 +1,7 @@
 package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.search.common.controller.BaseController;
 import com.search.common.utils.R;
 import com.search.entity.SysArticleEntity;
 import com.search.service.ISysArticleService;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController("/sysArticle")
 @Slf4j
 @Api(value = "sys_article控制层", tags = "标题接口")
-public class SysArticleController {
+public class SysArticleController extends BaseController {
 
     @Resource
     private ISysArticleService iSysArticleService;
@@ -118,7 +120,7 @@ public class SysArticleController {
             return R.error("入参有误");
         }
         List<SysArticleEntity> collect = sysArticleEntityList.parallelStream().filter(sysArticleEntity -> sysArticleEntity.getId() != null).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(collect)) {
+        if (CollectionUtils.isEmpty(collect)) {
             log.error("请求数据有误,有误的数据collect={}", JSONObject.toJSON(collect));
             return R.error("入参有误");
         }

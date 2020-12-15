@@ -1,76 +1,110 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.search.dao.SysArticleDao">
 
     <resultMap type="com.search.entity.SysArticleEntity" id="sysArticleEntityResult">
-        <result property="id"    column="id"    />
-        <result property="dataId"    column="data_id"    />
-        <result property="titleId"    column="title_id"    />
-        <result property="topicId"    column="topic_id"    />
-        <result property="contentId"    column="content_id"    />
-        <result property="content"    column="content"    />
-        <result property="emotionType"    column="emotion_type"    />
-        <result property="emotionValue"    column="emotion_value"    />
-        <result property="insertTime"    column="insert_time"    />
-        <result property="mediaType"    column="media_type"    />
-        <result property="publisherId"    column="publisher_id"    />
-        <result property="publisherLinkNum"    column="publisher_link_num"    />
-        <result property="publisherPv"    column="publisher_pv"    />
-        <result property="publisherCommentNum"    column="publisher_comment_num"    />
-        <result property="publisherCollectionNum"    column="publisher_collection_num"    />
-        <result property="publisherRepostNum"    column="publisher_repost_num"    />
-        <result property="publisherSiteName"    column="publisher_site_name"    />
-        <result property="publisherArticleTitle"    column="publisher_article_title"    />
-        <result property="publisherArticleUnique"    column="publisher_article_unique"    />
-        <result property="publisherArticleUrl"    column="publisher_article_url"    />
+        <result property="id" column="id"/>
+        <result property="dataId" column="data_id"/>
+        <result property="titleId" column="title_id"/>
+        <result property="topicId" column="topic_id"/>
+        <result property="contentId" column="content_id"/>
+        <result property="content" column="content"/>
+        <result property="emotionType" column="emotion_type"/>
+        <result property="emotionValue" column="emotion_value"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="mediaType" column="media_type"/>
+        <result property="publisherId" column="publisher_id"/>
+        <result property="publisherLinkNum" column="publisher_link_num"/>
+        <result property="publisherPv" column="publisher_pv"/>
+        <result property="publisherCommentNum" column="publisher_comment_num"/>
+        <result property="publisherCollectionNum" column="publisher_collection_num"/>
+        <result property="publisherRepostNum" column="publisher_repost_num"/>
+        <result property="publisherSiteName" column="publisher_site_name"/>
+        <result property="publisherArticleTitle" column="publisher_article_title"/>
+        <result property="publisherArticleUnique" column="publisher_article_unique"/>
+        <result property="publisherArticleUrl" column="publisher_article_url"/>
+
+        <result property="publisher" column="publisher"/>
+        <result property="publisherUrl" column="publisher_url"/>
+        <result property="publisherUserType" column="publisher_user_type"/>
+        <result property="publisherTime" column="publisher_time"/>
     </resultMap>
 
-	<!-- 查询的基础列 -->
+    <!-- 查询的基础列 -->
     <sql id="baseColumns">
-         id, data_id, title_id, topic_id, content_id, content, emotion_type, emotion_value, insert_time, media_type, publisher_id, publisher_link_num, publisher_pv, publisher_comment_num, publisher_collection_num, publisher_repost_num, publisher_site_name, publisher_article_title, publisher_article_unique, publisher_article_url    </sql>
+         id, data_id, title_id, topic_id, content_id, content, emotion_type, emotion_value, insert_time, media_type, publisher_id, publisher_link_num, publisher_pv, publisher_comment_num, publisher_collection_num, publisher_repost_num, publisher_site_name, publisher_article_title, publisher_article_unique, publisher_article_url
+         ,publisher, publisher_url, publisher_user_type,publisher_time
+          </sql>
 
     <!-- 筛选条件 -->
     <sql id="baseWhere">
-    <if test="id != null "> and id = #{id}</if>
-    <if test="dataId != null "> and data_id = #{dataId}</if>
-    <if test="titleId != null "> and title_id = #{titleId}</if>
-    <if test="topicId != null  and topicId != ''"> and topic_id = #{topicId}</if>
-    <if test="contentId != null "> and content_id = #{contentId}</if>
-    <if test="content != null  and content != ''"> and content = #{content}</if>
-    <if test="emotionType != null "> and emotion_type = #{emotionType}</if>
-    <if test="emotionValue != null "> and emotion_value = #{emotionValue}</if>
-    <if test="insertTime != null "> and insert_time = #{insertTime}</if>
-    <if test="mediaType != null "> and media_type = #{mediaType}</if>
-    <if test="publisherId != null "> and publisher_id = #{publisherId}</if>
-    <if test="publisherLinkNum != null "> and publisher_link_num = #{publisherLinkNum}</if>
-    <if test="publisherPv != null "> and publisher_pv = #{publisherPv}</if>
-    <if test="publisherCommentNum != null "> and publisher_comment_num = #{publisherCommentNum}</if>
-    <if test="publisherCollectionNum != null "> and publisher_collection_num = #{publisherCollectionNum}</if>
-    <if test="publisherRepostNum != null "> and publisher_repost_num = #{publisherRepostNum}</if>
-    <if test="publisherSiteName != null  and publisherSiteName != ''"> and publisher_site_name = #{publisherSiteName}</if>
-    <if test="publisherArticleTitle != null  and publisherArticleTitle != ''"> and publisher_article_title = #{publisherArticleTitle}</if>
-    <if test="publisherArticleUnique != null  and publisherArticleUnique != ''"> and publisher_article_unique = #{publisherArticleUnique}</if>
-    <if test="publisherArticleUrl != null  and publisherArticleUrl != ''"> and publisher_article_url = #{publisherArticleUrl}</if>
+        <if test="id != null ">and id = #{id}</if>
+        <if test="dataId != null ">and data_id = #{dataId}</if>
+        <if test="titleId != null ">and title_id = #{titleId}</if>
+        <if test="topicId != null  and topicId != ''">and topic_id = #{topicId}</if>
+        <if test="contentId != null ">and content_id = #{contentId}</if>
+        <if test="content != null  and content != ''">and content = #{content}</if>
+        <if test="emotionType != null ">and emotion_type = #{emotionType}</if>
+        <if test="emotionValue != null ">and emotion_value = #{emotionValue}</if>
+        <if test="insertTime != null ">and insert_time = #{insertTime}</if>
+        <if test="mediaType != null ">and media_type = #{mediaType}</if>
+        <if test="publisherId != null ">and publisher_id = #{publisherId}</if>
+        <if test="publisherLinkNum != null ">and publisher_link_num = #{publisherLinkNum}</if>
+        <if test="publisherPv != null ">and publisher_pv = #{publisherPv}</if>
+        <if test="publisherCommentNum != null ">and publisher_comment_num = #{publisherCommentNum}</if>
+        <if test="publisherCollectionNum != null ">and publisher_collection_num = #{publisherCollectionNum}</if>
+        <if test="publisherRepostNum != null ">and publisher_repost_num = #{publisherRepostNum}</if>
+        <if test="publisherSiteName != null  and publisherSiteName != ''">and publisher_site_name =
+            #{publisherSiteName}
+        </if>
+        <if test="publisherArticleTitle != null  and publisherArticleTitle != ''">and publisher_article_title =
+            #{publisherArticleTitle}
+        </if>
+        <if test="publisherArticleUnique != null  and publisherArticleUnique != ''">and publisher_article_unique =
+            #{publisherArticleUnique}
+        </if>
+        <if test="publisherArticleUrl != null  and publisherArticleUrl != ''">and publisher_article_url =
+            #{publisherArticleUrl}
+        </if>
+
+
+        <if test="publisher != null  and publisher != ''">and publisher =
+            #{publisher}
+        </if>
+        <if test="publisherUrl != null  and publisherUrl != ''">and publisher_url =
+            #{publisherUrl}
+        </if>
+        <if test="publisherUserType != null  and publisherUserType != ''">and publisher_user_type =
+            #{publisherUserType}
+        </if>
+        <if test="publisherTime != null  and publisherTime != ''">and publisher_time =
+            #{publisherTime}
+        </if>
     </sql>
 
-	<!-- 分页查询 -->
-    <select id="selectSysArticleList_Count" parameterType="com.search.entity.SysArticleEntity" resultType="java.lang.Integer">
-        select count(1) from sys_article where 1=1 <include refid="baseWhere"/>
-    </select>
-	<!-- 数据查询 -->
-    <select id="selectSysArticleList" parameterType="com.search.entity.SysArticleEntity" resultMap="sysArticleEntityResult">
-        select <include refid="baseColumns"/> from sys_article where 1=1 <include refid="baseWhere"/>
-		order by  id desc
+    <!-- 数据查询 -->
+    <select id="selectSysArticleList" parameterType="com.search.entity.SysArticleEntity"
+            resultMap="sysArticleEntityResult">
+        select
+        <include refid="baseColumns"/>
+        from sys_article where 1=1
+        <include refid="baseWhere"/>
+        order by id desc
     </select>
     <!-- 单个数据查询 -->
-    <select id="selectSysArticleOne" parameterType="com.search.entity.SysArticleEntity" resultMap="sysArticleEntityResult">
-		select <include refid="baseColumns"/> from sys_article where 1=1 <include refid="baseWhere"/> limit 1
+    <select id="selectSysArticleOne" parameterType="com.search.entity.SysArticleEntity"
+            resultMap="sysArticleEntityResult">
+        select
+        <include refid="baseColumns"/>
+        from sys_article where 1=1
+        <include refid="baseWhere"/>
+        limit 1
     </select>
 
     <!-- 批量插入 -->
-    <insert id="insertSysArticle" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSysArticle" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into sys_article
         <trim prefix="(" suffix=")" suffixOverrides=",">
             data_id,
@@ -92,62 +126,93 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             publisher_article_title,
             publisher_article_unique,
             publisher_article_url,
-         </trim>
-         values
-         <foreach collection="list" item="item" index="index" separator=",">
-         <trim prefix="(" suffix=")" suffixOverrides=",">
-            #{item.dataId},
-            #{item.titleId},
-            #{item.topicId},
-            #{item.contentId},
-            #{item.content},
-            #{item.emotionType},
-            #{item.emotionValue},
-            #{item.insertTime},
-            #{item.mediaType},
-            #{item.publisherId},
-            #{item.publisherLinkNum},
-            #{item.publisherPv},
-            #{item.publisherCommentNum},
-            #{item.publisherCollectionNum},
-            #{item.publisherRepostNum},
-            #{item.publisherSiteName},
-            #{item.publisherArticleTitle},
-            #{item.publisherArticleUnique},
-            #{item.publisherArticleUrl},
-         </trim>
-         </foreach>
+            publisher,
+            publisher_url,
+            publisher_user_type,
+            publisher_time
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.dataId},
+                #{item.titleId},
+                #{item.topicId},
+                #{item.contentId},
+                #{item.content},
+                #{item.emotionType},
+                #{item.emotionValue},
+                #{item.insertTime},
+                #{item.mediaType},
+                #{item.publisherId},
+                #{item.publisherLinkNum},
+                #{item.publisherPv},
+                #{item.publisherCommentNum},
+                #{item.publisherCollectionNum},
+                #{item.publisherRepostNum},
+                #{item.publisherSiteName},
+                #{item.publisherArticleTitle},
+                #{item.publisherArticleUnique},
+                #{item.publisherArticleUrl},
+
+                #{item.publisher},
+                #{item.publisherUrl},
+                #{item.publisherUserType},
+                #{item.publisherTime}
+            </trim>
+        </foreach>
     </insert>
 
-	<!-- 根据主键更新 -->
+    <!-- 根据主键更新 -->
     <update id="updateSysArticle" parameterType="java.util.List">
-    	<foreach collection="list" item="item" index="index" separator=";">
-        update sys_article
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="item.id != null ">id = #{item.id},</if>
-            <if test="item.dataId != null ">data_id = #{item.dataId},</if>
-            <if test="item.titleId != null ">title_id = #{item.titleId},</if>
-            <if test="item.topicId != null  and item.topicId != ''">topic_id = #{item.topicId},</if>
-            <if test="item.contentId != null ">content_id = #{item.contentId},</if>
-            <if test="item.content != null  and item.content != ''">content = #{item.content},</if>
-            <if test="item.emotionType != null ">emotion_type = #{item.emotionType},</if>
-            <if test="item.emotionValue != null ">emotion_value = #{item.emotionValue},</if>
-            <if test="item.insertTime != null ">insert_time = #{item.insertTime},</if>
-            <if test="item.mediaType != null ">media_type = #{item.mediaType},</if>
-            <if test="item.publisherId != null ">publisher_id = #{item.publisherId},</if>
-            <if test="item.publisherLinkNum != null ">publisher_link_num = #{item.publisherLinkNum},</if>
-            <if test="item.publisherPv != null ">publisher_pv = #{item.publisherPv},</if>
-            <if test="item.publisherCommentNum != null ">publisher_comment_num = #{item.publisherCommentNum},</if>
-            <if test="item.publisherCollectionNum != null ">publisher_collection_num = #{item.publisherCollectionNum},</if>
-            <if test="item.publisherRepostNum != null ">publisher_repost_num = #{item.publisherRepostNum},</if>
-            <if test="item.publisherSiteName != null  and item.publisherSiteName != ''">publisher_site_name = #{item.publisherSiteName},</if>
-            <if test="item.publisherArticleTitle != null  and item.publisherArticleTitle != ''">publisher_article_title = #{item.publisherArticleTitle},</if>
-            <if test="item.publisherArticleUnique != null  and item.publisherArticleUnique != ''">publisher_article_unique = #{item.publisherArticleUnique},</if>
-            <if test="item.publisherArticleUrl != null  and item.publisherArticleUrl != ''">publisher_article_url = #{item.publisherArticleUrl},</if>
-        </trim>
-        where id = #{item.id}
+        <foreach collection="list" item="item" index="index" separator=";">
+            update sys_article
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.id != null ">id = #{item.id},</if>
+                <if test="item.dataId != null ">data_id = #{item.dataId},</if>
+                <if test="item.titleId != null ">title_id = #{item.titleId},</if>
+                <if test="item.topicId != null  and item.topicId != ''">topic_id = #{item.topicId},</if>
+                <if test="item.contentId != null ">content_id = #{item.contentId},</if>
+                <if test="item.content != null  and item.content != ''">content = #{item.content},</if>
+                <if test="item.emotionType != null ">emotion_type = #{item.emotionType},</if>
+                <if test="item.emotionValue != null ">emotion_value = #{item.emotionValue},</if>
+                <if test="item.insertTime != null ">insert_time = #{item.insertTime},</if>
+                <if test="item.mediaType != null ">media_type = #{item.mediaType},</if>
+                <if test="item.publisherId != null ">publisher_id = #{item.publisherId},</if>
+                <if test="item.publisherLinkNum != null ">publisher_link_num = #{item.publisherLinkNum},</if>
+                <if test="item.publisherPv != null ">publisher_pv = #{item.publisherPv},</if>
+                <if test="item.publisherCommentNum != null ">publisher_comment_num = #{item.publisherCommentNum},</if>
+                <if test="item.publisherCollectionNum != null ">publisher_collection_num =
+                    #{item.publisherCollectionNum},
+                </if>
+                <if test="item.publisherRepostNum != null ">publisher_repost_num = #{item.publisherRepostNum},</if>
+                <if test="item.publisherSiteName != null  and item.publisherSiteName != ''">publisher_site_name =
+                    #{item.publisherSiteName},
+                </if>
+                <if test="item.publisherArticleTitle != null  and item.publisherArticleTitle != ''">
+                    publisher_article_title = #{item.publisherArticleTitle},
+                </if>
+                <if test="item.publisherArticleUnique != null  and item.publisherArticleUnique != ''">
+                    publisher_article_unique = #{item.publisherArticleUnique},
+                </if>
+                <if test="item.publisherArticleUrl != null  and item.publisherArticleUrl != ''">publisher_article_url =
+                    #{item.publisherArticleUrl},
+                </if>
+
+
+                <if test="item.publisher != null  and item.publisher != ''"> publisher =
+                    #{item.publisher},
+                </if>
+                <if test="item.publisherUrl != null  and item.publisherUrl != ''"> publisher_url =
+                    #{item.publisherUrl},
+                </if>
+                <if test="item.publisherUserType != null  and item.publisherUserType != ''">publisher_user_type =
+                    #{item.publisherUserType},
+                </if>
+                <if test="item.publisherTime != null  and item.publisherTime != ''">publisher_time =
+                    #{item.publisherTime}
+                </if>
+            </trim>
+            where id = #{item.id}
         </foreach>
     </update>
-
-
 </mapper>

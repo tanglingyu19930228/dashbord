@@ -1,6 +1,7 @@
 package com.search.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -63,6 +64,7 @@ public class SysArticleEntity implements Serializable {
      * 插入时间
      */
     @ApiModelProperty("插入时间")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date insertTime;
     /**
      * 0：微信；1：微博；2：博客；3：论坛：4：问答；5：新闻
@@ -120,4 +122,24 @@ public class SysArticleEntity implements Serializable {
     @ApiModelProperty("站点链接")
     private String publisherArticleUrl;
 
+    /**
+     * 发布人
+     */
+    @ApiModelProperty("发布人")
+    private String publisher;
+
+    @ApiModelProperty("发布人url")
+    private String publisherUrl;
+    /**
+     * 发布人类型
+     */
+    @ApiModelProperty("发布人类型")
+    private int publisherUserType;
+
+    /**
+     * 发布人时间
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty("发布人人时间格式=yyyy-MM-dd HH:mm:ss")
+    private Date publisherTime;
 }

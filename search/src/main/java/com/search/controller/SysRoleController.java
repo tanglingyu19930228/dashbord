@@ -2,6 +2,7 @@ package com.search.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.search.biz.RoleService;
+import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
 import com.search.entity.RoleEntity;
@@ -27,7 +28,7 @@ import java.util.List;
 
 @RestController("/sysRole")
 @Api(tags = "用户权限接口")
-public class SysRoleController {
+public class SysRoleController extends BaseController {
 
     @Resource
     private SysRoleService sysRoleService;
