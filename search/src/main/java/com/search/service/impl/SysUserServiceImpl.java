@@ -12,6 +12,7 @@ import com.search.common.utils.UuidUtil;
 import com.search.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.queue.PredicatedQueue;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.Cacheable;
@@ -75,7 +76,7 @@ public class SysUserServiceImpl implements SysUserService {
             log.error("用户名不存在:userName={}", sysUserEntity.getUserName());
             return R.error("用户名不存在,请输入正确的用户名");
         }
-        if (result.getDelFlag() == 1) {
+        if ("1".equals(result.getDelFlag())) {
             return R.error("该用户已经被删除");
         }
         //校验password
@@ -88,7 +89,7 @@ public class SysUserServiceImpl implements SysUserService {
             //缓存用户token信息
             String token = UuidUtil.generateUuid();
             GuavaCacheUtils.cache.put(String.format("LOGIN_TOKEN_%s", token), sysUserEntity);
-            return R.ok("登录成功").setData(result.getId()).setData(token);
+            return R.ok("登录成功").setUserId(Long.valueOf(result.getId())).setToken(token);
         }
         return R.ok("密码错误,请输入正确的密码");
 

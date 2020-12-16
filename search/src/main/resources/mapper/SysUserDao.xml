@@ -70,7 +70,7 @@
             resultType="com.search.entity.SysUserEntity">
         select
         <include refid="all_column"/>
-        from sys_user where `name`=#{userName}
+        from sys_user where `user_name`=#{userName}
     </select>
 
 

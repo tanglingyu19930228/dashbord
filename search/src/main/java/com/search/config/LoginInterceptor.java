@@ -1,7 +1,9 @@
 package com.search.config;
 
+import com.alibaba.fastjson.JSONObject;
 import com.search.annotation.NoNeedLogin;
 import com.search.common.domain.BusinessException;
+import com.search.common.domain.BusinessResponse;
 import com.search.common.domain.BusinessResponseEnum;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -12,9 +14,11 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component
@@ -38,7 +42,14 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
         }
         Object user = RequestContextHolder.getRequestAttributes().getAttribute(WebFilter.KEY, RequestAttributes.SCOPE_REQUEST);
         if (user == null) {
-            throw new BusinessException(BusinessResponseEnum.NON_LOGIN.getCode(), BusinessResponseEnum.NON_LOGIN.getMsg());
+            BusinessResponse wr = new BusinessResponse();
+            wr.setCode(BusinessResponseEnum.NON_LOGIN.getCode());
+            wr.setMsg(BusinessResponseEnum.NON_LOGIN.getMsg());
+            response.setStatus(200);
+            response.setHeader("Content-Type", "application/json;charset=UTF-8");
+            response.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
+            response.getOutputStream().flush();
+            return false;
         }
         return true;
     }

@@ -26,7 +26,7 @@ public class WebFilter implements Filter {
     @Resource
     private SysUserServiceImpl sysUserService;
 
-    public static final String KEY="CURRENT_USER";
+    public static final String KEY = "CURRENT_USER";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -48,7 +48,7 @@ public class WebFilter implements Filter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setStatus(200);
             httpServletResponse.setHeader("Content-Type", "application/json;charset=UTF-8");
-            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(httpServletResponse).getBytes(StandardCharsets.UTF_8));
+            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
             httpServletResponse.getOutputStream().flush();
             return;
         }
