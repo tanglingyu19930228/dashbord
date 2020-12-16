@@ -7,14 +7,10 @@ import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 
 import java.util.Collection;
 
-/**
- * @description:
- * @author: Tanglingyu
- * @time: 2020/12/10 22:43
- */
 
 /**
  * 测略可进一步修改
+ * @author tanglingyu
  */
 public class TableShardingAlgorithm implements PreciseShardingAlgorithm<String> {
     @Override

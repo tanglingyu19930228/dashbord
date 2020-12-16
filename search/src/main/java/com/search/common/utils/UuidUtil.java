@@ -2,6 +2,9 @@ package com.search.common.utils;
 
 import java.util.UUID;
 
+/**
+ * @author tanglingyu
+ */
 public class UuidUtil {
     public UuidUtil() {
     }

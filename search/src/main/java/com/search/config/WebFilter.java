@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * @author tanglingyu
+ */
 @Slf4j
 public class WebFilter implements Filter {
 

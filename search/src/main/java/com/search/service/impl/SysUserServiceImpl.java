@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +61,7 @@ public class SysUserServiceImpl implements SysUserService {
 
 
     @Override
-    public R login(SysUserEntity sysUserEntity) {
+    public R login(SysUserEntity sysUserEntity, HttpServletResponse response) {
         String userName = sysUserEntity.getUserName();
         if (StringUtils.isBlank(userName)) {
             log.info("用户名不能为空");
@@ -89,6 +91,13 @@ public class SysUserServiceImpl implements SysUserService {
             //缓存用户token信息
             String token = UuidUtil.generateUuid();
             GuavaCacheUtils.cache.put(String.format("LOGIN_TOKEN_%s", token), sysUserEntity);
+            //设置cookie
+            Cookie cookie = new Cookie("login_token", token);
+            cookie.setSecure(false);
+            cookie.setPath("/");
+            //先设置成5天,反正login_token由后端控制
+            cookie.setMaxAge(60 * 60 * 120);
+            response.addCookie(cookie);
             return R.ok("登录成功").setUserId(Long.valueOf(result.getId())).setToken(token);
         }
         return R.ok("密码错误,请输入正确的密码");

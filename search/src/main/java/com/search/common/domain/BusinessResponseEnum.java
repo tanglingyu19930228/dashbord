@@ -1,5 +1,9 @@
 package com.search.common.domain;
 
+/**
+ * @author tanglingyu
+ */
+
 public enum BusinessResponseEnum {
 
     SUCCESS(0, "成功"),

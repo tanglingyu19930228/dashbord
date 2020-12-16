@@ -1,8 +1,5 @@
 package com.search.config;
 
-import com.search.common.domain.BusinessResponse;
-import com.search.common.domain.BusinessResponseEnum;
-import org.apache.commons.math3.analysis.solvers.BaseUnivariateSolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -14,6 +11,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.lang.reflect.Method;
 
+/**
+ * @author tanglingyu
+ */
 @RestControllerAdvice
 public class ResponseControllerAdvice implements ResponseBodyAdvice {
     @Override
@@ -24,10 +24,6 @@ public class ResponseControllerAdvice implements ResponseBodyAdvice {
 
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        BusinessResponse businessResponse = new BusinessResponse();
-        businessResponse.setCode(BusinessResponseEnum.SUCCESS.getCode());
-        businessResponse.setMsg(BusinessResponseEnum.SUCCESS.getMsg());
-        businessResponse.setData(o);
-        return businessResponse;
+        return o;
     }
 }

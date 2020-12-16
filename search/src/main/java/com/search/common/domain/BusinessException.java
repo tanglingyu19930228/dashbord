@@ -1,5 +1,8 @@
 package com.search.common.domain;
 
+/**
+ * @author tanglingyu
+ */
 public class BusinessException extends RuntimeException {
 
     private int code;

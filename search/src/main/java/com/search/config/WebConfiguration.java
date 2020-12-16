@@ -8,6 +8,9 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import javax.servlet.Filter;
 import java.util.function.Supplier;
 
+/**
+ * @author tanglingyu
+ */
 @Configuration
 public class WebConfiguration {
 

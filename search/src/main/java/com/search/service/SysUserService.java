@@ -7,6 +7,7 @@ import com.search.entity.RoleQueryReq;
 import com.search.entity.UserQueryReq;
 import com.search.entity.SysUserEntity;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface SysUserService  {
 
-    R login(SysUserEntity sysUserEntity);
+    R login(SysUserEntity sysUserEntity, HttpServletResponse response);
 
     SysUserEntity getUserInfoByUserId(Integer id);
 

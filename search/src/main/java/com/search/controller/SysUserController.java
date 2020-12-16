@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
 
@@ -39,9 +40,9 @@ public class SysUserController extends BaseController {
     @PostMapping(value = "/login")
     @ApiOperation(value = "用户登录接口", tags = {"用户登录接口"})
     @NoNeedLogin
-    public R login(@RequestBody @Valid SysUserEntity sysUserEntity) {
+    public R login(@RequestBody @Valid SysUserEntity sysUserEntity,HttpServletResponse response) {
         logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
-        return sysUserService.login(sysUserEntity);
+        return sysUserService.login(sysUserEntity,response);
     }
 
     /**
