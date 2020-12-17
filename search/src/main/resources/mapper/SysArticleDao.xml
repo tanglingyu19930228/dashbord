@@ -103,6 +103,13 @@
         limit 1
     </select>
 
+    <select id="sumVoiceTrendcy" resultType="com.search.entity.SumVoiceResp">
+       select date_format(publisher_time,'%Y%m%d') as `date`,count(*) as total from sys_article group by date_format(publisher_time,'%Y%m%d')
+    </select>
+    <select id="statisticsVoice" resultType="com.search.entity.StatisticsResp">
+        select media_type,count(*) as total from sys_article group by media_type
+    </select>
+
     <!-- 批量插入 -->
     <insert id="insertSysArticle" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into sys_article
@@ -199,10 +206,10 @@
                 </if>
 
 
-                <if test="item.publisher != null  and item.publisher != ''"> publisher =
+                <if test="item.publisher != null  and item.publisher != ''">publisher =
                     #{item.publisher},
                 </if>
-                <if test="item.publisherUrl != null  and item.publisherUrl != ''"> publisher_url =
+                <if test="item.publisherUrl != null  and item.publisherUrl != ''">publisher_url =
                     #{item.publisherUrl},
                 </if>
                 <if test="item.publisherUserType != null  and item.publisherUserType != ''">publisher_user_type =

@@ -1,5 +1,7 @@
 package com.search.dao;
 
+import com.search.entity.StatisticsResp;
+import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
 import org.apache.ibatis.annotations.Param;
 
@@ -42,4 +44,8 @@ public interface SysArticleDao {
      * @return 结果
      */
     int updateSysArticle(List<SysArticleEntity> list);
+
+    List<SumVoiceResp> sumVoiceTrendcy();
+
+    List<StatisticsResp> statisticsVoice();
 }

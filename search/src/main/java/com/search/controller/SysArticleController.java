@@ -3,6 +3,8 @@ package com.search.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.search.common.controller.BaseController;
 import com.search.common.utils.R;
+import com.search.entity.StatisticsResp;
+import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
 import com.search.service.ISysArticleService;
 import io.swagger.annotations.Api;
@@ -126,5 +128,39 @@ public class SysArticleController extends BaseController {
         }
         int result = iSysArticleService.updateSysArticle(sysArticleEntityList);
         return result == 1 ? R.ok() : R.error("修改sys_article信息失败");
+    }
+
+    /**
+     * 声量趋势(总声量)
+     */
+    @PostMapping("/sumVoiceTrendcy")
+    @ApiOperation("声量趋势(总声量)")
+    public R sumVoiceTrendcy() {
+        log.info("声量趋势(总声量)查询");
+        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
+        return R.ok(sumVoiceResps);
+    }
+
+    /**
+     * 声量趋势(日均值)
+     */
+    @PostMapping("/avgVoiceTrendcy")
+    @ApiOperation("声量趋势(日均值)")
+    public R avgVoiceTrendcy() {
+        log.info("声量趋势(日均值)查询");
+        Double aDouble = iSysArticleService.avgVoiceTrendcy();
+        return R.ok(aDouble);
+    }
+
+    /**
+     * 声音来源统计
+     */
+    @PostMapping("/statisticsVoice")
+    @ApiOperation("声音来源统计")
+    public R statisticsVoice() {
+        log.info("声音来源统计查询");
+        List<StatisticsResp> statisticsResps = iSysArticleService.statisticsVoice();
+        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
+        return R.ok(statisticsResps);
     }
 }
