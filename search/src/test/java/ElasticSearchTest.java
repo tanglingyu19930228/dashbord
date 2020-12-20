@@ -115,7 +115,7 @@ public class ElasticSearchTest {
         sysArticleEntity.setInsertTime(DateUtils.getNowDate());
         sysArticleEntity.setMediaType(0);
         sysArticleEntity.setPublisher("优春娇");
-        sysArticleEntity.setPublisherId(6509839334L);
+        sysArticleEntity.setPublisherId("6509839334");
         sysArticleEntity.setPublisherLinkNum(123);
         sysArticleEntity.setPublisherPv(4321);
         sysArticleEntity.setPublisherCommentNum(123);

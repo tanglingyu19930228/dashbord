@@ -75,7 +75,7 @@ public class SysArticleEntity implements Serializable {
      * 发布人id
      */
     @ApiModelProperty("发布人id")
-    private Long publisherId;
+    private String publisherId;
     /**
      * 点赞数
      */

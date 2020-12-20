@@ -47,8 +47,6 @@ spring:
 elasticsearch:
   host: 127.0.0.1
   port: 9200
-  article:
-    index: articleindex
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml

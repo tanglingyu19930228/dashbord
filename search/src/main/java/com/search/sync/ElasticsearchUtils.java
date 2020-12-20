@@ -1,12 +1,17 @@
 package com.search.sync;
 
 import com.alibaba.fastjson.JSON;
+import com.search.common.utils.StringUtils;
 import com.search.entity.SysArticleEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -60,10 +65,14 @@ public class ElasticsearchUtils {
 
     public Map<String,Object> getSysArticleDataByCondition(String indexName,SysArticleEntity sysArticleEntity){
 
-
         return null;
     }
 
+    public static void main(String[] args) {
+        final String[] split = "asdf.fff".split("\\.");
+        Arrays.stream(split).forEach(System.out::println);
+        System.out.println("asdf.fff".substring(0,"asdf.fff".indexOf(".")));
+    }
 
 
 //    public static void main(String[] args) {
@@ -87,5 +96,27 @@ public class ElasticsearchUtils {
 //        final String[] propertiesNameByClass = getPropertiesNameByClass(SysArticleEntity.class);
 //        Arrays.stream(propertiesNameByClass).forEach(System.out::println);
 //    }
+
+    public int syncDatabaseToElasticsearchBulk(String indexName,List<SysArticleEntity> list){
+        log.info("开始同步数据库中的数据到 elasticsearch:"+list.size());
+        try {
+            final BulkRequest bulkRequest = new BulkRequest();
+            for (int i = 0; i < list.size(); i++) {
+                SysArticleEntity sysArticleEntity = list.get(i);
+                IndexRequest request = new IndexRequest(indexName);
+                bulkRequest.add(
+                    request.id(String.valueOf(i)).source(JSON.toJSONString(sysArticleEntity), XContentType.JSON)
+                );
+            }
+            final BulkResponse index = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+            if(!index.hasFailures()){
+                return 0;
+            }
+            return index.getItems().length;
+        } catch (Exception e) {
+            log.error("本次同步数据库数据到elasticsearch 中失败",e);
+            return 0;
+        }
+    }
 
 }

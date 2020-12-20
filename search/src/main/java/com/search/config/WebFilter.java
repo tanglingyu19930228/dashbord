@@ -60,7 +60,9 @@ public class WebFilter implements Filter {
             httpServletResponse.setHeader("Access-Control-Allow-Origin", "true" );
             httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
             httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT");
-            httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            httpServletResponse.setHeader("Access-Control-Expose-Headers", "*");
+//            httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept ,token");
+            httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
             httpServletResponse.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
             httpServletResponse.getOutputStream().flush();
             return;

@@ -3,6 +3,7 @@ package com.search.sync;
 import com.search.bean.ElasticsearchConfig;
 import com.search.common.utils.GuavaCacheUtils;
 import com.search.common.utils.R;
+import com.search.common.utils.StringUtils;
 import com.search.dao.SysArticleDao;
 import com.search.entity.SysArticleEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -26,28 +27,22 @@ public class CombineDatabaseAndElasticsearch {
 
     private static final String  SYNC_KEY = "sync";
 
-    @Value(value = "${elasticsearch.articleIndex}")
-    private String articleIndex;
-
-    @Autowired
-    ElasticsearchConfig elasticsearchConfig;
-
     @Autowired
     SysArticleDao sysArticleDao;
 
-//    @Autowired
-//    EsRepository esRepository;
-
-	@Autowired
-    RestHighLevelClient restHighLevelClient;
+    @Autowired
+    ElasticsearchUtils elasticsearchUtils;
 
     public Integer getDatabaseSyncStart(){
-        SearchRequest searchRequest = new SearchRequest();
+        log.info("select elasticsearch last id~~~~~~~~~~~~~~");
         try {
-
-            return 1;
+            String id = elasticsearchUtils.getElasticIndexLastInsertId("newindex");
+            if(StringUtils.isBlank(id)){
+                return 0;
+            }
+            return Integer.parseInt(id);
         } catch (Exception e) {
-            log.error("查询数据库中数据失败",e);
+            log.error("select last elasticsearch start error",e);
             return 0;
         }
     }
@@ -80,12 +75,15 @@ public class CombineDatabaseAndElasticsearch {
                 return R.error("有同步任务正在执行");
             }
             List<SysArticleEntity> needSyncList = getNeedSyncList();
-//            Iterable<SysArticleEntity> sysArticleEntities = esRepository.saveAll(needSyncList);
-            return R.ok("同步完毕");
+            int result = elasticsearchUtils.syncDatabaseToElasticsearchBulk("newindex", needSyncList);
+            if(result==needSyncList.size()){
+                return R.ok("同步完毕");
+            }
+            String data = "同步成功了："+result+";总需同步数量为："+needSyncList.size();
+            return R.ok(data);
         } catch (Exception e) {
             log.error("服务器出错",e);
             return  R.error();
         }
     }
-
 }

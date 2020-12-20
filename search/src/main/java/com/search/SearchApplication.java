@@ -18,7 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @MapperScan(basePackages = {"com.search.dao"})
 @EnableCaching
-@EnableElasticsearchRepositories(basePackages = "com.search.repository")
+//@EnableElasticsearchRepositories(basePackages = "com.search.repository")
 public class SearchApplication {
     public static void main(String[] args) {
         SpringApplication.run(SearchApplication.class, args);
