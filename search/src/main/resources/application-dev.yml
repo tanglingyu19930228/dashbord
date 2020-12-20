@@ -39,6 +39,16 @@ spring:
     props:
       sql:
         show: true
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+      clusterNodes: 127.0.0.1:9300
+elasticsearch:
+  host: 127.0.0.1
+  port: 9200
+  article:
+    index: articleindex
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml

@@ -34,7 +34,7 @@ public class SysArticleEntity implements Serializable {
      * 标签id
      */
     @ApiModelProperty("标签id")
-    private Integer titleId;
+    private String titleId;
     /**
      * 话题id,逗号分隔
      */
@@ -75,7 +75,7 @@ public class SysArticleEntity implements Serializable {
      * 发布人id
      */
     @ApiModelProperty("发布人id")
-    private Integer publisherId;
+    private Long publisherId;
     /**
      * 点赞数
      */
@@ -142,4 +142,17 @@ public class SysArticleEntity implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("发布人人时间格式=yyyy-MM-dd HH:mm:ss")
     private Date publisherTime;
+
+    /**
+     * 包含的过滤词
+     */
+    @ApiModelProperty("包含的过滤词")
+    private String includeQueryString;
+
+    /**
+     * 不包含的过滤词
+     */
+    @ApiModelProperty("不包含的过滤词")
+    private String excludeQueryString;
+
 }

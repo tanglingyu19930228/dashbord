@@ -48,4 +48,10 @@ public interface SysArticleDao {
     List<SumVoiceResp> sumVoiceTrendcy();
 
     List<StatisticsResp> statisticsVoice();
+    /**
+     * 查询数据库 数据大于 es中id 后的所有数据
+     * @param databaseSyncStart es中的id
+     * @return 查询数据库 数据大于 es中id 后的所有数据
+     */
+    List<SysArticleEntity> selectListByNeedSync(Integer databaseSyncStart);
 }

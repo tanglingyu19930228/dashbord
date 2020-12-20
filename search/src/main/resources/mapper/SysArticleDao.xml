@@ -110,6 +110,11 @@
         select media_type,count(*) as total from sys_article group by media_type
     </select>
 
+    <select id="selectListByNeedSync" parameterType="int" resultType="com.search.entity.SysArticleEntity">
+        select  <include refid="baseColumns"/>
+        from sys_article where 1=1 where id &gt; #{databseSyncStart}
+    </select>
+
     <!-- 批量插入 -->
     <insert id="insertSysArticle" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into sys_article
