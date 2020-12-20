@@ -1,5 +1,7 @@
 package com.search.service;
 
+import com.search.entity.StatisticsResp;
+import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
 
 import java.util.List;
@@ -67,4 +69,23 @@ public interface ISysArticleService {
      */
     public int updateSysArticle(SysArticleEntity sysArticleEntity);
 
+    /**
+     * 查询总声量
+     *
+     * @return
+     */
+    List<SumVoiceResp> sumVoiceTrendcy();
+
+    /**
+     * 声量日均值
+     *
+     * @return
+     */
+    Double avgVoiceTrendcy();
+
+    /**
+     * 声音来源统计
+     * @return
+     */
+    List<StatisticsResp> statisticsVoice();
 }

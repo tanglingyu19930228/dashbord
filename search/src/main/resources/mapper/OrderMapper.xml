@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.search.dao.OrderMapper">
+
+    <resultMap type="com.search.entity.Order" id="baseMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="gmtCreate" column="gmt_create"/>
+    </resultMap>
+
+    <sql id="All_COLUMN">
+        id,name,type,gmt_create
+    </sql>
+
+    <insert id="save">
+        insert into t_order(name,type) values(#{entity.name},#{entity.type})
+    </insert>
+    <select id="getById" resultType="com.search.entity.Order">
+       select <include refid="All_COLUMN"/>
+       from t_order where id=#{id}
+    </select>
+
+</mapper>

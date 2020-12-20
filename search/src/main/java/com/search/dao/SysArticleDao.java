@@ -1,6 +1,10 @@
 package com.search.dao;
 
+import com.search.entity.StatisticsResp;
+import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -15,15 +19,15 @@ public interface SysArticleDao {
      * @param sysArticleEntity sysArticleEntity
      * @return SysArticleEntity
      */
-    public SysArticleEntity selectSysArticleOne(SysArticleEntity sysArticleEntity);
+    SysArticleEntity selectSysArticleOne(SysArticleEntity sysArticleEntity);
 
     /**
      * 查询SysArticleEntity列表
      *
-     * @param  sysArticleEntity sysArticleEntity
+     * @param sysArticleEntity sysArticleEntity
      * @return SysArticleEntity集合
      */
-    public List<SysArticleEntity> selectSysArticleList(SysArticleEntity sysArticleEntity);
+    List<SysArticleEntity> selectSysArticleList(SysArticleEntity sysArticleEntity);
 
     /**
      * 新增SysArticleEntity
@@ -31,7 +35,7 @@ public interface SysArticleDao {
      * @param list list
      * @return 结果
      */
-    public int insertSysArticle(List<SysArticleEntity> list);
+    int insertSysArticle(List<SysArticleEntity> list);
 
     /**
      * 修改sysArticle
@@ -39,5 +43,9 @@ public interface SysArticleDao {
      * @param list list
      * @return 结果
      */
-    public int updateSysArticle(List<SysArticleEntity> list);
+    int updateSysArticle(List<SysArticleEntity> list);
+
+    List<SumVoiceResp> sumVoiceTrendcy();
+
+    List<StatisticsResp> statisticsVoice();
 }

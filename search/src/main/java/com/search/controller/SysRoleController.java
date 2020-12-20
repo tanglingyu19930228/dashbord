@@ -2,19 +2,18 @@ package com.search.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.search.biz.RoleService;
+import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
 import com.search.entity.RoleEntity;
 import com.search.service.SysRoleService;
 import com.search.vo.RoleVO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -27,10 +26,9 @@ import java.util.List;
  * @time: 2020/12/6 19:18
  */
 
-@RestController
-@RequestMapping(value = "/sysRole")
+@RestController("/sysRole")
 @Api(tags = "用户权限接口")
-public class SysRoleController {
+public class SysRoleController extends BaseController {
 
     @Resource
     private SysRoleService sysRoleService;

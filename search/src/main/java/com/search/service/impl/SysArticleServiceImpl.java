@@ -2,6 +2,10 @@ package com.search.service.impl;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.function.ToLongFunction;
+
+import com.search.entity.StatisticsResp;
+import com.search.entity.SumVoiceResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.search.dao.SysArticleDao;
@@ -24,7 +28,7 @@ public class SysArticleServiceImpl implements ISysArticleService {
     /**
      * 查询SysArticleEntity
      *
-     * @param  id id
+     * @param id id
      * @return SysArticleEntity
      */
     @Override
@@ -42,12 +46,12 @@ public class SysArticleServiceImpl implements ISysArticleService {
      */
     @Override
     public SysArticleEntity selectSysArticleOne(SysArticleEntity sysArticleEntity) {
-    	try{
-        	return sysArticleDao.selectSysArticleOne(sysArticleEntity);
-		} catch (Exception e) {
-			log.error("数据库异常:",e);
-			return null;
-		}
+        try {
+            return sysArticleDao.selectSysArticleOne(sysArticleEntity);
+        } catch (Exception e) {
+            log.error("数据库异常:", e);
+            return null;
+        }
     }
 
     /**
@@ -58,12 +62,12 @@ public class SysArticleServiceImpl implements ISysArticleService {
      */
     @Override
     public List<SysArticleEntity> selectSysArticleList(SysArticleEntity sysArticleEntity) {
-    	try{
-        	return sysArticleDao.selectSysArticleList(sysArticleEntity);
-		} catch (Exception e) {
-			log.error("数据库异常:",e);
-			return new ArrayList<SysArticleEntity>();
-		}
+        try {
+            return sysArticleDao.selectSysArticleList(sysArticleEntity);
+        } catch (Exception e) {
+            log.error("数据库异常:", e);
+            return new ArrayList<SysArticleEntity>();
+        }
     }
 
     /**
@@ -87,12 +91,12 @@ public class SysArticleServiceImpl implements ISysArticleService {
      */
     @Override
     public int insertSysArticleList(List<SysArticleEntity> list) {
-		try{
-        	return sysArticleDao.insertSysArticle(list);
-		} catch (Exception e) {
-			log.error("数据库异常:",e);
-			return 0;
-		}
+        try {
+            return sysArticleDao.insertSysArticle(list);
+        } catch (Exception e) {
+            log.error("数据库异常:", e);
+            return 0;
+        }
     }
 
     /**
@@ -116,12 +120,33 @@ public class SysArticleServiceImpl implements ISysArticleService {
      */
     @Override
     public int updateSysArticle(List<SysArticleEntity> sysArticleEntityList) {
-		try{
-	        return sysArticleDao.updateSysArticle(sysArticleEntityList);
-		} catch (Exception e) {
-			log.error("数据库异常:",e);
-			return 0;
-		}
+        try {
+            return sysArticleDao.updateSysArticle(sysArticleEntityList);
+        } catch (Exception e) {
+            log.error("数据库异常:", e);
+            return 0;
+        }
     }
 
+    @Override
+    public List<SumVoiceResp> sumVoiceTrendcy() {
+        return sysArticleDao.sumVoiceTrendcy();
+    }
+
+    @Override
+    public Double avgVoiceTrendcy() {
+        List<SumVoiceResp> sumVoiceResps = sysArticleDao.sumVoiceTrendcy();
+        double asDouble = sumVoiceResps.stream().mapToLong(new ToLongFunction<SumVoiceResp>() {
+            @Override
+            public long applyAsLong(SumVoiceResp value) {
+                return value.getTotal();
+            }
+        }).average().getAsDouble();
+        return asDouble;
+    }
+
+    @Override
+    public List<StatisticsResp> statisticsVoice() {
+        return sysArticleDao.statisticsVoice();
+    }
 }

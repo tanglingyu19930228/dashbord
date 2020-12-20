@@ -2,6 +2,7 @@ package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.search.annotation.NoNeedLogin;
 import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
@@ -10,11 +11,11 @@ import com.search.entity.SysUserEntity;
 import com.search.entity.UserQueryReq;
 import com.search.service.SysUserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
 
@@ -25,8 +26,7 @@ import java.util.Arrays;
  * @author Administrator
  * @date 2020-12-02 12:13:22
  */
-@RestController
-@RequestMapping("/sysUser")
+@RestController("/sysUser")
 @Api(tags = "系统用户接口")
 public class SysUserController extends BaseController {
     @Autowired
@@ -39,9 +39,10 @@ public class SysUserController extends BaseController {
      */
     @PostMapping(value = "/login")
     @ApiOperation(value = "用户登录接口", tags = {"用户登录接口"})
-    public R login(@RequestBody @Valid SysUserEntity sysUserEntity) {
+    @NoNeedLogin
+    public R login(@RequestBody @Valid SysUserEntity sysUserEntity,HttpServletResponse response) {
         logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
-        return sysUserService.login(sysUserEntity);
+        return sysUserService.login(sysUserEntity,response);
     }
 
     /**
