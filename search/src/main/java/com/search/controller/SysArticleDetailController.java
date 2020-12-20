@@ -22,9 +22,10 @@ import java.util.stream.Collectors;
  * @author: Tanglingyu
  * @time: 2020/12/13 12:31
  */
-@RestController("/sysArticleDetail")
+@RestController
 @Api(value = "sys_article_detail控制层", tags = "标题详情接口")
 @Slf4j
+@RequestMapping("/sysArticleDetail")
 public class SysArticleDetailController {
 
     @Resource

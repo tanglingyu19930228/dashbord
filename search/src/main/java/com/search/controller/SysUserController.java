@@ -1,11 +1,16 @@
 package com.search.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.search.annotation.NoNeedLogin;
 import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
+import com.search.common.utils.AESUtil;
+import com.search.common.utils.GuavaCacheUtils;
 import com.search.common.utils.R;
+import com.search.common.utils.StringUtils;
+import com.search.dao.SysUserDao;
 import com.search.entity.RoleQueryReq;
 import com.search.entity.SysUserEntity;
 import com.search.entity.UserQueryReq;
@@ -15,8 +20,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 
@@ -26,11 +33,15 @@ import java.util.Arrays;
  * @author Administrator
  * @date 2020-12-02 12:13:22
  */
-@RestController("/sysUser")
+@RestController
+@RequestMapping(value = "/sysUser")
 @Api(tags = "系统用户接口")
 public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    SysUserDao sysUserDao;
 
     /**
      * 登录
@@ -43,6 +54,73 @@ public class SysUserController extends BaseController {
     public R login(@RequestBody @Valid SysUserEntity sysUserEntity,HttpServletResponse response) {
         logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
         return sysUserService.login(sysUserEntity,response);
+    }
+    /**
+     * 登录
+     * @param sysUserEntity 请求user对象
+     * @return 返回结果
+     */
+    @PostMapping(value = "/logout")
+    @ApiOperation(value = "用户登出接口", tags = {"用户登出接口"})
+    @NoNeedLogin
+    public R logout(HttpServletRequest request) {
+//        logger.info("开始用户登出辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
+        return sysUserService.logout(request);
+    }
+
+
+
+    @PostMapping(value = "/resetPassword")
+    @ApiOperation(value = "重置密码", tags = {"重置密码"})
+    @NoNeedLogin
+    public R resetPassword(@RequestBody @Valid SysUserEntity sysUserEntity,HttpServletResponse response) {
+        logger.info("开始用户登录逻辑,请求参数={}", JSONObject.toJSONString(sysUserEntity));
+        return sysUserService.resetPassword(sysUserEntity,response);
+    }
+
+    @RequestMapping(value = "/reset")
+    @NoNeedLogin
+    public void reset(String userName,String p,HttpServletResponse response){
+        try {
+            if(StringUtils.isNotBlank(userName)&&StringUtils.isNotBlank(p)){
+                Object o = GuavaCacheUtils.cache.get("password:" + userName);
+                if(o instanceof String){
+                    if(AESUtil.decrypt(p, "1323232313232323").equals(String.class.cast(o))){
+                        SysUserEntity result = sysUserDao.selectOneByUserName(userName);
+                        result.setPassword(AESUtil.decrypt(p, "1323232313232323"));
+                        int i = sysUserDao.updateByUserId(result);
+                        PrintWriter writer = null;
+                        response.setCharacterEncoding("UTF-8");
+                        response.setContentType("content_type");
+                        String responseMsg = "重设密码成功";
+                        try {
+                            writer = response.getWriter();
+                            String json = JSON.toJSONString(responseMsg);
+                            writer.write(json);
+                            writer.flush();
+                            writer.close();
+                        } catch (Exception e1) {
+
+                        }
+                    }
+                }
+            }
+            response.sendRedirect("/login");
+        } catch (Exception e) {
+            PrintWriter writer = null;
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("content_type");
+            String responseMsg = "重设密码错误";
+            try {
+                writer = response.getWriter();
+                String json = JSON.toJSONString(responseMsg);
+                writer.write(json);
+                writer.flush();
+                writer.close();
+            } catch (Exception e1) {
+
+            }
+        }
     }
 
     /**

@@ -45,6 +45,11 @@ public class SysUserEntity implements Serializable {
 	@ApiModelProperty(value = "密码")
 	private String password;
 	/**
+	 * 新密码
+	 */
+	@ApiModelProperty(value = "新密码")
+	private String newPassword;
+	/**
 	 * 是否删除
 	 */
 	@ApiModelProperty(value = "是否删除")

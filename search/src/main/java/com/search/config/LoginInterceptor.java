@@ -1,10 +1,12 @@
 package com.search.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.util.concurrent.ForwardingListeningExecutorService;
 import com.search.annotation.NoNeedLogin;
 import com.search.common.domain.BusinessException;
 import com.search.common.domain.BusinessResponse;
 import com.search.common.domain.BusinessResponseEnum;
+import com.search.common.utils.GuavaCacheUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author tanglingyu
@@ -44,8 +48,9 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
             if (targetMethod.getAnnotation(NoNeedLogin.class) != null || targetMethod.getDeclaringClass().getAnnotation(NoNeedLogin.class) != null) {
                 return true;
             }
-            Object user = RequestContextHolder.getRequestAttributes().getAttribute(WebFilter.KEY, RequestAttributes.SCOPE_REQUEST);
-            if (user == null) {
+
+            final Object token = request.getHeader("token");
+            if(Objects.isNull(token)){
                 BusinessResponse wr = new BusinessResponse();
                 wr.setCode(BusinessResponseEnum.NON_LOGIN.getCode());
                 wr.setMsg(BusinessResponseEnum.NON_LOGIN.getMsg());
@@ -55,7 +60,14 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
                 response.getOutputStream().flush();
                 return false;
             }
-            return true;
+            final ConcurrentMap<String, Object> stringObjectConcurrentMap = GuavaCacheUtils.cache.asMap();
+            for (Map.Entry<String, Object> entry:stringObjectConcurrentMap.entrySet()) {
+                String s = "LOGIN_TOKEN_"+token.toString();
+                if(s.equals(entry.getKey())){
+                    return true;
+                }
+            }
+            return false;
         }
         return true;
     }

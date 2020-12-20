@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.search.dao.SysMediaTypeDao">
+
+    <resultMap type="com.search.entity.SysMediaTypeEntity" id="sysMediaTypeEntityResult">
+        <result property="id"    column="id"    />
+        <result property="mediaType"    column="media_type"    />
+        <result property="mediaName"    column="media_name"    />
+    </resultMap>
+
+	<!-- 查询的基础列 -->
+    <sql id="baseColumns">
+         id, media_type, media_name    </sql>
+
+    <!-- 筛选条件 -->
+    <sql id="baseWhere">
+    <if test="id != null "> and id = #{id}</if>
+    <if test="mediaType != null "> and media_type = #{mediaType}</if>
+    <if test="mediaName != null  and mediaName != ''"> and media_name = #{mediaName}</if>
+    </sql>
+
+	<!-- 分页查询 -->
+    <select id="selectSysMediaTypeList_Count" parameterType="com.search.entity.SysMediaTypeEntity" resultType="java.lang.Integer">
+        select count(1) from sys_media_type where 1=1 <include refid="baseWhere"/>
+    </select>
+	<!-- 数据查询 -->
+    <select id="selectSysMediaTypeList" parameterType="com.search.entity.SysMediaTypeEntity" resultMap="sysMediaTypeEntityResult">
+        select <include refid="baseColumns"/> from sys_media_type where 1=1 <include refid="baseWhere"/>
+		order by  id desc
+    </select>
+    <!-- 单个数据查询 -->
+    <select id="selectSysMediaTypeOne" parameterType="com.search.entity.SysMediaTypeEntity" resultMap="sysMediaTypeEntityResult">
+		select <include refid="baseColumns"/> from sys_media_type where 1=1 <include refid="baseWhere"/> limit 1
+    </select>
+
+    <!-- 批量插入 -->
+    <insert id="insertSysMediaType" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="id">
+        insert into sys_media_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            media_type,
+            media_name,
+         </trim>
+         values
+         <foreach collection="list" item="item" index="index" separator=",">
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{item.mediaType},
+            #{item.mediaName},
+         </trim>
+         </foreach>
+    </insert>
+
+	<!-- 根据主键更新 -->
+    <update id="updateSysMediaType" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" separator=";">
+        update sys_media_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="item.id != null ">id = #{item.id},</if>
+            <if test="item.mediaType != null ">media_type = #{item.mediaType},</if>
+            <if test="item.mediaName != null  and item.mediaName != ''">media_name = #{item.mediaName},</if>
+        </trim>
+        where id = #{item.id}
+        </foreach>
+    </update>
+
+
+</mapper>

@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
  * @time: 2020/12/13 11:56
  */
 
-@RestController("/sysArticle")
+@RestController
 @Slf4j
+@RequestMapping("/sysArticle")
 @Api(value = "sys_article控制层", tags = "标题接口")
 public class SysArticleController extends BaseController {
 

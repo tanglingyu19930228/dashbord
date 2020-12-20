@@ -7,6 +7,7 @@ import com.search.entity.RoleQueryReq;
 import com.search.entity.UserQueryReq;
 import com.search.entity.SysUserEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -31,5 +32,9 @@ public interface SysUserService  {
     int deleteByUserIds(List<Integer> userIds);
 
     PageInfo<SysUserEntity> listByPage(int pageNum,int pageSize);
+
+    R resetPassword(SysUserEntity sysUserEntity, HttpServletResponse response);
+
+    R logout(HttpServletRequest request);
 }
 

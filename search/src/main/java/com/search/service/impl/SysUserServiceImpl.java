@@ -5,15 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.search.bean.SpringConfiguration;
-import com.search.common.utils.GuavaCacheUtils;
-import com.search.common.utils.R;
-import com.search.common.utils.StringUtils;
-import com.search.common.utils.UuidUtil;
+import com.search.biz.MailService;
+import com.search.common.utils.*;
+import com.search.config.WebFilter;
 import com.search.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.queue.PredicatedQueue;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.config.CacheManagementConfigUtils;
@@ -23,16 +23,22 @@ import com.search.dao.SysUserDao;
 import com.search.service.SysUserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.util.WebUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +57,9 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Resource
     private SpringConfiguration springConfiguration;
+
+    @Autowired
+    MailService mailService;
 
     private String REGEXP = null;
 
@@ -98,6 +107,7 @@ public class SysUserServiceImpl implements SysUserService {
             //先设置成5天,反正login_token由后端控制
             cookie.setMaxAge(60 * 60 * 120);
             response.addCookie(cookie);
+            RequestContextHolder.getRequestAttributes().setAttribute(WebFilter.KEY,result,RequestAttributes.SCOPE_REQUEST);
             return R.ok("登录成功").setUserId(Long.valueOf(result.getId())).setToken(token);
         }
         return R.ok("密码错误,请输入正确的密码");
@@ -186,6 +196,49 @@ public class SysUserServiceImpl implements SysUserService {
             return new PageInfo<>(sysUserEntities);
         }
         return new PageInfo<>(Collections.emptyList());
+    }
+
+    @Override
+    public R resetPassword(SysUserEntity sysUserEntity, HttpServletResponse response) {
+        if(Objects.isNull(sysUserEntity)){
+            return R.error("请求为空");
+        }
+        if(StringUtils.isBlank(sysUserEntity.getUserName())){
+            return R.error("未知用户请求");
+        }
+        if(StringUtils.isBlank(sysUserEntity.getPassword())||StringUtils.isBlank(sysUserEntity.getNewPassword())){
+            return R.error("请输入两次密码");
+        }
+        if(!sysUserEntity.getPassword().equals(sysUserEntity.getNewPassword())){
+            return R.error("两次密码输入不一致");
+        }
+        try {
+            String encrypt = AESUtil.encrypt(sysUserEntity.getNewPassword(), "1323232313232323");
+            GuavaCacheUtils.cache.put("password:"+sysUserEntity.getUserName(), sysUserEntity.getNewPassword());
+            mailService.sendSimpleMail(sysUserEntity.getUserName(),"新的验证码","http://47.115.160.133:19999/sysUser/reset?userName="+sysUserEntity.getUserName()+"&p="+encrypt);
+            return R.ok("发送邮件成功");
+        } catch (Exception e) {
+            return R.error("发送邮件失败");
+        }
+    }
+
+    @Override
+    public R logout(HttpServletRequest request) {
+        Object user = RequestContextHolder.getRequestAttributes().getAttribute(WebFilter.KEY, RequestAttributes.SCOPE_REQUEST);
+        if(Objects.nonNull(user)){
+            RequestContextHolder.getRequestAttributes().setAttribute(WebFilter.KEY,null,RequestAttributes.SCOPE_REQUEST);
+            final Cookie[] cookies = request.getCookies();
+            try {
+                final Cookie login_token1 = WebUtils.getCookie(request, "login_token");
+                final ConcurrentMap<String, Object> stringObjectConcurrentMap = GuavaCacheUtils.cache.asMap();
+                System.out.println(stringObjectConcurrentMap);
+                GuavaCacheUtils.cache.invalidate("LOGIN_TOKEN_"+login_token1.getValue());
+                request.logout();
+            } catch (ServletException e) {
+                e.printStackTrace();
+            }
+        }
+        return R.ok("登出成功");
     }
 
     private R checkEmail(String userName) {
