@@ -44,6 +44,8 @@ public class WebFilter implements Filter {
             String contextPath = ((HttpServletRequestImpl) request).getExchange().getRequestURL();
             if(contextPath.contains("/sysUser/login")){
                 filterChain.doFilter(servletRequest,servletResponse);
+                //pay attention to
+                return;
             }else{
                 String loginToken = getFromHeaderOrCookie(request, "login_token");
                 if (StringUtils.isNotEmpty(loginToken)) {
