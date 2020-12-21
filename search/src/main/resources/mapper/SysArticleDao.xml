@@ -110,9 +110,9 @@
         select media_type,count(*) as total from sys_article group by media_type
     </select>
 
-    <select id="selectListByNeedSync" parameterType="int" resultType="com.search.entity.SysArticleEntity">
+    <select id="selectListByNeedSync" parameterType="int" resultMap="sysArticleEntityResult">
         select  <include refid="baseColumns"/>
-        from sys_article where 1=1 where id &gt; #{databseSyncStart}
+        from sys_article where 1=1 and id &gt; #{databaseSyncStart}
     </select>
 
     <!-- 批量插入 -->

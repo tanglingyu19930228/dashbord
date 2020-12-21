@@ -51,9 +51,9 @@ public class CombineDatabaseAndElasticsearch {
         log.info("开始查询待同步数据");
         try {
             Integer databaseSyncStart = getDatabaseSyncStart();
-            if(databaseSyncStart ==0){
-                return new ArrayList<>();
-            }
+//            if(databaseSyncStart ==0){
+//                return new ArrayList<>();
+//            }
             return sysArticleDao.selectListByNeedSync(databaseSyncStart);
         } catch (Exception e) {
             log.info("服务器异常",e);
@@ -69,11 +69,11 @@ public class CombineDatabaseAndElasticsearch {
     public synchronized R doSync(){
         log.info("开始同步数据库和es中的数据");
         try {
-            final Object o = GuavaCacheUtils.cache.get(SYNC_KEY);
-            if(Objects.nonNull(o)){
-                log.info("有同步任务正在执行");
-                return R.error("有同步任务正在执行");
-            }
+//            final Object o = GuavaCacheUtils.cache.get(SYNC_KEY);
+//            if(Objects.nonNull(o)){
+//                log.info("有同步任务正在执行");
+//                return R.error("有同步任务正在执行");
+//            }
             List<SysArticleEntity> needSyncList = getNeedSyncList();
             int result = elasticsearchUtils.syncDatabaseToElasticsearchBulk("newindex", needSyncList);
             if(result==needSyncList.size()){
