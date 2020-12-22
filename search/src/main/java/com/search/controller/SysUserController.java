@@ -57,7 +57,7 @@ public class SysUserController extends BaseController {
     }
     /**
      * 登录
-     * @param sysUserEntity 请求user对象
+     * @param
      * @return 返回结果
      */
     @PostMapping(value = "/logout")

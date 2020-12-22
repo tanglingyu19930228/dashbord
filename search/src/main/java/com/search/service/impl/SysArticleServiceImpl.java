@@ -3,6 +3,7 @@ package com.search.service.impl;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.function.ToLongFunction;
+import java.util.stream.Collectors;
 
 import com.search.common.utils.BigDecimalUtils;
 import com.search.entity.StatisticsResp;
@@ -137,13 +138,8 @@ public class SysArticleServiceImpl implements ISysArticleService {
     @Override
     public String avgVoiceTrendcy() {
         List<SumVoiceResp> sumVoiceResps = sysArticleDao.sumVoiceTrendcy();
-        double asDouble = sumVoiceResps.stream().mapToLong(new ToLongFunction<SumVoiceResp>() {
-            @Override
-            public long applyAsLong(SumVoiceResp value) {
-                return value.getTotal();
-            }
-        }).average().getAsDouble();
-        return BigDecimalUtils.round(asDouble,2).toString();
+        double average = sumVoiceResps.stream().collect(Collectors.summarizingLong(SumVoiceResp::getTotal)).getAverage();
+        return BigDecimalUtils.round(average,2).toString();
     }
 
     @Override
