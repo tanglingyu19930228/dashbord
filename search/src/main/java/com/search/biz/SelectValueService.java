@@ -3,10 +3,7 @@ package com.search.biz;
 import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
 import com.search.dao.SysOverviewCountDao;
-import com.search.entity.SysContentTypeEntity;
-import com.search.entity.SysEmotionTypeEntity;
-import com.search.entity.SysMediaTypeEntity;
-import com.search.entity.SysTopicEntity;
+import com.search.entity.*;
 import com.search.service.ISysContentTypeService;
 import com.search.service.ISysEmotionTypeService;
 import com.search.service.ISysMediaTypeService;
@@ -73,7 +70,7 @@ public class SelectValueService {
 
     public R getOverviewData(QueryVO queryVO){
         Map<String,Object> returnMap = new HashMap<>();
-        List<Map<String, Integer>> overviewBanner = getOverviewBanner(queryVO);
+        List<SumVoiceResp> overviewBanner = getOverviewBanner(queryVO);
         Map<String, String> voiceResource = getVoiceResource(overviewBanner);
         returnMap.put("banner",overviewBanner);
         returnMap.put("voice",voiceResource);
@@ -91,29 +88,28 @@ public class SelectValueService {
      * @param queryVO queryVO
      * @return Map
      */
-    @Cacheable("orderByBanner")
     private Map<String,Integer> orderByBanner(QueryVO queryVO){
-        List<Map<String, Integer>> overviewBanner = getOverviewBanner(queryVO);
+        List<SumVoiceResp> overviewBanner = getOverviewBanner(queryVO);
         Integer total,totalInteraction,totalWxArticle,totalWxInteraction,totalNews,totalNewsInteraction;
         total=totalInteraction=totalWxArticle=totalWxInteraction=totalNews=totalNewsInteraction=0;
-        for(Map<String, Integer> map : overviewBanner){
-            total += map.get("countAll");
-            totalInteraction += map.get("linkNumAll") + map.get("pvAll")+map.get("commentAll")+map.get("collectionAll")+map.get("repostNum");
-            totalWxArticle += map.get("mediaType")==0?map.get("countAll"):0;
-            totalWxInteraction += map.get("mediaType")==0?map.get("countAll"):0;
+        for(SumVoiceResp voiceResp : overviewBanner){
+//            total += map.get("countAll");
+//            totalInteraction += map.get("linkNumAll") + map.get("pvAll")+map.get("commentAll")+map.get("collectionAll")+map.get("repostNum");
+//            totalWxArticle += map.get("mediaType")==0?map.get("countAll"):0;
+//            totalWxInteraction += map.get("mediaType")==0?map.get("countAll"):0;
         }
         return null;
     }
 
-    public Map<String,String> getVoiceResource(List<Map<String, Integer>> overviewBanner){
-        final long totalAll = overviewBanner.stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
-        final Map<Integer, List<Map<String, Integer>>> mediaType = overviewBanner.stream().collect(Collectors.groupingBy(item -> item.get("mediaType")));
-        final long wx  = mediaType.get(0).stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
-        final long wb  = mediaType.get(1).stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
-        final long bk  = mediaType.get(2).stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
-        final long lt  = mediaType.get(3).stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
-        final long wd  = mediaType.get(4).stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
-        final long news  = mediaType.get(4).stream().map(item -> item.get("totalAll")).collect(Collectors.summarizingLong(Integer::longValue)).getCount();
+    public Map<String,String> getVoiceResource(List<SumVoiceResp> overviewBanner){
+        final long totalAll = overviewBanner.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+        final Map<Integer, List<SumVoiceResp>> mediaType = overviewBanner.stream().collect(Collectors.groupingBy(SumVoiceResp::getMediaType));
+        final long wx  = mediaType.get(0).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+        final long wb  = mediaType.get(1).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+        final long bk  = mediaType.get(2).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+        final long lt  = mediaType.get(3).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+        final long wd  = mediaType.get(4).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+        final long news  = mediaType.get(4).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
         Map<String,String> map = new HashMap<>(8);
         map.put("wxVoice", BigDecimalUtils.divRound2(wx,totalAll,4));
         map.put("wxVoiceNumber", String.valueOf(wx));
@@ -127,8 +123,7 @@ public class SelectValueService {
         return map;
     }
 
-    @Cacheable("getOverviewBanner")
-    public  List<Map<String, Integer>>getOverviewBanner(QueryVO queryVO){
+    public  List<SumVoiceResp> getOverviewBanner(QueryVO queryVO){
         try {
             return sysOverviewCountDao.getOverviewBanner(queryVO);
         } catch (Exception e) {

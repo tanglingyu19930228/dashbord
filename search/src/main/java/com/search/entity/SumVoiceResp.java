@@ -14,4 +14,20 @@ public class SumVoiceResp {
     private String date;
     private Long total;
 
+    private Integer mediaType;
+
+    private Long linkNumAll;
+
+    private Long pvAll;
+
+    private Long commentAll;
+
+    private Long collectionAll;
+
+    private Long  repostNum;
+
+
+
+
+
 }

@@ -5,9 +5,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.search.dao.SysOverviewCountDao">
 
 
-    <select id="getOverviewBanner" resultType="java.util.Map" parameterType="java.util.Map">
+    <select id="getOverviewBanner" resultType="com.search.entity.SumVoiceResp" parameterType="java.util.Map">
         select
-            count(*) countAll,
+            count(*) total,
             sum(publisher_link_num) linkNumAll,
             sum(publisher_pv) pvAll,
             sum(publisher_comment_num) commentAll,
