@@ -16,6 +16,8 @@ public class SumVoiceResp {
 
     private Integer mediaType;
 
+    private String siteName;
+
     private Long linkNumAll;
 
     private Long pvAll;

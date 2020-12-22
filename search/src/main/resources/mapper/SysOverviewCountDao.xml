@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.search.dao.SysOverviewCountDao">
 
 
-    <select id="getOverviewBanner" resultType="com.search.entity.SumVoiceResp" parameterType="java.util.Map">
+    <select id="getOverviewBanner" resultType="com.search.entity.SumVoiceResp" parameterType="com.search.vo.QueryVO">
         select
             count(*) total,
             sum(publisher_link_num) linkNumAll,
@@ -13,7 +13,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             sum(publisher_comment_num) commentAll,
             sum(publisher_collection_num) collectionAll,
             sum(publisher_repost_num) repostNum,
-            media_type mediaType
-        FROM sys_article group by media_type
+            media_type mediaType,
+            publisher_site_name siteName
+        FROM sys_article
+        where 1=1
+        <if test="startDate != null"> and  insert_time &gt;= #{startDate} </if>
+        <if test="endDate != null"> and  insert_time &lt;= #{endDate} </if>
+        group by media_type,publisher_site_name
     </select>
 </mapper>

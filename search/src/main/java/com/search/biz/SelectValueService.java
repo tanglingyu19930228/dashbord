@@ -2,6 +2,7 @@ package com.search.biz;
 
 import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
+import com.search.dao.SysKeyDao;
 import com.search.dao.SysOverviewCountDao;
 import com.search.entity.*;
 import com.search.service.ISysContentTypeService;
@@ -47,6 +48,8 @@ public class SelectValueService {
 
     @Autowired
     SysOverviewCountDao sysOverviewCountDao;
+    @Autowired
+    SysKeyDao sysKeyDao;
 
     public R getSelectValue(){
 
@@ -71,57 +74,103 @@ public class SelectValueService {
     public R getOverviewData(QueryVO queryVO){
         Map<String,Object> returnMap = new HashMap<>();
         List<SumVoiceResp> overviewBanner = getOverviewBanner(queryVO);
-        Map<String, String> voiceResource = getVoiceResource(overviewBanner);
-        returnMap.put("banner",overviewBanner);
-        returnMap.put("voice",voiceResource);
+        returnMap.put("banner",renderBannerData(overviewBanner));
+        returnMap.put("voiceResource",getVoiceResource(overviewBanner));
+        returnMap.put("sysKey",sysKeyDao.selectKeyword());
         return R.ok(returnMap);
     }
 
-    /**
-     * 总声量 每个平台的帖子数相加得出
-     * 总互动量 每个平台(微博+微信+新闻)的互动数相加得出
-     * 微信文章数
-     * 微信互动量 微信文章下的点赞数+阅读数
-     * 新闻数
-     * 新闻互动量  新闻的评论量
-     * 0：微信；1：微博；2：博客；3：论坛：4：问答；5：新闻
-     * @param queryVO queryVO
-     * @return Map
-     */
-    private Map<String,Integer> orderByBanner(QueryVO queryVO){
-        List<SumVoiceResp> overviewBanner = getOverviewBanner(queryVO);
-        Integer total,totalInteraction,totalWxArticle,totalWxInteraction,totalNews,totalNewsInteraction;
-        total=totalInteraction=totalWxArticle=totalWxInteraction=totalNews=totalNewsInteraction=0;
-        for(SumVoiceResp voiceResp : overviewBanner){
-//            total += map.get("countAll");
-//            totalInteraction += map.get("linkNumAll") + map.get("pvAll")+map.get("commentAll")+map.get("collectionAll")+map.get("repostNum");
-//            totalWxArticle += map.get("mediaType")==0?map.get("countAll"):0;
-//            totalWxInteraction += map.get("mediaType")==0?map.get("countAll"):0;
+    private Map<String,Object> renderBannerData(List<SumVoiceResp> overviewBanner) {
+        Map<String,Object> map = new HashMap<>();
+        try {
+            final long sum = overviewBanner.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("total",sum);
+            final long sumAll = overviewBanner.stream().map(item->{
+                return item.getLinkNumAll()+item.getPvAll()+item.getCommentAll()+item.getCollectionAll()+item.getRepostNum();
+            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("sumAll",sumAll);
+            final Map<Integer, List<SumVoiceResp>> collect = overviewBanner.stream().collect(Collectors.groupingBy(SumVoiceResp::getMediaType));
+            final List<SumVoiceResp> sumVoiceRespWx = collect.get(0);
+            final long sumWx = sumVoiceRespWx.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("wxArticle",sumWx);
+            final long sumWxAll = sumVoiceRespWx.stream().map(item -> {
+                return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
+            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("sumWxAll",sumWxAll);
+
+            final List<SumVoiceResp> sumVoiceRespNews = collect.get(5);
+            final long sumNews = sumVoiceRespNews.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("NewsArticle",sumNews);
+            final long sumNewsAll = sumVoiceRespNews.stream().map(item -> {
+                return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
+            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("sumNewsAll",sumNewsAll);
+            return map;
+        } catch (Exception e) {
+            log.error("查询banner 异常",e);
+            return new HashMap<>();
         }
-        return null;
     }
 
-    public Map<String,String> getVoiceResource(List<SumVoiceResp> overviewBanner){
-        final long totalAll = overviewBanner.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        final Map<Integer, List<SumVoiceResp>> mediaType = overviewBanner.stream().collect(Collectors.groupingBy(SumVoiceResp::getMediaType));
-        final long wx  = mediaType.get(0).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        final long wb  = mediaType.get(1).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        final long bk  = mediaType.get(2).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        final long lt  = mediaType.get(3).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        final long wd  = mediaType.get(4).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        final long news  = mediaType.get(4).stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
-        Map<String,String> map = new HashMap<>(8);
-        map.put("wxVoice", BigDecimalUtils.divRound2(wx,totalAll,4));
-        map.put("wxVoiceNumber", String.valueOf(wx));
-        map.put("wbVoice", BigDecimalUtils.divRound2(wb,totalAll,4));
-        map.put("wbVoiceNumber", String.valueOf(wb));
-        map.put("newsVoice", BigDecimalUtils.divRound2(news,totalAll,4));
-        map.put("newsVoiceNumber", String.valueOf(news));
-        long otherAll = bk +lt +wd;
-        map.put("otherVoice", BigDecimalUtils.divRound2(otherAll,totalAll,4));
-        map.put("otherVoiceNumber", String.valueOf(otherAll));
-        return map;
+    public Map<String,Object> getVoiceResource(List<SumVoiceResp> overviewBanner){
+        Map<String,Object> send = new HashMap<>(8);
+        try {
+            final long totalAll = overviewBanner.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+            long otherAll = 0;
+            Map<Integer, List<SumVoiceResp>> collect = overviewBanner.stream().collect(Collectors.groupingBy(SumVoiceResp::getMediaType));
+            List<SumVoiceResp> otherList = new ArrayList<>();
+            for (Map.Entry<Integer, List<SumVoiceResp>> entry: collect.entrySet()) {
+                Map<String,Object> voiceResourceMap = new HashMap<>(8);
+                final Integer key = entry.getKey();
+                List<SumVoiceResp> value = entry.getValue();
+                final long val = value.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::valueOf)).getSum();
+                Map<String, List<SumVoiceResp>> collect1 = value.stream().collect(Collectors.groupingBy(SumVoiceResp::getSiteName));
+                List<Map<String,Object>> innerList = new ArrayList<>();
+                for (Map.Entry<String, List<SumVoiceResp>> inner:collect1.entrySet()) {
+                    Map<String,Object> te = new HashMap<>();
+                    te.put("name",inner.getKey());
+                    te.put("size",inner.getValue().stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum());
+                    innerList.add(te);
+                }
+                if(key == 0){
+                    voiceResourceMap.put("wxVoice",totalAll==0?0: BigDecimalUtils.divRound2(val,totalAll,4));
+                    voiceResourceMap.put("wxVoiceNumber", val);
+                    voiceResourceMap.put("secondWxLevelAgg",innerList);
+                    send.put("voiceResourceWx",voiceResourceMap);
+                }else if(key == 1){
+                    voiceResourceMap.put("wbVoice", totalAll==0?0:BigDecimalUtils.divRound2(val,totalAll,4));
+                    voiceResourceMap.put("wbVoiceNumber",val);
+                    voiceResourceMap.put("secondWbLevelAgg",collect1);
+                    send.put("voiceResourceWb",innerList);
+                }else if (key == 5){
+                    voiceResourceMap.put("newsVoice",totalAll==0?0: BigDecimalUtils.divRound2(val,totalAll,4));
+                    voiceResourceMap.put("newsVoiceNumber", val);
+                    voiceResourceMap.put("secondNewsLevelAgg",collect1);
+                    send.put("voiceResourceNews",innerList);
+                }else {
+                    otherAll += val;
+                    otherList.addAll(value);
+                }
+            }
+            Map<String,Object> otherMap = new HashMap<>();
+            otherMap.put("otherVoice",totalAll==0?0: BigDecimalUtils.divRound2(otherAll,totalAll,4));
+            otherMap.put("otherVoiceNumber", otherAll);
+            List<Map<String,Object>> innerList = new ArrayList<>();
+            for (Map.Entry<String, List<SumVoiceResp>> inner:otherList.stream().collect(Collectors.groupingBy(SumVoiceResp::getSiteName)).entrySet()) {
+                Map<String,Object> te = new HashMap<>();
+                te.put("name",inner.getKey());
+                te.put("size",inner.getValue().stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum());
+                innerList.add(te);
+            }
+            otherMap.put("secondNewsLevelAgg", innerList);
+            send.put("voiceResourceOthers",otherMap);
+            return send;
+        } catch (Exception e) {
+            log.error("查询第三层时服务器异常",e);
+            return new HashMap<>();
+        }
     }
+
 
     public  List<SumVoiceResp> getOverviewBanner(QueryVO queryVO){
         try {
