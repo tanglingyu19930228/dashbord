@@ -1,8 +1,11 @@
 package com.search.sync;
 
+import cn.hutool.core.util.ReflectUtil;
 import com.alibaba.fastjson.JSON;
+import com.search.common.utils.R;
 import com.search.common.utils.StringUtils;
 import com.search.entity.SysArticleEntity;
+import com.search.vo.QueryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -12,7 +15,9 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -21,6 +26,7 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -36,6 +42,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ElasticsearchUtils {
+
+    private static final String INDEX_NAME = "newindex";
 
     @Autowired
     RestHighLevelClient restHighLevelClient;
@@ -117,6 +125,26 @@ public class ElasticsearchUtils {
             log.error("本次同步数据库数据到elasticsearch 中失败",e);
             return 0;
         }
+    }
+
+    public R doSearch(QueryVO queryVO,String indexName){
+        if(Objects.isNull(queryVO)){
+            return R.error("查询失败");
+        }
+        if(Objects.isNull(queryVO.getTitleId())){
+            return R.error("未知的品牌产品查询");
+        }
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices(StringUtils.isBlank(indexName)?INDEX_NAME:indexName);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        final BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        boolQuery.filter(QueryBuilders.matchQuery("titleId",queryVO.getTitleId()));
+        if(!(CollectionUtils.isEmpty(queryVO.getEmotionList())||queryVO.getEmotionList().size()==3)){
+            List<Integer> emotionList = queryVO.getEmotionList();
+            boolQuery.filter(QueryBuilders.multiMatchQuery("emotionType","1","2"));
+        }
+
+        return R.error();
     }
 
 }

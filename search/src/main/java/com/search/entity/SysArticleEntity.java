@@ -64,7 +64,6 @@ public class SysArticleEntity implements Serializable {
      * 插入时间
      */
     @ApiModelProperty("插入时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date insertTime;
     /**
      * 0：微信；1：微博；2：博客；3：论坛：4：问答；5：新闻
@@ -139,7 +138,6 @@ public class SysArticleEntity implements Serializable {
     /**
      * 发布人时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("发布人人时间格式=yyyy-MM-dd HH:mm:ss")
     private Date publisherTime;
 

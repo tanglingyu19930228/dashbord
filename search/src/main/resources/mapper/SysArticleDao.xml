@@ -220,7 +220,7 @@
                 <if test="item.publisherUserType != null  and item.publisherUserType != ''">publisher_user_type =
                     #{item.publisherUserType},
                 </if>
-                <if test="item.publisherTime != null  and item.publisherTime != ''">publisher_time =
+                <if test="item.publisherTime != null ">publisher_time =
                     #{item.publisherTime}
                 </if>
             </trim>

@@ -3,7 +3,9 @@ import com.search.common.utils.DateUtils;
 import com.search.common.utils.ExcelUtils;
 import com.search.common.utils.StringUtils;
 import com.search.dao.SysArticleDao;
+import com.search.dao.SysKeyDao;
 import com.search.entity.SysArticleEntity;
+import com.search.entity.SysKeyEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,36 @@ public class TestImport {
 
     @Autowired
     SysArticleDao sysArticleDao;
+
+    @Autowired
+    SysKeyDao sysKeyDao;
+
+    @Test
+    public void importKeywordData(){
+        final List<List<String>> lists = ExcelUtils.importXls("E:/ciping.xlsx", 0);
+        List<SysKeyEntity> list = new ArrayList<>();
+
+        for (int i = 1; i < lists.size(); i++) {
+            final SysKeyEntity sysKeyEntity = transferOneKeyExcel(lists.get(i));
+            list.add(sysKeyEntity);
+        }
+        List<SysKeyEntity>  insert = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if(insert.size()>=1000){
+                this.sysKeyDao.insertSysKey(insert);
+                insert = new ArrayList<>();
+            }
+            insert.add(list.get(i));
+        }
+        System.out.println();
+    }
+
+    private SysKeyEntity transferOneKeyExcel(List<String> strings) {
+        SysKeyEntity sysKeyEntity = new SysKeyEntity();
+        sysKeyEntity.setDataId(Integer.parseInt(getIntegerString(strings.get(0))));
+        sysKeyEntity.setKeyWord(strings.get(1));
+        return sysKeyEntity;
+    }
 
     @Test
     public void importData() throws Exception{

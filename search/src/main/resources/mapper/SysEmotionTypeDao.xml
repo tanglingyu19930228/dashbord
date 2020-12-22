@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.search.dao.SysEmotionTypeDao">
+
+    <resultMap type="com.search.entity.SysEmotionTypeEntity" id="sysEmotionTypeEntityResult">
+        <result property="id"    column="id"    />
+        <result property="emotionType"    column="emotion_type"    />
+        <result property="emotionName"    column="emotion_name"    />
+    </resultMap>
+
+	<!-- 查询的基础列 -->
+    <sql id="baseColumns">
+         id, emotion_type, emotion_name    </sql>
+
+    <!-- 筛选条件 -->
+    <sql id="baseWhere">
+    <if test="id != null "> and id = #{id}</if>
+    <if test="emotionType != null "> and emotion_type = #{emotionType}</if>
+    <if test="emotionName != null  and emotionName != ''"> and emotion_name = #{emotionName}</if>
+    </sql>
+
+	<!-- 分页查询 -->
+    <select id="selectSysEmotionTypeList_Count" parameterType="com.search.entity.SysEmotionTypeEntity" resultType="java.lang.Integer">
+        select count(1) from sys_emotion_type where 1=1 <include refid="baseWhere"/>
+    </select>
+	<!-- 数据查询 -->
+    <select id="selectSysEmotionTypeList" parameterType="com.search.entity.SysEmotionTypeEntity" resultMap="sysEmotionTypeEntityResult">
+        select <include refid="baseColumns"/> from sys_emotion_type where 1=1 <include refid="baseWhere"/>
+		order by  id desc
+    </select>
+    <!-- 单个数据查询 -->
+    <select id="selectSysEmotionTypeOne" parameterType="com.search.entity.SysEmotionTypeEntity" resultMap="sysEmotionTypeEntityResult">
+		select <include refid="baseColumns"/> from sys_emotion_type where 1=1 <include refid="baseWhere"/> limit 1
+    </select>
+
+    <!-- 批量插入 -->
+    <insert id="insertSysEmotionType" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="id">
+        insert into sys_emotion_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            emotion_type,
+            emotion_name,
+         </trim>
+         values
+         <foreach collection="list" item="item" index="index" separator=",">
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{item.emotionType},
+            #{item.emotionName},
+         </trim>
+         </foreach>
+    </insert>
+
+	<!-- 根据主键更新 -->
+    <update id="updateSysEmotionType" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" separator=";">
+        update sys_emotion_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="item.id != null ">id = #{item.id},</if>
+            <if test="item.emotionType != null ">emotion_type = #{item.emotionType},</if>
+            <if test="item.emotionName != null  and item.emotionName != ''">emotion_name = #{item.emotionName},</if>
+        </trim>
+        where id = #{item.id}
+        </foreach>
+    </update>
+
+
+</mapper>

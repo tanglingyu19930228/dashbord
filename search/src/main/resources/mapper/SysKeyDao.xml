@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.search.dao.SysKeyDao">
+
+    <resultMap type="com.search.entity.SysKeyEntity" id="sysKeyEntityResult">
+        <result property="id"    column="id"    />
+        <result property="dataId"    column="data_id"    />
+        <result property="keyWord"    column="key_word"    />
+    </resultMap>
+
+	<!-- 查询的基础列 -->
+    <sql id="baseColumns">
+         id, data_id, key_word    </sql>
+
+    <!-- 筛选条件 -->
+    <sql id="baseWhere">
+    <if test="id != null "> and id = #{id}</if>
+    <if test="dataId != null "> and data_id = #{dataId}</if>
+    <if test="keyWord != null  and keyWord != ''"> and key_word = #{keyWord}</if>
+    </sql>
+
+	<!-- 分页查询 -->
+    <select id="selectSysKeyList_Count" parameterType="com.search.entity.SysKeyEntity" resultType="java.lang.Integer">
+        select count(1) from sys_key where 1=1 <include refid="baseWhere"/>
+    </select>
+	<!-- 数据查询 -->
+    <select id="selectSysKeyList" parameterType="com.search.entity.SysKeyEntity" resultMap="sysKeyEntityResult">
+        select <include refid="baseColumns"/> from sys_key where 1=1 <include refid="baseWhere"/>
+		order by  id desc
+    </select>
+    <!-- 单个数据查询 -->
+    <select id="selectSysKeyOne" parameterType="com.search.entity.SysKeyEntity" resultMap="sysKeyEntityResult">
+		select <include refid="baseColumns"/> from sys_key where 1=1 <include refid="baseWhere"/> limit 1
+    </select>
+
+    <!-- 批量插入 -->
+    <insert id="insertSysKey" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="id">
+        insert into sys_key
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            data_id,
+            key_word,
+         </trim>
+         values
+         <foreach collection="list" item="item" index="index" separator=",">
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{item.dataId},
+            #{item.keyWord},
+         </trim>
+         </foreach>
+    </insert>
+
+	<!-- 根据主键更新 -->
+    <update id="updateSysKey" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" separator=";">
+        update sys_key
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="item.id != null ">id = #{item.id},</if>
+            <if test="item.dataId != null ">data_id = #{item.dataId},</if>
+            <if test="item.keyWord != null  and item.keyWord != ''">key_word = #{item.keyWord},</if>
+        </trim>
+        where id = #{item.id}
+        </foreach>
+    </update>
+    
+    <select id="selectKeyword" resultType="java.util.Map" >
+        select * from (
+            select key_word,count(1) cc from  sys_key GROUP BY key_word
+        ) aa ORDER BY aa.cc desc limit 50
+    </select>
+
+
+</mapper>
