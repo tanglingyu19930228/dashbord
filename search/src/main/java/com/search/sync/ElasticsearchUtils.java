@@ -109,7 +109,7 @@ public class ElasticsearchUtils {
                 );
             }
             final BulkResponse index = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-            if(!index.hasFailures()){
+            if(index.hasFailures()){
                 return 0;
             }
             return index.getItems().length;

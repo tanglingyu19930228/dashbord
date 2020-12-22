@@ -1,22 +1,16 @@
-import cn.hutool.poi.excel.ExcelReader;
-import cn.hutool.poi.excel.ExcelUtil;
 import com.search.SearchApplication;
 import com.search.common.utils.DateUtils;
 import com.search.common.utils.ExcelUtils;
 import com.search.common.utils.StringUtils;
 import com.search.dao.SysArticleDao;
 import com.search.entity.SysArticleEntity;
-import io.swagger.models.auth.In;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest(classes = { SearchApplication.class })
@@ -46,10 +40,10 @@ public class TestImport {
             try {
                 final int i1 = this.sysArticleDao.insertSysArticle(objects);
             } catch (Exception e) {
-//                e.printStackTrace();
+//                e.printStackTrace(); 由于若是批量的话 excel content可能会有无法识别导致批量失败 所以使用单个导入
             }
         }
-        System.out.println("");
+        System.out.println("debug point");
     }
 
     private static String getIntegerString(String one){
@@ -88,7 +82,6 @@ public class TestImport {
         sysArticleEntity.setPublisherArticleTitle(StringUtils.isBlank(listOne.get(27))?"": listOne.get(27));
         sysArticleEntity.setPublisherArticleUnique(StringUtils.isBlank(listOne.get(29))?"": listOne.get(29));
         sysArticleEntity.setPublisherArticleUrl(StringUtils.isBlank(listOne.get(30))?"": listOne.get(30));
-        sysArticleEntity.setPublisher("ce0b0d401837e2712331483dc0b611c6");
         sysArticleEntity.setPublisherUserType(StringUtils.isBlank(listOne.get(18))?0:listOne.get(18).equals("个人认证")?0:listOne.get(18).equals("普通用户")?1:2);
         //20
         sysArticleEntity.setPublisherTime(DateUtils.getNowDate());
