@@ -81,11 +81,16 @@ public interface ISysArticleService {
      *
      * @return
      */
-    Double avgVoiceTrendcy();
+    String avgVoiceTrendcy();
 
     /**
      * 声音来源统计
+     *
      * @return
      */
     List<StatisticsResp> statisticsVoice();
+
+    Long totalVoice();
+
+    List<StatisticsResp> sysLike(SysArticleEntity sysArticleEntity);
 }

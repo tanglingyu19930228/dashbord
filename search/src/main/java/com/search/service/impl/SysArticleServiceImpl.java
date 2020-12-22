@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.function.ToLongFunction;
 
+import com.search.common.utils.BigDecimalUtils;
 import com.search.entity.StatisticsResp;
 import com.search.entity.SumVoiceResp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +135,7 @@ public class SysArticleServiceImpl implements ISysArticleService {
     }
 
     @Override
-    public Double avgVoiceTrendcy() {
+    public String avgVoiceTrendcy() {
         List<SumVoiceResp> sumVoiceResps = sysArticleDao.sumVoiceTrendcy();
         double asDouble = sumVoiceResps.stream().mapToLong(new ToLongFunction<SumVoiceResp>() {
             @Override
@@ -142,11 +143,21 @@ public class SysArticleServiceImpl implements ISysArticleService {
                 return value.getTotal();
             }
         }).average().getAsDouble();
-        return asDouble;
+        return BigDecimalUtils.round(asDouble,2).toString();
     }
 
     @Override
     public List<StatisticsResp> statisticsVoice() {
         return sysArticleDao.statisticsVoice();
+    }
+
+    @Override
+    public Long totalVoice() {
+        return sysArticleDao.totalVoice();
+    }
+
+    @Override
+    public List<StatisticsResp> sysLike(SysArticleEntity sysArticleEntity) {
+        return sysArticleDao.sysLike(sysArticleEntity);
     }
 }

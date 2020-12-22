@@ -2,6 +2,7 @@ package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.search.common.controller.BaseController;
+import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
 import com.search.entity.StatisticsResp;
 import com.search.entity.SumVoiceResp;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -149,8 +153,8 @@ public class SysArticleController extends BaseController {
     @ApiOperation("声量趋势(日均值)")
     public R avgVoiceTrendcy() {
         log.info("声量趋势(日均值)查询");
-        Double aDouble = iSysArticleService.avgVoiceTrendcy();
-        return R.ok(aDouble);
+        String avg = iSysArticleService.avgVoiceTrendcy();
+        return R.ok(avg);
     }
 
     /**
@@ -161,7 +165,37 @@ public class SysArticleController extends BaseController {
     public R statisticsVoice() {
         log.info("声音来源统计查询");
         List<StatisticsResp> statisticsResps = iSysArticleService.statisticsVoice();
-        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
+        Long total = iSysArticleService.totalVoice();
+        Map<Integer, Object[]> map = new HashMap<>();
+        for (int i = 0; i < statisticsResps.size(); ++i) {
+            if (i != statisticsResps.size() - 1) {
+                Object[] obj = new Object[2];
+                obj[0] = statisticsResps.get(i).getTotal();
+                obj[1] = BigDecimalUtils.divRound2(obj[0], total, 2);
+                map.put(statisticsResps.get(i).getMediaType(), obj);
+            } else {
+                Object[] obj = new Object[2];
+                obj[0] = statisticsResps.get(i).getTotal();
+                BigDecimal bigDecimal = new BigDecimal("0.00");
+                map.entrySet().forEach(entry -> {
+                    BigDecimal b = new BigDecimal((String) entry.getValue()[1]);
+                    bigDecimal.add(b);
+                });
+                obj[1] = new BigDecimal("1.00").subtract(bigDecimal).toPlainString();
+                map.put(statisticsResps.get(i).getMediaType(), obj);
+            }
+        }
         return R.ok(statisticsResps);
+    }
+
+    /**
+     * 情感类型/数据源模糊查询
+     */
+    @PostMapping("/sysLike")
+    @ApiOperation("声音来源统计")
+    public R sysLike(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
+        log.info("情感类型/数据源模糊查询");
+        List<StatisticsResp> sysArticleEntities = iSysArticleService.sysLike(sysArticleEntity);
+        return R.ok(sysArticleEntities);
     }
 }

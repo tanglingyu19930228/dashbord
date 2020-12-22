@@ -114,6 +114,23 @@
         select  <include refid="baseColumns"/>
         from sys_article where 1=1 and id &gt; #{databaseSyncStart}
     </select>
+    <select id="totalVoice" resultType="java.lang.Long">
+        select count(*) from sys_article
+    </select>
+    <select id="sysLike" resultType="com.search.entity.StatisticsResp">
+        select
+        media_type,count(*)
+        from sys_article
+        <where>
+            <if test="sysArticleEntity.emotionType!=null and sysArticleEntity.emotionType!=''">
+                emotion_type=#{sysArticleEntity.emotionType}
+            </if>
+            <if test="sysArticleEntity.mediaType!=null and sysArticleEntity.mediaType!=''">and
+                media_type=#{sysArticleEntity.mediaType}
+            </if>
+        </where>
+        group by media_type
+    </select>
 
     <!-- 批量插入 -->
     <insert id="insertSysArticle" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">

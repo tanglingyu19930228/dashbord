@@ -54,4 +54,8 @@ public interface SysArticleDao {
      * @return 查询数据库 数据大于 es中id 后的所有数据
      */
     List<SysArticleEntity> selectListByNeedSync(Integer databaseSyncStart);
+
+    Long totalVoice();
+
+    List<StatisticsResp> sysLike(@Param("sysArticleEntity") SysArticleEntity sysArticleEntity);
 }
