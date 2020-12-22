@@ -155,4 +155,9 @@ public class SysArticleServiceImpl implements ISysArticleService {
     public Long totalVoice() {
         return sysArticleDao.totalVoice();
     }
+
+    @Override
+    public List<StatisticsResp> sysLike(SysArticleEntity sysArticleEntity) {
+        return sysArticleDao.sysLike(sysArticleEntity);
+    }
 }

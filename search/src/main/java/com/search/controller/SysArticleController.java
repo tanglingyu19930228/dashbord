@@ -187,4 +187,15 @@ public class SysArticleController extends BaseController {
         }
         return R.ok(statisticsResps);
     }
+
+    /**
+     * 情感类型/数据源模糊查询
+     */
+    @PostMapping("/sysLike")
+    @ApiOperation("声音来源统计")
+    public R sysLike(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
+        log.info("情感类型/数据源模糊查询");
+        List<StatisticsResp> sysArticleEntities = iSysArticleService.sysLike(sysArticleEntity);
+        return R.ok(sysArticleEntities);
+    }
 }

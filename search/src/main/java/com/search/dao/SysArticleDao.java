@@ -56,4 +56,6 @@ public interface SysArticleDao {
     List<SysArticleEntity> selectListByNeedSync(Integer databaseSyncStart);
 
     Long totalVoice();
+
+    List<StatisticsResp> sysLike(@Param("sysArticleEntity") SysArticleEntity sysArticleEntity);
 }

@@ -85,9 +85,12 @@ public interface ISysArticleService {
 
     /**
      * 声音来源统计
+     *
      * @return
      */
     List<StatisticsResp> statisticsVoice();
 
     Long totalVoice();
+
+    List<StatisticsResp> sysLike(SysArticleEntity sysArticleEntity);
 }
