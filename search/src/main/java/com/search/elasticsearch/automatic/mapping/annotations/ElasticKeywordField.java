@@ -1,0 +1,55 @@
+package com.search.elasticsearch.automatic.mapping.annotations;
+
+
+import com.search.elasticsearch.automatic.mapping.annotations.values.BoolValue;
+import com.search.elasticsearch.automatic.mapping.annotations.values.FloatValue;
+import com.search.elasticsearch.automatic.mapping.annotations.values.IntValue;
+import com.search.elasticsearch.automatic.mapping.enums.FieldType;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * A field to index structured content such as email addresses, hostnames, status codes, zip codes or tags.
+ *
+ * @author frekele - Leandro Kersting de Freitas
+ * @see <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/keyword.html">Site Elasticsearch Reference Guide.</a>
+ */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ElasticKeywordField {
+
+    FieldType type = FieldType.KEYWORD;
+
+    String suffixName() default "keyword";
+
+    String analyzer() default "";
+
+    @Deprecated
+    FloatValue boost() default @FloatValue(ignore = true);
+
+    BoolValue docValues() default @BoolValue(ignore = true);
+
+    BoolValue eagerGlobalOrdinals() default @BoolValue(ignore = true);
+
+    IntValue ignoreAbove() default @IntValue(ignore = true);
+
+    BoolValue includeInAll() default @BoolValue(ignore = true);
+
+    BoolValue index() default @BoolValue(ignore = true);
+
+    String indexOptions() default "";
+
+    BoolValue norms() default @BoolValue(ignore = true);
+
+    String nullValue() default "";
+
+    BoolValue store() default @BoolValue(ignore = true);
+
+    String similarity() default "";
+
+    String normalizer() default "";
+
+}
