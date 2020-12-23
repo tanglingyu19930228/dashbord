@@ -393,6 +393,22 @@ public class StringUtils  extends org.apache.commons.lang3.StringUtils {
         return m.matches();
     }
 
+    /**
+     * 在指定的字符串前面填充0，直到字段串的长度达到指定的长度
+     * 示例：输入6, 2 ---> 返回06
+     * @param data 需要被填充的字符串
+     * @param fillStr 需要填充得字符串
+     * @param length 目标字符串的长度
+     * @return 返回填充后的字符串
+     */
+    public static String frontFillStr(String data, String fillStr, int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length-data.length(); i++) {
+            sb.append(fillStr);
+        }
+        return sb.append(data).toString();
+    }
+
     public static void main(String[] args) {
         String s = "^(\\s)*|^([a-z0-9A-Z]|-|\\.|_|!)+@[a-z0-9A-Z]+\\.[a-z0-9A-Z]{2,}$";
         System.out.println(checkMail(s,"xuxiaoby@qq.com"));

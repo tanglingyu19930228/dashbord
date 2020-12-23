@@ -22,7 +22,6 @@
         <java.version>1.8</java.version>
         <sharding-sphere.version>4.0.1</sharding-sphere.version>
         <commons-collections4.version>4.1</commons-collections4.version>
-        <elasticsearch.version>7.1.0</elasticsearch.version>
     </properties>
 
     <dependencies>
@@ -163,14 +162,26 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client -->
+
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>7.6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>7.6.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -190,11 +201,6 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.17</version>
         </dependency>
-
-
-
-
-
 
         <dependency>
             <groupId>cn.afterturn</groupId>
