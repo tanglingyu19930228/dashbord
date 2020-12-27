@@ -3,6 +3,7 @@ package com.search.service;
 import com.search.entity.StatisticsResp;
 import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
+import com.search.vo.QueryVO;
 
 import java.util.List;
 
@@ -74,14 +75,14 @@ public interface ISysArticleService {
      *
      * @return
      */
-    List<SumVoiceResp> sumVoiceTrendcy();
+    List<SumVoiceResp> sumVoiceTrendcy(QueryVO queryVO);
 
     /**
      * 声量日均值
      *
      * @return
      */
-    String avgVoiceTrendcy();
+    String avgVoiceTrendcy(QueryVO queryVO);
 
     /**
      * 声音来源统计

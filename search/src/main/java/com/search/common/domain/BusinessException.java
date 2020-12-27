@@ -17,6 +17,7 @@ public class BusinessException extends RuntimeException {
         this.msg = msg;
     }
 
+    @Override
     public String getMessage() {
         return this.msg;
     }

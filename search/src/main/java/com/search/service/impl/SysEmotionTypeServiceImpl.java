@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.search.dao.SysEmotionTypeDao;
 import com.search.entity.SysEmotionTypeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.search.service.ISysEmotionTypeService;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,7 @@ public class SysEmotionTypeServiceImpl implements ISysEmotionTypeService {
      * @return SysEmotionTypeEntityList 列表
      */
     @Override
+    @Cacheable(cacheNames = "selectSysEmotionTypeList")
     public List<SysEmotionTypeEntity> selectSysEmotionTypeList(SysEmotionTypeEntity sysEmotionTypeEntity) {
     	try{
         	return sysEmotionTypeDao.selectSysEmotionTypeList(sysEmotionTypeEntity);

@@ -7,6 +7,7 @@ import com.search.dao.SysMediaTypeDao;
 import com.search.entity.SysMediaTypeEntity;
 import com.search.service.ISysMediaTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,6 +58,7 @@ public class SysMediaTypeServiceImpl implements ISysMediaTypeService {
      * @return SysMediaTypeEntityList 列表
      */
     @Override
+    @Cacheable(cacheNames = "selectSysMediaTypeList")
     public List<SysMediaTypeEntity> selectSysMediaTypeList(SysMediaTypeEntity sysMediaTypeEntity) {
     	try{
         	return sysMediaTypeDao.selectSysMediaTypeList(sysMediaTypeEntity);

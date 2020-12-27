@@ -46,6 +46,22 @@ public class DateUtils  extends org.apache.commons.lang3.time.DateUtils {
         }
     }
 
+    public static Date transferDateHadOffset(String dateStr){
+        try {
+            dateStr = dateStr.replace("Z", " UTC");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+            Date d = format.parse(dateStr);
+            return d;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        final Date date = transferDateHadOffset("2020-12-07T00:00:00.000Z");
+        System.out.println(date);
+    }
+
     /**
      * 获取当前日期, 默认格式为yyyy-MM-dd
      *
@@ -191,19 +207,6 @@ public class DateUtils  extends org.apache.commons.lang3.time.DateUtils {
             month += 1;
         }
         return Integer.valueOf(String.valueOf(month));
-    }
-
-    public static void main(String[] args) {
-        Date start = dateTime(YYYY_MM_DD, "2020-01-01");
-        Date end = dateTime(YYYY_MM_DD, "2020-01-31");
-        Date months = DateUtils.addMonths(start, 1);
-        Date addDays = DateUtils.addDays(months, -1);
-        if(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD, end).equals(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD, addDays))) {
-//			| return false;
-            System.out.println("a");
-        }else {
-            System.out.println("2");
-        }
     }
 
     public static Date addDateByNumberDay(Date date, int numberDay) {

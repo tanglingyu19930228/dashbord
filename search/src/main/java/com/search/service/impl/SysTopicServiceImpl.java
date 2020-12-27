@@ -7,6 +7,7 @@ import com.search.dao.SysTopicDao;
 import com.search.entity.SysTopicEntity;
 import com.search.service.ISysTopicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.search.common.text.Convert;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,7 @@ public class SysTopicServiceImpl implements ISysTopicService {
      * @return SysTopicEntityList 列表
      */
     @Override
+    @Cacheable(cacheNames = "selectSysTopicList")
     public List<SysTopicEntity> selectSysTopicList(SysTopicEntity sysTopicEntity) {
     	try{
         	return sysTopicDao.selectSysTopicList(sysTopicEntity);

@@ -103,11 +103,17 @@
         limit 1
     </select>
 
-    <select id="sumVoiceTrendcy" resultType="com.search.entity.SumVoiceResp">
-       select date_format(publisher_time,'%Y%m%d') as `date`,count(*) as total from sys_article group by date_format(publisher_time,'%Y%m%d')
+    <select id="sumVoiceTrendcy" resultType="com.search.entity.SumVoiceResp" parameterType="com.search.vo.QueryVO">
+        select date_format(insert_time,'%Y%m%d') as `date`,count(*) as total from sys_article
+        where 1=1
+        <if test="startDate != null"> and  insert_time &gt;= #{startDate} </if>
+        <if test="endDate != null"> and  insert_time &lt;= #{endDate} </if>
+        group by date_format(insert_time,'%Y%m%d')
     </select>
-    <select id="statisticsVoice" resultType="com.search.entity.StatisticsResp">
-        select media_type,count(*) as total from sys_article group by media_type
+    <select id="statisticsVoice" resultType="com.search.entity.StatisticsResp" >
+        select media_type,count(*) as total from sys_article
+
+        group by media_type
     </select>
 
     <select id="selectListByNeedSync" parameterType="int" resultMap="sysArticleEntityResult">

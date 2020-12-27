@@ -3,17 +3,18 @@ package com.search.biz;
 import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
 import com.search.dao.SysKeyDao;
+import com.search.dao.SysMediaTypeDao;
 import com.search.dao.SysOverviewCountDao;
 import com.search.entity.*;
+import com.search.enums.SelectEnum;
 import com.search.service.ISysContentTypeService;
 import com.search.service.ISysEmotionTypeService;
 import com.search.service.ISysMediaTypeService;
 import com.search.service.ISysTopicService;
-import com.search.vo.Constant;
+import com.search.service.impl.SysArticleServiceImpl;
 import com.search.vo.QueryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,14 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class SelectValueService {
-
-    private static final String TOPIC  = "topic";
-
-    private static final String MEDIA_TYPE="mediaType";
-
-    private static final String CONTENT_TYPE = "contentType";
-
-    private static final String EMOTION_TYPE = "emotionType";
 
     @Autowired
     ISysTopicService sysTopicService;
@@ -51,23 +44,41 @@ public class SelectValueService {
     @Autowired
     SysKeyDao sysKeyDao;
 
+    @Autowired
+    SysArticleServiceImpl sysArticleService;
+
     public R getSelectValue(){
-
-        Map<String,Object> map = new HashMap<>(8);
-
+        Map<String,List> map = new HashMap<>(8);
         try {
             List<SysTopicEntity> sysTopicEntities = sysTopicService.selectSysTopicList(new SysTopicEntity());
-            map.put(TOPIC,sysTopicEntities);
+            map.put(SelectEnum.TOPIC.getName(),sysTopicEntities);
             List<SysMediaTypeEntity> sysMediaTypeEntities = sysMediaTypeService.selectSysMediaTypeList(new SysMediaTypeEntity());
-            map.put(MEDIA_TYPE,sysMediaTypeEntities);
+            map.put(SelectEnum.MEDIA_TYPE.getName(),sysMediaTypeEntities);
             List<SysContentTypeEntity> sysContentTypeEntities = sysContentTypeService.selectSysContentTypeList(new SysContentTypeEntity());
-            map.put(CONTENT_TYPE,sysContentTypeEntities);
+            map.put(SelectEnum.CONTENT_TYPE.getName(),sysContentTypeEntities);
             List<SysEmotionTypeEntity> sysEmotionTypeEntities = sysEmotionTypeService.selectSysEmotionTypeList(new SysEmotionTypeEntity());
-            map.put(EMOTION_TYPE,sysEmotionTypeEntities);
+            map.put(SelectEnum.EMOTION_TYPE.getName(),sysEmotionTypeEntities);
             return R.ok(map);
         } catch (Exception e) {
             return R.error("服务器异常");
         }
+    }
+    public Map<String,Integer> getSelectValueNumbers(){
+
+        Map<String,Integer> map = new HashMap<>(8);
+        try {
+            List<SysTopicEntity> sysTopicEntities = sysTopicService.selectSysTopicList(new SysTopicEntity());
+            map.put(SelectEnum.TOPIC.getName(),sysTopicEntities.size());
+            List<SysMediaTypeEntity> sysMediaTypeEntities = sysMediaTypeService.selectSysMediaTypeList(new SysMediaTypeEntity());
+            map.put(SelectEnum.MEDIA_TYPE.getName(),sysMediaTypeEntities.size());
+            List<SysContentTypeEntity> sysContentTypeEntities = sysContentTypeService.selectSysContentTypeList(new SysContentTypeEntity());
+            map.put(SelectEnum.CONTENT_TYPE.getName(),sysContentTypeEntities.size());
+            List<SysEmotionTypeEntity> sysEmotionTypeEntities = sysEmotionTypeService.selectSysEmotionTypeList(new SysEmotionTypeEntity());
+            map.put(SelectEnum.EMOTION_TYPE.getName(),sysEmotionTypeEntities.size());
+        } catch (Exception e) {
+            log.error("查询配置数据出错",e);
+        }
+        return map;
     }
 
 
@@ -77,6 +88,8 @@ public class SelectValueService {
         returnMap.put("banner",renderBannerData(overviewBanner));
         returnMap.put("voiceResource",getVoiceResource(overviewBanner));
         returnMap.put("sysKey",sysKeyDao.selectKeyword());
+        returnMap.put("dayAvgTrend",sysArticleService.avgVoiceTrendcy(queryVO));
+        returnMap.put("totalTrend",sysArticleService.sumVoiceTrendcy(queryVO));
         return R.ok(returnMap);
     }
 
@@ -100,11 +113,19 @@ public class SelectValueService {
 
             final List<SumVoiceResp> sumVoiceRespNews = collect.get(5);
             final long sumNews = sumVoiceRespNews.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
-            map.put("NewsArticle",sumNews);
+            map.put("newsArticle",sumNews);
             final long sumNewsAll = sumVoiceRespNews.stream().map(item -> {
                 return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
             }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("sumNewsAll",sumNewsAll);
+
+            final List<SumVoiceResp> sumVoiceRespWb = collect.get(1);
+            final long sumWb = sumVoiceRespWb.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("wbArticle",sumWb);
+            final long sumWbAll = sumVoiceRespWb.stream().map(item -> {
+                return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
+            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            map.put("sumWbAll",sumWbAll);
             return map;
         } catch (Exception e) {
             log.error("查询banner 异常",e);
@@ -140,13 +161,13 @@ public class SelectValueService {
                 }else if(key == 1){
                     voiceResourceMap.put("wbVoice", totalAll==0?0:BigDecimalUtils.divRound2(val,totalAll,4));
                     voiceResourceMap.put("wbVoiceNumber",val);
-                    voiceResourceMap.put("secondWbLevelAgg",collect1);
-                    send.put("voiceResourceWb",innerList);
+                    voiceResourceMap.put("secondWbLevelAgg",innerList);
+                    send.put("voiceResourceWb",voiceResourceMap);
                 }else if (key == 5){
                     voiceResourceMap.put("newsVoice",totalAll==0?0: BigDecimalUtils.divRound2(val,totalAll,4));
                     voiceResourceMap.put("newsVoiceNumber", val);
-                    voiceResourceMap.put("secondNewsLevelAgg",collect1);
-                    send.put("voiceResourceNews",innerList);
+                    voiceResourceMap.put("secondNewsLevelAgg",innerList);
+                    send.put("voiceResourceNews",voiceResourceMap);
                 }else {
                     otherAll += val;
                     otherList.addAll(value);

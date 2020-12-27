@@ -135,27 +135,27 @@ public class SysArticleController extends BaseController {
         return result == 1 ? R.ok() : R.error("修改sys_article信息失败");
     }
 
-    /**
-     * 声量趋势(总声量)
-     */
-    @PostMapping("/sumVoiceTrendcy")
-    @ApiOperation("声量趋势(总声量)")
-    public R sumVoiceTrendcy() {
-        log.info("声量趋势(总声量)查询");
-        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
-        return R.ok(sumVoiceResps);
-    }
-
-    /**
-     * 声量趋势(日均值)
-     */
-    @PostMapping("/avgVoiceTrendcy")
-    @ApiOperation("声量趋势(日均值)")
-    public R avgVoiceTrendcy() {
-        log.info("声量趋势(日均值)查询");
-        String avg = iSysArticleService.avgVoiceTrendcy();
-        return R.ok(avg);
-    }
+//    /**
+//     * 声量趋势(总声量)
+//     */
+//    @PostMapping("/sumVoiceTrendcy")
+//    @ApiOperation("声量趋势(总声量)")
+//    public R sumVoiceTrendcy() {
+//        log.info("声量趋势(总声量)查询");
+//        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
+//        return R.ok(sumVoiceResps);
+//    }
+//
+//    /**
+//     * 声量趋势(日均值)
+//     */
+//    @PostMapping("/avgVoiceTrendcy")
+//    @ApiOperation("声量趋势(日均值)")
+//    public R avgVoiceTrendcy() {
+//        log.info("声量趋势(日均值)查询");
+//        String avg = iSysArticleService.avgVoiceTrendcy();
+//        return R.ok(avg);
+//    }
 
     /**
      * 声音来源统计

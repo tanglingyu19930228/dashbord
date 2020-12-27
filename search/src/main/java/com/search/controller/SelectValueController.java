@@ -4,6 +4,7 @@ import com.search.biz.SelectValueService;
 import com.search.common.controller.BaseController;
 import com.search.entity.SysTopicEntity;
 import com.search.service.ISysTopicService;
+import com.search.sync.ElasticsearchUtils;
 import com.search.vo.QueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ public class SelectValueController extends BaseController {
 	@Autowired
 	SelectValueService selectValueService;
 
+	@Autowired
+	ElasticsearchUtils elasticsearchUtils;
 
 
 	@PostMapping("/getAllData")
@@ -34,7 +37,13 @@ public class SelectValueController extends BaseController {
 	@PostMapping("/getOverviewData")
 	@ResponseBody
 	public R getOverviewData(@RequestBody QueryVO queryVO){
-		return selectValueService.getOverviewData(queryVO);
+		return elasticsearchUtils.doSingleSearch(queryVO,"newindex");
+	}
+
+	@PostMapping("/getArticleShow")
+	@ResponseBody
+	public R getArticleShow(@RequestBody QueryVO queryVO){
+		return elasticsearchUtils.justForContent(queryVO,"newindex6");
 	}
 
 }

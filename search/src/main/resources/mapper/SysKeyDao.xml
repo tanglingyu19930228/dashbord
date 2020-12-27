@@ -66,8 +66,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectKeyword" resultType="java.util.Map" >
         select * from (
-            select key_word,count(1) cc from  sys_key GROUP BY key_word
-        ) aa ORDER BY aa.cc desc limit 50
+            select key_word keyWord,count(1) weight from  sys_key GROUP BY key_word
+        ) aa ORDER BY aa.weight desc limit 50
     </select>
 
 

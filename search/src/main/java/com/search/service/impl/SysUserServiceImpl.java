@@ -110,7 +110,7 @@ public class SysUserServiceImpl implements SysUserService {
             RequestContextHolder.getRequestAttributes().setAttribute(WebFilter.KEY,result,RequestAttributes.SCOPE_REQUEST);
             return R.ok("登录成功").setUserId(Long.valueOf(result.getId())).setToken(token);
         }
-        return R.ok("密码错误,请输入正确的密码");
+        return R.error("密码错误,请输入正确的密码");
 
     }
 

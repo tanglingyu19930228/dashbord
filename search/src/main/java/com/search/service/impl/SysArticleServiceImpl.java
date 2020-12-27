@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.search.common.utils.BigDecimalUtils;
 import com.search.entity.StatisticsResp;
 import com.search.entity.SumVoiceResp;
+import com.search.vo.QueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.search.dao.SysArticleDao;
@@ -131,13 +132,13 @@ public class SysArticleServiceImpl implements ISysArticleService {
     }
 
     @Override
-    public List<SumVoiceResp> sumVoiceTrendcy() {
-        return sysArticleDao.sumVoiceTrendcy();
+    public List<SumVoiceResp> sumVoiceTrendcy(QueryVO queryVO) {
+        return sysArticleDao.sumVoiceTrendcy(queryVO);
     }
 
     @Override
-    public String avgVoiceTrendcy() {
-        List<SumVoiceResp> sumVoiceResps = sysArticleDao.sumVoiceTrendcy();
+    public String avgVoiceTrendcy(QueryVO queryVO) {
+        List<SumVoiceResp> sumVoiceResps = sysArticleDao.sumVoiceTrendcy(queryVO);
         double average = sumVoiceResps.stream().collect(Collectors.summarizingLong(SumVoiceResp::getTotal)).getAverage();
         return BigDecimalUtils.round(average,2).toString();
     }

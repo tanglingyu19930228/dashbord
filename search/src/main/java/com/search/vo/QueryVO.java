@@ -17,6 +17,8 @@ public class QueryVO {
 
     private Date endDate;
 
+    private Integer from;
+
     private List<Integer> emotionList;
 
     private List<Integer> mediaList;
@@ -28,5 +30,15 @@ public class QueryVO {
     private List<String> includeList;
 
     private List<String> excludeList;
+
+    private Integer pageSize;
+
+    private Integer pageNumber;
+
+    /**
+     * 0:按照 时间查询
+     * 1：按照 声量排序；
+     */
+    private Integer orderBy;
 
 }

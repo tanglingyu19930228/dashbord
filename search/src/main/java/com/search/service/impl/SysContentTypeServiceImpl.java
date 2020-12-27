@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.search.dao.SysContentTypeDao;
 import com.search.entity.SysContentTypeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.search.service.ISysContentTypeService;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,7 @@ public class SysContentTypeServiceImpl implements ISysContentTypeService {
      * @return SysContentTypeEntityList 列表
      */
     @Override
+    @Cacheable(cacheNames = "selectSysContentTypeList")
     public List<SysContentTypeEntity> selectSysContentTypeList(SysContentTypeEntity sysContentTypeEntity) {
     	try{
         	return sysContentTypeDao.selectSysContentTypeList(sysContentTypeEntity);

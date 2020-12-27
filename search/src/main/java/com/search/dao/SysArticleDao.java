@@ -3,6 +3,7 @@ package com.search.dao;
 import com.search.entity.StatisticsResp;
 import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
+import com.search.vo.QueryVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public interface SysArticleDao {
      */
     int updateSysArticle(List<SysArticleEntity> list);
 
-    List<SumVoiceResp> sumVoiceTrendcy();
+    List<SumVoiceResp> sumVoiceTrendcy(QueryVO queryVO);
 
     List<StatisticsResp> statisticsVoice();
     /**
