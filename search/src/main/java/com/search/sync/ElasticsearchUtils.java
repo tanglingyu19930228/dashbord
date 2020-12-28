@@ -294,7 +294,13 @@ public class ElasticsearchUtils {
         if(!CollectionUtils.isEmpty(queryVO.getIncludeList())){
             List<String> includeList = queryVO.getIncludeList();
             for (String str : includeList) {
-                boolQuery.must(QueryBuilders.termQuery("content",str));
+                boolQuery.must(QueryBuilders.wildcardQuery("content", "*" + str + "*"));
+            }
+        }
+        if(!CollectionUtils.isEmpty(queryVO.getExcludeList())){
+            List<String> excludeList = queryVO.getExcludeList();
+            for (String str : excludeList) {
+                boolQuery.mustNot(QueryBuilders.wildcardQuery("content", "*" + str + "*"));
             }
         }
         return boolQuery;

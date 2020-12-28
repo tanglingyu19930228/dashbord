@@ -75,7 +75,7 @@ public class CombineDatabaseAndElasticsearch {
 //                return R.error("有同步任务正在执行");
 //            }
             List<SysArticleEntity> needSyncList = getNeedSyncList();
-            int result = elasticsearchUtils.syncDatabaseToElasticsearchBulk("newindex", needSyncList);
+            int result = elasticsearchUtils.syncDatabaseToElasticsearchBulk("newindex6", needSyncList);
             if(result==needSyncList.size()){
                 return R.ok("同步完毕");
             }

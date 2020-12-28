@@ -1,5 +1,6 @@
 package com.search.biz;
 
+import com.alibaba.fastjson.JSONObject;
 import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
 import com.search.dao.SysKeyDao;
@@ -48,21 +49,26 @@ public class SelectValueService {
     SysArticleServiceImpl sysArticleService;
 
     public R getSelectValue(){
-        Map<String,List> map = new HashMap<>(8);
         try {
-            List<SysTopicEntity> sysTopicEntities = sysTopicService.selectSysTopicList(new SysTopicEntity());
-            map.put(SelectEnum.TOPIC.getName(),sysTopicEntities);
-            List<SysMediaTypeEntity> sysMediaTypeEntities = sysMediaTypeService.selectSysMediaTypeList(new SysMediaTypeEntity());
-            map.put(SelectEnum.MEDIA_TYPE.getName(),sysMediaTypeEntities);
-            List<SysContentTypeEntity> sysContentTypeEntities = sysContentTypeService.selectSysContentTypeList(new SysContentTypeEntity());
-            map.put(SelectEnum.CONTENT_TYPE.getName(),sysContentTypeEntities);
-            List<SysEmotionTypeEntity> sysEmotionTypeEntities = sysEmotionTypeService.selectSysEmotionTypeList(new SysEmotionTypeEntity());
-            map.put(SelectEnum.EMOTION_TYPE.getName(),sysEmotionTypeEntities);
-            return R.ok(map);
+            return R.ok(getStaticMap());
         } catch (Exception e) {
             return R.error("服务器异常");
         }
     }
+
+    private Map<String,List> getStaticMap() {
+        Map<String,List> map = new HashMap<>(8);
+        List<SysTopicEntity> sysTopicEntities = sysTopicService.selectSysTopicList(new SysTopicEntity());
+        map.put(SelectEnum.TOPIC.getName(),sysTopicEntities);
+        List<SysMediaTypeEntity> sysMediaTypeEntities = sysMediaTypeService.selectSysMediaTypeList(new SysMediaTypeEntity());
+        map.put(SelectEnum.MEDIA_TYPE.getName(),sysMediaTypeEntities);
+        List<SysContentTypeEntity> sysContentTypeEntities = sysContentTypeService.selectSysContentTypeList(new SysContentTypeEntity());
+        map.put(SelectEnum.CONTENT_TYPE.getName(),sysContentTypeEntities);
+        List<SysEmotionTypeEntity> sysEmotionTypeEntities = sysEmotionTypeService.selectSysEmotionTypeList(new SysEmotionTypeEntity());
+        map.put(SelectEnum.EMOTION_TYPE.getName(),sysEmotionTypeEntities);
+        return map;
+    }
+
     public Map<String,Integer> getSelectValueNumbers(){
 
         Map<String,Integer> map = new HashMap<>(8);
@@ -87,7 +93,6 @@ public class SelectValueService {
         List<SumVoiceResp> overviewBanner = getOverviewBanner(queryVO);
         returnMap.put("banner",renderBannerData(overviewBanner));
         returnMap.put("voiceResource",getVoiceResource(overviewBanner));
-        returnMap.put("sysKey",sysKeyDao.selectKeyword());
         returnMap.put("dayAvgTrend",sysArticleService.avgVoiceTrendcy(queryVO));
         returnMap.put("totalTrend",sysArticleService.sumVoiceTrendcy(queryVO));
         return R.ok(returnMap);
@@ -200,5 +205,20 @@ public class SelectValueService {
             log.error("服务器异常",e);
             return new ArrayList<>();
         }
+    }
+
+    public R getStaticData() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            final Map<String, List> staticMap = getStaticMap();
+            jsonObject.put("select",staticMap);
+            final List<Map<String, Object>> mapList = sysKeyDao.selectKeyword();
+            jsonObject.put("sysKey",mapList);
+            return R.ok(jsonObject);
+        } catch (Exception e) {
+            log.error("查询基础信息异常",e);
+            return R.error("服务器异常");
+        }
+
     }
 }

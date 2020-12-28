@@ -37,13 +37,19 @@ public class SelectValueController extends BaseController {
 	@PostMapping("/getOverviewData")
 	@ResponseBody
 	public R getOverviewData(@RequestBody QueryVO queryVO){
-		return elasticsearchUtils.doSingleSearch(queryVO,"newindex");
+		return elasticsearchUtils.doSingleSearch(queryVO,"newindex6");
 	}
 
 	@PostMapping("/getArticleShow")
 	@ResponseBody
 	public R getArticleShow(@RequestBody QueryVO queryVO){
 		return elasticsearchUtils.justForContent(queryVO,"newindex6");
+	}
+
+	@PostMapping("/getStaticData")
+	@ResponseBody
+	public R getStaticData(){
+		return selectValueService.getStaticData();
 	}
 
 }

@@ -86,8 +86,8 @@ public class ContainAnalysisService {
         final Map<String, List<TopicAggVO>> collect = topicAggVOList.stream().collect(Collectors.groupingBy(TopicAggVO::getKey));
         List<Map<String,String>> list = new ArrayList<>();
         final long countAll = object.getLongValue("countAll");
-        extractSameCode(topicName, collect, list, countAll);
-        object.put("emotionPic",list);
+        extractSameCode(topicName, collect, list, countAll,0L);
+        object.put("topicPic",list);
 
         final Map<Long, List<TopicAggVO>> dateCollect = topicAggVOList.stream().collect(Collectors.groupingBy(TopicAggVO::getDateTime));
         List<List<Map<String,String>>> byDayList = new ArrayList<>();
@@ -99,13 +99,13 @@ public class ContainAnalysisService {
             List<Map<String,String>> temp = new ArrayList<>();
             final long sum = value.stream().map(TopicAggVO::getDocCount).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             final Map<String, List<TopicAggVO>> collect1 = value.stream().collect(Collectors.groupingBy(TopicAggVO::getKey));
-            extractSameCode(topicName,collect1,temp,sum);
+            extractSameCode(topicName,collect1,temp,sum,entry.getKey());
             byDayList.add(temp);
         }
-        object.put("emotionTable",byDayList);
+        object.put("topicTable",byDayList);
     }
 
-    private void extractSameCode(Map<Integer, String> topicName, Map<String, List<TopicAggVO>> collect, List<Map<String, String>> list, long countAll) {
+    private void extractSameCode(Map<Integer, String> topicName, Map<String, List<TopicAggVO>> collect, List<Map<String, String>> list, long countAll,Long dateLong) {
         for ( Map.Entry<String, List<TopicAggVO>> entry: collect.entrySet()) {
             final String s = topicName.get(Integer.parseInt(entry.getKey()));
             final List<TopicAggVO> value = entry.getValue();
@@ -116,6 +116,7 @@ public class ContainAnalysisService {
             final long sum = value.stream().map(TopicAggVO::getDocCount).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             te.put("size",Objects.isNull(sum)?"0":String.valueOf(sum));
             te.put("name",s);
+            te.put("date",String.valueOf(dateLong));
             te.put("percent",sum==0?"0":BigDecimalUtils.divRound2(sum, countAll,4));
             list.add(te);
         }
@@ -134,6 +135,7 @@ public class ContainAnalysisService {
         object.put("gatherCalculate", less==0?0:BigDecimalUtils.divRound2(gather,totalEmotion,4));
         final Map<Long, List<EmotionAggVO>> collect = emotionAllList.stream().collect(Collectors.groupingBy(EmotionAggVO::getDate));
         Map<Long, Object> map = new HashMap<>();
+        List<Map<String,Long>> realPic = new ArrayList<>();
         for (Map.Entry<Long, List<EmotionAggVO>> entry:collect.entrySet()) {
             final List<EmotionAggVO> value = entry.getValue();
             Map<String,Long> temp = new HashMap<>();
@@ -142,7 +144,8 @@ public class ContainAnalysisService {
                 temp.put("mid",0L);
                 temp.put("less",0L);
                 temp.put("gather",0L);
-                map.put(entry.getKey(),temp);
+                temp.put("date",entry.getKey());
+                realPic.add(temp);
                 continue;
             }
             final long sumInnerMid = value.stream().filter(item -> 0 == item.getKey()).map(EmotionAggVO::getDocCount).collect(Collectors.summarizingLong(Long::longValue)).getSum();
@@ -152,9 +155,10 @@ public class ContainAnalysisService {
             temp.put("mid",sumInnerMid);
             temp.put("less",sumInnerLess);
             temp.put("gather",sumInnerGather);
-            map.put(entry.getKey(),temp);
+            temp.put("date",entry.getKey());
+            realPic.add(temp);
         }
-        object.put("pic",map);
+        object.put("pic",realPic);
     }
 
     private  List<ContainAnalysisVO> convertResponseBean(SearchResponse searchResponse){

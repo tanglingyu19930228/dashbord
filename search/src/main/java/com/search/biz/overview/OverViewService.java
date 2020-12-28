@@ -88,7 +88,6 @@ public class OverViewService {
         jsonObject.put("dayAvgTrend", BigDecimalUtils.div(total,list.size()));
         Map<String,Object> obj = this.parseVoiceResource(list,total,sumAll,list.size(),map);
         jsonObject.put("voiceResource",obj);
-        jsonObject.put("sysKey",sysKeyDao.selectKeyword());
         return jsonObject;
     }
 
@@ -120,7 +119,6 @@ public class OverViewService {
             dayCount.setList(siteNameVOList);
             list.add(dayCount);
         }
-        System.out.printf("a");
         return list;
     }
     private List<SiteNameVO> transferOneBucketToSiteNameVO(List<? extends Terms.Bucket> buckets) {
@@ -163,9 +161,7 @@ public class OverViewService {
         return list;
     }
     private Map<String, Object> parseVoiceResource(List<DayCount> list, Long total, Long sumAll, int size,Map<String,Long> longMap) {
-        Map<String, Object> map = new HashMap<>();
-
-
+        Map<String, Object> map = new HashMap<>(8);
 
         Map<String, Object> voiceResourceNews = new HashMap<>(8);
         voiceResourceNews.put("newsVoiceNumber",longMap.get("newsArticle"));
