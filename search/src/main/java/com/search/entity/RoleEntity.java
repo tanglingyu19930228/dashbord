@@ -38,6 +38,8 @@ public class RoleEntity {
     @ApiModelProperty("是否显示")
     private boolean show;
 
+    private Integer titleId;
+
 
     private List<RoleEntity> roleEntityList;
 }

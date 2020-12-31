@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.search.common.utils.R;
 
+import java.util.Objects;
+
 /**
  * ${functionName} 提供者
  *
@@ -37,13 +39,13 @@ public class SelectValueController extends BaseController {
 	@PostMapping("/getOverviewData")
 	@ResponseBody
 	public R getOverviewData(@RequestBody QueryVO queryVO){
-		return elasticsearchUtils.doSingleSearch(queryVO,"newindex6");
+		return elasticsearchUtils.doSingleSearch(queryVO,"newindex8");
 	}
 
 	@PostMapping("/getArticleShow")
 	@ResponseBody
 	public R getArticleShow(@RequestBody QueryVO queryVO){
-		return elasticsearchUtils.justForContent(queryVO,"newindex6");
+		return elasticsearchUtils.justForContent(queryVO,"newindex8");
 	}
 
 	@PostMapping("/getStaticData")

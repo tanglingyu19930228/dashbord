@@ -16,4 +16,8 @@ public class DayCount {
 
     private List<SiteNameVO> list;
 
+    private Long total;
+
+    private Long totalPercent;
+
 }

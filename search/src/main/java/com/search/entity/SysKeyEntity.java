@@ -2,6 +2,8 @@ package com.search.entity;
 
 
 import java.io.Serializable;
+
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 /**
@@ -26,5 +28,8 @@ public class SysKeyEntity implements Serializable {
 	 * 单词
 	 */
 	private String keyWord;
+
+	private Integer keyType ;
+
 
 }

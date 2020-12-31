@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class CombineDatabaseAndElasticsearch {
     public Integer getDatabaseSyncStart(){
         log.info("select elasticsearch last id~~~~~~~~~~~~~~");
         try {
-            String id = elasticsearchUtils.getElasticIndexLastInsertId("newindex");
+            String id = elasticsearchUtils.getElasticIndexLastInsertId("newindex8");
             if(StringUtils.isBlank(id)){
                 return 0;
             }
@@ -65,7 +66,7 @@ public class CombineDatabaseAndElasticsearch {
      * 同步调用
      * @return 做同步
      */
-    @Scheduled(cron = "* * * * * 1")
+    @Scheduled(cron = "0 */1 * * * ?")
     public synchronized R doSync(){
         log.info("开始同步数据库和es中的数据");
         try {
@@ -75,7 +76,10 @@ public class CombineDatabaseAndElasticsearch {
 //                return R.error("有同步任务正在执行");
 //            }
             List<SysArticleEntity> needSyncList = getNeedSyncList();
-            int result = elasticsearchUtils.syncDatabaseToElasticsearchBulk("newindex6", needSyncList);
+            if(CollectionUtils.isEmpty(needSyncList)){
+                return R.ok("目前是最新数据不需要更新");
+            }
+            int result = elasticsearchUtils.syncDatabaseToElasticsearchBulk("newindex8", needSyncList);
             if(result==needSyncList.size()){
                 return R.ok("同步完毕");
             }

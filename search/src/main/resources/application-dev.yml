@@ -14,6 +14,19 @@ spring:
     username: xuxiaoby@qq.com
     password: iggtelienmqibbid
     default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+            trust: smtp.qq.com
+        socketFactory:
+          class: javax.net.ssl.SSLSocketFactory
+          port: 465
+          auth: true
+          starttls:
+            enable: true
+            required: true
   shardingsphere:
     datasource:
       names: tanglingyu
@@ -43,9 +56,9 @@ spring:
     elasticsearch:
       repositories:
         enabled: true
-      clusterNodes: 47.115.160.133:9300
+      clusterNodes: 127.0.0.1:9300
 elasticsearch:
-  host: 47.115.160.133
+  host: 127.0.0.1
   port: 9200
 
 mybatis:

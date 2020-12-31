@@ -1,5 +1,7 @@
 package com.search.sync;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.clone.CloneSupport;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.search.biz.SelectValueService;
@@ -8,6 +10,7 @@ import com.search.common.utils.R;
 import com.search.entity.SysArticleEntity;
 import com.search.vo.QueryVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.CloneUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -28,6 +31,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInter
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -112,7 +116,11 @@ public class ElasticsearchUtils {
             sourceBuilder.query(boolQueryBuilder);
             sourceBuilder.from(Objects.isNull(queryVO.getPageSize())?0:queryVO.getPageSize());
             sourceBuilder.size(Objects.isNull(queryVO.getPageNumber())?10:queryVO.getPageNumber());
-            sourceBuilder.sort("insertTime",SortOrder.DESC);
+            if(queryVO.getOrderBy()==null || queryVO.getOrderBy() == 0){
+                sourceBuilder.sort("insertTime",SortOrder.DESC);
+            }else {
+                sourceBuilder.sort("publisherPv",SortOrder.DESC);
+            }
             searchRequest.source(sourceBuilder);
             final SearchResponse search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             final JSONObject object = parseSimpleSearch(search,queryVO);
@@ -153,6 +161,11 @@ public class ElasticsearchUtils {
         if(!simpleCheck.isSuccess()){
             return simpleCheck;
         }
+        if(Objects.nonNull(queryVO.getFrom())&& queryVO.getFrom()==2){
+            if(!CollectionUtils.isEmpty(queryVO.getTitleIds())){
+                return this.doMultiSearch(queryVO,indexName);
+            }
+        }
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.indices(indexName);
         try {
@@ -171,7 +184,47 @@ public class ElasticsearchUtils {
             JSONObject obj = parseResultService.parseElasticsearchResponse(search,queryVO);
             return R.ok(obj);
         } catch (Exception e) {
-            throw new BusinessException(500,"查询异常");
+            JSONObject object = new JSONObject();
+            object.put("error",indexName);
+            object.put("msg","查询异常");
+            object.put("request",JSON.toJSONString(queryVO));
+            final R error = R.error();
+            error.setData(object);
+            return error;
+        }
+    }
+
+    private R doMultiSearch(QueryVO queryVO, String indexName) {
+        Map<String,List<JSONObject>> map = new HashMap<>(8);
+        final List<Integer> titleIds = queryVO.getTitleIds();
+        List<QueryVO> list = new ArrayList<>();
+        try {
+            for (int i = 0; i < titleIds.size(); i++) {
+                final QueryVO one = new QueryVO();
+                BeanUtil.copyProperties(queryVO,one);
+                one.setTitleIds(new ArrayList<>());
+                one.setTitleId(titleIds.get(i));
+                one.setFrom(0);
+                list.add(one);
+            }
+            List<JSONObject> resultOk = new ArrayList<>();
+            List<JSONObject> resultError = new ArrayList<>();
+            for (QueryVO vo : list) {
+                final R r = this.doSingleSearch(vo, indexName);
+                if(!r.isSuccess()){
+                    JSONObject temp = (JSONObject) r.getData();
+                    temp.put("titleId",vo.getTitleId());
+                    resultError.add(temp);
+                }
+                JSONObject temp = (JSONObject) r.getData();
+                temp.put("titleId",vo.getTitleId());
+                resultOk.add(temp);
+            }
+            map.put("success",resultOk);
+            map.put("fail",resultError);
+            return R.ok(map);
+        } catch (Exception e) {
+            return R.error("查询失败");
         }
     }
 
@@ -179,7 +232,10 @@ public class ElasticsearchUtils {
         if(Objects.isNull(queryVO)){
             return R.error("查询失败");
         }
-        if(Objects.isNull(queryVO.getTitleId())){
+//        if(Objects.isNull(queryVO.getFrom())){
+//            return R.error("查询地点位置");
+//        }
+        if(Objects.isNull(queryVO.getTitleId())&&Objects.isNull(queryVO.getTitleIds())){
             return R.error("未知的品牌产品查询");
         }
         return R.ok();
@@ -196,7 +252,7 @@ public class ElasticsearchUtils {
     }
 
     private SearchSourceBuilder buildCompareAgg(QueryVO queryVO, BoolQueryBuilder boolQueryBuilder) {
-        return null;
+        return buildDetailAgg(queryVO,boolQueryBuilder);
     }
 
     private SearchSourceBuilder buildAnalysisAgg(QueryVO queryVO, BoolQueryBuilder boolQueryBuilder) {
@@ -255,41 +311,53 @@ public class ElasticsearchUtils {
         if(Objects.nonNull(queryVO.getStartDate())&&Objects.nonNull(queryVO.getEndDate())){
             boolQuery.must(QueryBuilders.rangeQuery("insertTime").gte(queryVO.getStartDate().getTime()).lte(queryVO.getEndDate().getTime()));
         }
-        if(!(CollectionUtils.isEmpty(queryVO.getEmotionList())||queryVO.getEmotionList().size()==3)){
-            BoolQueryBuilder emotionBool = QueryBuilders.boolQuery();
-            log.info("情感类型过滤；0：中性、1：负面、2：正面");
-            List<Integer> emotionList = queryVO.getEmotionList();
-            for (Integer integer : emotionList) {
-                emotionBool.should(QueryBuilders.termQuery("emotionType",integer));
+        if(!CollectionUtils.isEmpty(queryVO.getEmotionList())){
+            final int size = queryVO.getEmotionList().size();
+            if( size!= 0 &&  size != 3){
+                BoolQueryBuilder emotionBool = QueryBuilders.boolQuery();
+                log.info("情感类型过滤；0：中性、1：负面、2：正面");
+                List<Integer> emotionList = queryVO.getEmotionList();
+                for (Integer integer : emotionList) {
+                    emotionBool.should(QueryBuilders.termQuery("emotionType",integer));
+                }
+                boolQuery.must(emotionBool);
             }
-            boolQuery.must(emotionBool);
         }
-        if(!(CollectionUtils.isEmpty(queryVO.getContentList()) || queryVO.getContentList().size() != 3)){
-            log.info("内容类型过滤；0、全部：1、UGC:2:PGC");
-            BoolQueryBuilder contentBool = QueryBuilders.boolQuery();
-            List<Integer> contentList = queryVO.getContentList();
-            for (Integer integer : contentList) {
-                contentBool.should(QueryBuilders.termQuery("contentId",integer));
+        if(!CollectionUtils.isEmpty(queryVO.getContentList())){
+            final int size = queryVO.getContentList().size();
+            if( size!= 0 &&  size != 3){
+                log.info("内容类型过滤；0、全部：1、UGC:2:PGC");
+                BoolQueryBuilder contentBool = QueryBuilders.boolQuery();
+                List<Integer> contentList = queryVO.getContentList();
+                for (Integer integer : contentList) {
+                    contentBool.should(QueryBuilders.termQuery("contentId",integer));
+                }
+                boolQuery.must(contentBool);
             }
-            boolQuery.must(contentBool);
         }
-        if(!(CollectionUtils.isEmpty(queryVO.getTopicList()) || queryVO.getContentList().size() != 3)){
-            log.info("话题类型过滤；");
-            final BoolQueryBuilder topicBool = QueryBuilders.boolQuery();
-            List<Integer> topicList = queryVO.getTopicList();
-            for (Integer integer : topicList) {
-                topicBool.should(QueryBuilders.termQuery("topicId",integer));
+        if(!CollectionUtils.isEmpty(queryVO.getTopicList()) ){
+            final int size = queryVO.getTopicList().size();
+            if( size!= 0 &&  size != 30){
+                log.info("话题类型过滤；");
+                final BoolQueryBuilder topicBool = QueryBuilders.boolQuery();
+                List<Integer> topicList = queryVO.getTopicList();
+                for (Integer integer : topicList) {
+                    topicBool.should(QueryBuilders.wildcardQuery("topicId","*" +integer +"*"));
+                }
+                boolQuery.must(topicBool);
             }
-            boolQuery.must(topicBool);
         }
-        if(!(CollectionUtils.isEmpty(queryVO.getMediaList()) || queryVO.getMediaList().size() != 3)){
-            log.info("媒体类型过滤；0：微信；1：微博；2：博客；3：论坛：4：问答；5：新闻");
-            List<Integer> mediaList = queryVO.getMediaList();
-            final BoolQueryBuilder mediaQuery = QueryBuilders.boolQuery();
-            for (Integer integer : mediaList) {
-                mediaQuery.should(QueryBuilders.termQuery("mediaType",integer));
+        if(!CollectionUtils.isEmpty(queryVO.getMediaList()) ){
+            final int size = queryVO.getMediaList().size();
+            if( size!= 0 &&  size != 6){
+                log.info("媒体类型过滤；0：微信；1：微博；2：博客；3：论坛：4：问答；5：新闻");
+                List<Integer> mediaList = queryVO.getMediaList();
+                final BoolQueryBuilder mediaQuery = QueryBuilders.boolQuery();
+                for (Integer integer : mediaList) {
+                    mediaQuery.should(QueryBuilders.termQuery("mediaType",integer));
+                }
+                boolQuery.must(mediaQuery);
             }
-            boolQuery.must(mediaQuery);
         }
         if(!CollectionUtils.isEmpty(queryVO.getIncludeList())){
             List<String> includeList = queryVO.getIncludeList();

@@ -12,6 +12,7 @@
         <result property="parentId" column="parent_id"/>
         <result property="createDate" column="create_date"/>
         <result property="delFlag" column="del_flag"/>
+        <result property="titleId" column="title_id"/>
     </resultMap>
 
     <sql id="all_column">
@@ -20,7 +21,8 @@
         create_by,
         parent_id,
         create_date,
-        del_flag
+        del_flag,
+        title_id
     </sql>
     <update id="updateRole">
         update sys_role
@@ -32,7 +34,10 @@
                 create_by=#{roleEntity.createBy},
             </if>
             <if test="roleEntity.delFlag!=null">
-                del_flag=#{roleEntity.delFlag}
+                del_flag=#{roleEntity.delFlag},
+            </if>
+            <if test="roleEntity.titleId!=null">
+                title_id=#{roleEntity.titleId}
             </if>
         </set>
         where id=#{roleEntity.roleId}
@@ -76,11 +81,12 @@
         <result property="parentId"    column="parent_id"    />
         <result property="createDate"    column="create_date"    />
         <result property="delFlag"    column="del_flag"    />
+        <result property="titleId"    column="title_id"    />
     </resultMap>
 
     <!-- 查询的基础列 -->
     <sql id="baseColumns">
-        id, name, create_by,parent_id, create_date, del_flag    </sql>
+        id, name, create_by,parent_id, create_date, del_flag,title_id    </sql>
 
     <!-- 筛选条件 -->
     <sql id="baseWhere">
@@ -90,6 +96,7 @@
         <if test="parentId != null "> and parent_id = #{parentId}</if>
         <if test="createDate != null "> and create_date = #{createDate}</if>
         <if test="delFlag != null "> and del_flag = #{delFlag}</if>
+        <if test="titleId != null "> and title_id = #{titleId}</if>
     </sql>
 
     <select id="selectRoleListByUser" parameterType="com.search.entity.SysRoleEntity" resultMap="sysRoleEntityResult">
@@ -122,6 +129,7 @@
             parent_id,
             create_date,
             del_flag,
+            title_id,
         </trim>
         values
         <foreach collection="list" item="item" index="index" separator=",">
@@ -130,7 +138,7 @@
                 #{item.createBy},
                 #{item.parentId},
                 #{item.createDate},
-                #{item.delFlag},
+                #{item.titleId},
             </trim>
         </foreach>
     </insert>
@@ -146,6 +154,7 @@
                 <if test="item.parentId != null ">parent_id = #{item.parentId},</if>
                 <if test="item.createDate != null ">create_date = #{item.createDate},</if>
                 <if test="item.delFlag != null ">del_flag = #{item.delFlag},</if>
+                <if test="item.titleId != null ">title_id = #{item.titleId},</if>
             </trim>
             where id = #{item.id}
         </foreach>

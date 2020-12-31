@@ -158,6 +158,18 @@ public class ContainAnalysisService {
             temp.put("date",entry.getKey());
             realPic.add(temp);
         }
+        realPic.sort(new Comparator<Map<String, Long>>() {
+            @Override
+            public int compare(Map<String, Long> o1, Map<String, Long> o2) {
+                if(o1.get("date")>o2.get("date")){
+                    return 1;
+                }else if(o1.get("date").equals(o2.get("date"))){
+                    return 0;
+                }else{
+                    return  -1;
+                }
+            }
+        });
         object.put("pic",realPic);
     }
 

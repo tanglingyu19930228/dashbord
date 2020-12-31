@@ -41,4 +41,6 @@ public class QueryVO {
      */
     private Integer orderBy;
 
+    private List<Integer> titleIds;
+
 }

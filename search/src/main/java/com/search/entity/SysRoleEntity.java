@@ -52,6 +52,8 @@ public class SysRoleEntity implements Serializable {
 	@ApiModelProperty("是否展示")
 	private boolean show;
 
+	private Integer titleId;
+
 	@ApiModelProperty("子角色集合")
 	private List<SysRoleEntity> list;
 

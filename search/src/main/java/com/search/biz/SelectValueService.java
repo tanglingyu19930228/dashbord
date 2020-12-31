@@ -212,7 +212,8 @@ public class SelectValueService {
         try {
             final Map<String, List> staticMap = getStaticMap();
             jsonObject.put("select",staticMap);
-            final List<Map<String, Object>> mapList = sysKeyDao.selectKeyword();
+            SysKeyEntity sysKeyEntity = new SysKeyEntity();
+            final List<Map<String, Object>> mapList = sysKeyDao.selectKeyword(sysKeyEntity);
             jsonObject.put("sysKey",mapList);
             return R.ok(jsonObject);
         } catch (Exception e) {

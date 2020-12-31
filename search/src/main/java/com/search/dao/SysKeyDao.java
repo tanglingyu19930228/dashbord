@@ -47,5 +47,5 @@ public interface SysKeyDao {
      * 查询前50个词频的名称
      * @return
      */
-    public List<Map<String,Object>> selectKeyword();
+    public List<Map<String,Object>> selectKeyword(SysKeyEntity sysKeyEntity);
 }

@@ -74,7 +74,7 @@ public class ElasticSearchTest {
         for (int i= 2;i< 10;i++) {
             SysArticleEntity sysArticleEntity = generatorOne();
             sysArticleEntity.setId(i);
-            IndexRequest request = new IndexRequest(INDEX);
+            IndexRequest request = new IndexRequest("newindex7");
             bulkRequest.add(
                     request.id(String.valueOf(i)).source(JSON.toJSONString(sysArticleEntity),XContentType.JSON)
             );

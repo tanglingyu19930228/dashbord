@@ -51,8 +51,9 @@ public class OverViewService {
         Long sumWxAll = 0L;
         Long sumWbAll = 0L;
         Long sumNewsAll = 0L;
-        Long otherArticle = 0L;
-        Long sumOtherAll = 0L;
+        /** 2：博客；3：论坛：4：问答 */
+        Long blogArticle = 0L;Long commentArticle = 0L; Long quesArticle = 0L;
+        Long sumBlogAll = 0L;Long sumCommentAll = 0L; Long sumQuesAll = 0L;
         for (DayCount dayCount : list) {
             final List<SiteNameVO> inner = dayCount.getList();
             for (SiteNameVO siteNameVO : inner) {
@@ -63,15 +64,33 @@ public class OverViewService {
                 sumAll += allCount;
                 final Integer mediaType = siteNameVO.getMediaType();
                 if(mediaType == 0){
+                    //微信互动量:    点赞，阅读
                     wxArticle += siteNameVO.getDocCount();
-                    sumWxAll += allCount;
+                    sumWxAll += siteNameVO.getPublisherLinkNum()+siteNameVO.getPublisherPv();
+//                    sumWxAll += allCount;
                 }else if(mediaType == 1){
+                    // 微博互动量:   转发+评论+点赞
                     wbArticle += siteNameVO.getDocCount();
-                    sumWbAll += allCount;
+                    sumWbAll += siteNameVO.getPublisherRepostNum()+siteNameVO.getPublisherCommentNum()+siteNameVO.getPublisherLinkNum();
+//                    sumWbAll += allCount;
                 }else if(mediaType == 5 ){
+                    // 新闻互动量:   评论量+阅读
                     newsArticle += siteNameVO.getDocCount();
-                    sumNewsAll += allCount;
-                }else {
+//                    sumNewsAll += allCount;
+                    sumNewsAll += siteNameVO.getPublisherCommentNum()+siteNameVO.getPublisherPv();
+                }else if(mediaType == 2){
+                    //博客互动量:    阅读数+评论+转发数+收藏数
+                    blogArticle += siteNameVO.getDocCount();
+                    sumBlogAll += siteNameVO.getPublisherLinkNum() + siteNameVO.getPublisherCommentNum() + siteNameVO.getPublisherRepostNum() + siteNameVO.getPublisherCollectionNum();
+                }else if(mediaType == 3){
+                    //论坛互动量:    阅读数+评论数
+                    commentArticle += siteNameVO.getDocCount();
+                    sumCommentAll += siteNameVO.getPublisherPv() + siteNameVO.getPublisherCommentNum();
+                }else if(mediaType == 4 ){
+                    // 问答互动量:   回答量+点赞+阅读
+                    quesArticle += siteNameVO.getDocCount();
+                    sumQuesAll += siteNameVO.getPublisherCommentNum() + siteNameVO.getPublisherLinkNum() + siteNameVO.getPublisherPv();
+                }else{
 
                 }
             }
@@ -116,7 +135,10 @@ public class OverViewService {
             dayCount.setDateKey(date.getTime());
             dayCount.setDocCount(bucket.getDocCount());
             List<SiteNameVO> siteNameVOList = transferOneBucketToSiteNameVO(longTerms.getBuckets());
+            Long oneTotal = siteNameVOList.stream().map(item->item.getPublisherCollectionNum()+item.getPublisherCommentNum()+item.getPublisherLinkNum()
+                    +item.getPublisherPv()+item.getPublisherRepostNum()).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             dayCount.setList(siteNameVOList);
+            dayCount.setTotal(oneTotal);
             list.add(dayCount);
         }
         return list;
