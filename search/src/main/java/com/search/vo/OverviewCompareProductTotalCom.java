@@ -6,10 +6,8 @@ import lombok.Data;
  * @author Administrator
  */
 @Data
-public class OverviewArticleTrendExcel {
+public class OverviewCompareProductTotalCom {
 
     private String productName;
-    private Long dateKey;
     private Long total;
-
 }

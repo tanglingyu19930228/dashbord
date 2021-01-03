@@ -6,10 +6,9 @@ import lombok.Data;
  * @author Administrator
  */
 @Data
-public class OverviewArticleTrendExcel {
+public class OverviewContentHighWord {
 
-    private String productName;
-    private Long dateKey;
+    private String highWord;
     private Long total;
 
 }
