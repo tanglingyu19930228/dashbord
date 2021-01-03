@@ -56,9 +56,9 @@ spring:
     elasticsearch:
       repositories:
         enabled: true
-      clusterNodes: 127.0.0.1:9300
+      clusterNodes: 47.115.160.133:9300
 elasticsearch:
-  host: 127.0.0.1
+  host: 47.115.160.133
   port: 9200
 
 mybatis:

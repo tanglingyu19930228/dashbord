@@ -1,13 +1,15 @@
 package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.search.annotation.NoNeedLogin;
+import com.search.biz.SelectValueService;
 import com.search.common.controller.BaseController;
 import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
 import com.search.entity.StatisticsResp;
-import com.search.entity.SumVoiceResp;
 import com.search.entity.SysArticleEntity;
 import com.search.service.ISysArticleService;
+import com.search.sync.ElasticsearchUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -38,6 +40,12 @@ public class SysArticleController extends BaseController {
 
     @Resource
     private ISysArticleService iSysArticleService;
+
+    @Resource
+    private SelectValueService selectValueService;
+
+    @Resource
+    private ElasticsearchUtils elasticsearchUtils;
 
     /**
      * 根据id查询sys_article信息
@@ -189,13 +197,20 @@ public class SysArticleController extends BaseController {
     }
 
     /**
-     * 情感类型/数据源模糊查询
+     * 声音来源分析
      */
-    @PostMapping("/sysLike")
-    @ApiOperation("声音来源统计")
-    public R sysLike(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
-        log.info("情感类型/数据源模糊查询");
-        List<StatisticsResp> sysArticleEntities = iSysArticleService.sysLike(sysArticleEntity);
-        return R.ok(sysArticleEntities);
+    @PostMapping("/originVoice")
+    @ApiOperation("声音来源分析")
+    @NoNeedLogin
+    public R originVoice() {
+        log.info("声音来源分析");
+        try {
+            R r = selectValueService.originVoice();
+            return r;
+        } catch (Exception e) {
+            log.error("服务器异常{}", e);
+        }
+        return R.error("服务器异常");
     }
 }
+
