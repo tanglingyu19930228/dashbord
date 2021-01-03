@@ -24,6 +24,14 @@
         del_flag,
         is_admin
     </sql>
+    <insert id="saveUser" parameterType="com.search.entity.SysUserEntity"  useGeneratedKeys="true" keyProperty="id">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,user_name, phone, name,password,del_flag,is_admin
+        </trim>
+        values (#{id}, #{userName}, #{phone}, #{name}, #{password}, #{delFlag}, #{isAdmin}
+        )
+    </insert>
 
     <update id="updateByUserId">
         update sys_user

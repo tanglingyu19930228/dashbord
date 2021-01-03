@@ -29,4 +29,6 @@ public interface SysUserDao {
     int deleteByUserIds(@Param("userIds") List<Integer> userIds);
 
     List<SysUserEntity> listByPage();
+
+    int saveUser(SysUserEntity sysUserEntity);
 }

@@ -23,6 +23,10 @@ public class RoleVO {
     @ApiModelProperty(value = "用户id")
     private Integer userId;
 
+    private String userName;
+
+    private String password;
+
     @ApiModelProperty(value = "传入的权限")
     private List<SysRoleEntity> sysRoleEntityList;
 

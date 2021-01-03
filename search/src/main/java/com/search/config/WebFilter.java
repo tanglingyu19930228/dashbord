@@ -39,37 +39,37 @@ public class WebFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        try {
-            HttpServletRequest request = (HttpServletRequest) servletRequest;
-            String contextPath = ((HttpServletRequestImpl) request).getExchange().getRequestURL();
-            if(contextPath.contains("/sysUser/login")){
-                filterChain.doFilter(servletRequest,servletResponse);
-                //pay attention to
-                return;
-            }else{
-                String loginToken = getFromHeaderOrCookie(request, "login_token");
-                if (StringUtils.isNotEmpty(loginToken)) {
-                    resolveLoginUser(loginToken);
-                }
-            }
-        } catch (Exception e) {
-            BusinessResponse wr = new BusinessResponse();
-            wr.setCode(BusinessResponseEnum.SYSTEM_ERROR.getCode());
-            wr.setMsg(e.getMessage());
-            HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-            httpServletResponse.setStatus(200);
-            httpServletResponse.setHeader("Content-Type", "application/json;charset=UTF-8");
-            httpServletResponse.setHeader("Access-Control-Allow-Origin", "true" );
-            httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT");
-            httpServletResponse.setHeader("Access-Control-Expose-Headers", "*");
-//            httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept ,token");
-            httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
-            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
-            httpServletResponse.getOutputStream().flush();
-            return;
-        }
-        filterChain.doFilter(servletRequest, servletResponse);
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        filterChain.doFilter(servletRequest,servletResponse);
+//        try {
+//            String contextPath = ((HttpServletRequestImpl) request).getExchange().getRequestURL();
+//            if(contextPath.contains("/sysUser/login")){
+//                //pay attention to
+//                return;
+//            }else{
+//                String loginToken = getFromHeaderOrCookie(request, "login_token");
+//                if (StringUtils.isNotEmpty(loginToken)) {
+//                    resolveLoginUser(loginToken);
+//                }
+//            }
+//        } catch (Exception e) {
+//            BusinessResponse wr = new BusinessResponse();
+//            wr.setCode(BusinessResponseEnum.SYSTEM_ERROR.getCode());
+//            wr.setMsg(e.getMessage());
+//            HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+//            httpServletResponse.setStatus(200);
+//            httpServletResponse.setHeader("Content-Type", "application/json;charset=UTF-8");
+//            httpServletResponse.setHeader("Access-Control-Allow-Origin", "true" );
+//            httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
+//            httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT");
+//            httpServletResponse.setHeader("Access-Control-Expose-Headers", "*");
+////            httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept ,token");
+//            httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
+//            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
+//            httpServletResponse.getOutputStream().flush();
+//            return;
+//        }
+//        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     @Override

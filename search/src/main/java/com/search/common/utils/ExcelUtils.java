@@ -1,12 +1,20 @@
 package com.search.common.utils;
 
+import lombok.Cleanup;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -133,6 +141,37 @@ public class ExcelUtils {
             return "";
         }
         return value;
+    }
+
+
+    public static void exportXSS(List<List<String>>  dataList, String filePath) {
+        try {
+            FileOutputStream out = new FileOutputStream(filePath);
+            XSSFWorkbook wb = new XSSFWorkbook ();
+            XSSFCellStyle setBorder = wb.createCellStyle();
+            XSSFSheet sheet1 = wb.createSheet("sheet1");
+
+
+            for(int i=0; i< dataList.size();i++){
+                XSSFRow row=sheet1.createRow(i);
+                for(int j=0;j<dataList.get(i).size();j++){
+                    XSSFCell cell =row.createCell(j);
+                    String  str =dataList.get(i).get(j);
+                    if(StringUtils.isBlank(str)) {
+                        str = "";
+                    }
+                    cell.setCellValue(str);
+
+                }
+
+            }
+
+            wb.write(out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            log.error("exprot Xls exception.", e);
+        }
     }
 
 }

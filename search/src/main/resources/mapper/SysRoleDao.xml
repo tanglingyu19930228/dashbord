@@ -138,6 +138,7 @@
                 #{item.createBy},
                 #{item.parentId},
                 #{item.createDate},
+                #{item.delFlag},
                 #{item.titleId},
             </trim>
         </foreach>

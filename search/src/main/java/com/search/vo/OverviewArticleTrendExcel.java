@@ -2,13 +2,11 @@ package com.search.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author Administrator
  */
 @Data
-public class DayCount {
+public class OverviewArticleTrendExcel {
 
     private Long dateKey;
 
@@ -16,8 +14,5 @@ public class DayCount {
 
     private Long total;
 
-    private List<SiteNameVO> list;
-
-    private Long totalPercent;
 
 }

@@ -5,6 +5,7 @@ import com.search.biz.RoleService;
 import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
 import com.search.common.utils.R;
+import com.search.common.utils.StringUtils;
 import com.search.entity.RoleEntity;
 import com.search.service.SysRoleService;
 import com.search.vo.RoleVO;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @description:
@@ -41,7 +43,12 @@ public class SysRoleController extends BaseController {
     @PostMapping(value = "/addUserRole")
     @ApiOperation(value = "增加权限接口", tags = {"增加权限接口"})
     public R addUserRole(@RequestBody @ApiParam(value = "用户角色实体") RoleVO roleVO){
-
+        if(Objects.isNull(roleVO)){
+            return R.error("请求参数为空");
+        }
+        if(StringUtils.isBlank(roleVO.getUserName())||StringUtils.isBlank(roleVO.getPassword())){
+            return R.error("用户名密码不能为空");
+        }
         return roleService.addUserRole(roleVO);
     }
 

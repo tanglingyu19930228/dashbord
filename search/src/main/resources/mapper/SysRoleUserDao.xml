@@ -10,6 +10,37 @@
         <result property="roleId" column="role_id"/>
         <result property="delFlag" column="del_flag"/>
     </resultMap>
+    <insert id="save" parameterType="com.search.entity.SysRoleUserEntity"   useGeneratedKeys="true" keyProperty="id">
+        insert into sys_role_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,user_id, role_id,del_flag
+        </trim>
+        values (
+            #{id}, #{userId}, #{roleId}, #{delFlag}
+        )
+    </insert>
+    <update id="update" parameterType="com.search.entity.SysRoleUserEntity">
+        update sys_role_user
+        <set>
+            <if test="userId!=null">
+                user_id=#{userId},
+            </if>
+            <if test="roleEntity.delFlag!=null">
+                role_id=#{roleId},
+            </if>
+            <if test="roleEntity.titleId!=null">
+                del_flag=#{delFlag}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="selectList" resultMap="sysRoleUserMap" parameterType="com.search.entity.SysRoleUserEntity">
+        select id,user_id,role_id,del_flag from  sys_role_user
+        where 1=1 and del_flag = 0
+        <if test="id != null"> and id = #{id} </if>
+        <if test="userId != null"> and user_id = #{userId} </if>
+        <if test="roleId != null"> and role_id = #{roleId} </if>
+    </select>
 
 
 </mapper>

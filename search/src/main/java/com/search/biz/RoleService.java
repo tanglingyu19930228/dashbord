@@ -5,8 +5,12 @@ import com.alibaba.fastjson.JSON;
 import com.search.common.utils.DateUtils;
 import com.search.common.utils.R;
 import com.search.dao.SysRoleDao;
+import com.search.dao.SysRoleUserDao;
+import com.search.dao.SysUserDao;
 import com.search.entity.RoleEntity;
 import com.search.entity.SysRoleEntity;
+import com.search.entity.SysRoleUserEntity;
+import com.search.entity.SysUserEntity;
 import com.search.vo.RoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,52 +34,72 @@ public class RoleService {
     @Autowired
     SysRoleDao sysRoleDao;
 
+    @Autowired
+    SysUserDao sysUserDao;
+
+    @Autowired
+    SysRoleUserDao sysRoleUserDao;
+
     public R addUserRole(RoleVO roleVO) {
         try {
-            if(Objects.isNull(roleVO)||Objects.isNull(roleVO.getSysRoleEntityList())){
+            SysUserEntity sysUserEntity1 = this.sysUserDao.selectOneByUserName(roleVO.getUserName());
+            if(Objects.isNull(sysUserEntity1)){
+                SysUserEntity sysUserEntity = new SysUserEntity();
+                sysUserEntity.setDelFlag(0);
+                sysUserEntity.setIsAdmin(1);
+                sysUserEntity.setUserName(roleVO.getUserName());
+                sysUserEntity.setPassword(roleVO.getPassword());
+                sysUserEntity.setName(roleVO.getUserName());
+                final int i = sysUserDao.saveUser(sysUserEntity);
+                sysUserEntity1 = sysUserEntity;
+                if(i<0){
+                    return R.error("新增用户失败");
+                }
+            }
+            List<SysRoleEntity> rolePage = roleVO.getSysRoleEntityList();
+            if(Objects.isNull(roleVO.getSysRoleEntityList())){
                 log.error("用户权限添加时，未填写参数");
                 return R.error("请填写请求参数");
             }
-            List<SysRoleEntity> rolePage = roleVO.getSysRoleEntityList();
-            Integer userId = roleVO.getUserId();
-
-            SysRoleEntity sysRoleEntity = new SysRoleEntity();
-            sysRoleEntity.setCreateBy(userId);
-            List<SysRoleEntity> roleDb = this.sysRoleDao.selectRoleListByUser(sysRoleEntity);
-            Map<Integer, List<SysRoleEntity>> dbMap = roleDb.stream().collect(Collectors.groupingBy(SysRoleEntity::getId));
-            Map<Integer, List<SysRoleEntity>> pageMap = rolePage.stream().collect(Collectors.groupingBy(SysRoleEntity::getId));
+            Integer userId = sysUserEntity1.getId();
+            SysRoleUserEntity sysRoleUserEntity = new SysRoleUserEntity();
+            sysRoleUserEntity.setUserId(userId);
+            sysRoleUserEntity.setDelFlag(0);
+            List<SysRoleUserEntity> listDb = this.sysRoleUserDao.selectList(sysRoleUserEntity);
+            List<SysRoleUserEntity> collectPage = rolePage.stream().map(item -> {
+                SysRoleUserEntity te = new SysRoleUserEntity();
+                te.setDelFlag(0);
+                te.setRoleId(item.getId());
+                te.setUserId(userId);
+                return te;
+            }).collect(Collectors.toList());
+            Map<Integer, List<SysRoleUserEntity>> dbMap = listDb.stream().collect(Collectors.groupingBy(SysRoleUserEntity::getRoleId));
+            Map<Integer, List<SysRoleUserEntity>> pageMap = collectPage.stream().collect(Collectors.groupingBy(SysRoleUserEntity::getRoleId));
 //
-            List<SysRoleEntity> create = new ArrayList<>();
-            List<SysRoleEntity> delete = new ArrayList<>();
-            for (Map.Entry<Integer, List<SysRoleEntity>> dbEntry : dbMap.entrySet()) {
-                List<SysRoleEntity> roleEntityList = pageMap.get(dbEntry.getKey());
+            List<SysRoleUserEntity> create = new ArrayList<>();
+            List<SysRoleUserEntity> delete = new ArrayList<>();
+            for (Map.Entry<Integer, List<SysRoleUserEntity>> dbEntry : dbMap.entrySet()) {
+                List<SysRoleUserEntity> roleEntityList = pageMap.get(dbEntry.getKey());
                 if(roleEntityList == null){
                     delete.addAll(dbEntry.getValue());
                 }
             }
-            for (Map.Entry<Integer, List<SysRoleEntity>> pageEntry : pageMap.entrySet()) {
-                List<SysRoleEntity> roleEntityList = dbMap.get(pageEntry.getKey());
+            for (Map.Entry<Integer, List<SysRoleUserEntity>> pageEntry : pageMap.entrySet()) {
+                List<SysRoleUserEntity> roleEntityList = dbMap.get(pageEntry.getKey());
                 if(roleEntityList == null){
                     create.addAll(pageEntry.getValue());
                 }
             }
             if(!CollectionUtils.isEmpty(create)){
                 create.forEach(item->{
-                    item.setDelFlag(0);
-                    item.setCreateBy(-1);
-                    item.setCreateDate(DateUtils.getNowDate());
-                    List<SysRoleEntity> tempList = new ArrayList<>();
-                    tempList.add(item);
-                    final int insert = this.sysRoleDao.insertSysRole(tempList);
+                    final int insert = this.sysRoleUserDao.save(item);
                     log.info("创建用户权限：" + JSON.toJSONString(item));
                 });
             }
             if(!CollectionUtils.isEmpty(delete)){
-                create.forEach(item->{
-                    item.setDelFlag(1);
-                    List<SysRoleEntity> roleTemp = new ArrayList<>();
-                    roleTemp.add(item);
-                    final int insert = this.sysRoleDao.updateSysRole(roleTemp);
+                delete.forEach(item->{
+                    sysRoleUserEntity.setDelFlag(1);
+                    final int deleteFlag = this.sysRoleUserDao.update(sysRoleUserEntity);
                     log.info("删除用户权限：" + JSON.toJSONString(item));
                 });
             }
