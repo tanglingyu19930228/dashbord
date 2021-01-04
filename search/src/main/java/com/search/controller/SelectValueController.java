@@ -1,11 +1,14 @@
 package com.search.controller;
 
+import com.search.annotation.BizLog;
 import com.search.biz.SelectValueService;
 import com.search.common.controller.BaseController;
 import com.search.entity.SysTopicEntity;
 import com.search.service.ISysTopicService;
 import com.search.sync.ElasticsearchUtils;
 import com.search.vo.QueryVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,37 +24,42 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/getSelect")
+@Api(value = "SelectValueController", tags = "SelectValueController控制层")
 public class SelectValueController extends BaseController {
 
-	@Autowired
-	SelectValueService selectValueService;
+    @Autowired
+    SelectValueService selectValueService;
 
-	@Autowired
-	ElasticsearchUtils elasticsearchUtils;
+    @Autowired
+    ElasticsearchUtils elasticsearchUtils;
 
 
-	@PostMapping("/getAllData")
-	@ResponseBody
-	public R getSelectValueService(){
-		return selectValueService.getSelectValue();
-	}
+    @PostMapping("/getAllData")
+    @BizLog(action = "getAllData")
+    @ApiOperation(value = "getAllData")
+    public R getSelectValueService() {
+        return selectValueService.getSelectValue();
+    }
 
-	@PostMapping("/getOverviewData")
-	@ResponseBody
-	public R getOverviewData(@RequestBody QueryVO queryVO){
-		return elasticsearchUtils.doSingleSearch(queryVO,"newindex8");
-	}
+    @PostMapping("/getOverviewData")
+    @BizLog(action = "getOverviewData")
+    @ApiOperation(value = "getOverviewData")
+    public R getOverviewData(@RequestBody QueryVO queryVO) {
+        return elasticsearchUtils.doSingleSearch(queryVO, "newindex8");
+    }
 
-	@PostMapping("/getArticleShow")
-	@ResponseBody
-	public R getArticleShow(@RequestBody QueryVO queryVO){
-		return elasticsearchUtils.justForContent(queryVO,"newindex8");
-	}
+    @PostMapping("/getArticleShow")
+    @BizLog(action = "getArticleShow")
+    @ApiOperation(value = "getArticleShow")
+    public R getArticleShow(@RequestBody QueryVO queryVO) {
+        return elasticsearchUtils.justForContent(queryVO, "newindex8");
+    }
 
-	@PostMapping("/getStaticData")
-	@ResponseBody
-	public R getStaticData(){
-		return selectValueService.getStaticData();
-	}
+    @PostMapping("/getStaticData")
+    @BizLog(action = "getStaticData")
+    @ApiOperation(value = "getStaticData")
+    public R getStaticData() {
+        return selectValueService.getStaticData();
+    }
 
 }

@@ -1,8 +1,11 @@
 package com.search.controller;
 
+import com.search.annotation.BizLog;
 import com.search.biz.ExportService;
 import com.search.common.utils.ExcelUtils;
 import com.search.vo.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.IOUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +28,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/export")
 @Slf4j
+@Api(value = "导出excel 控制类", tags = "excel导出接口")
 public class ExportController {
-
-
-    // 概览页 ==================== start
 
     /**
      * 站点名称
@@ -36,6 +37,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/siteName")
+    @BizLog(action = "站点名称导出")
+    @ApiOperation(value = "站点名称导出")
     public void siteName(HttpServletResponse response, @RequestBody @Valid List<OverviewSiteExcel> overviewSiteExcels) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -55,6 +58,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/weiBoExport")
+    @BizLog(action = "声音来源分析(微博)导出")
+    @ApiOperation(value = "声音来源分析(微博)导出")
     public void weiBoExport(HttpServletResponse response, @RequestBody @Valid List<OverviewWeiBoAnalysis> overviewWeiBoAnalyses) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -74,6 +79,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/contentHighWordExport")
+    @BizLog(action = "内容高频词导出")
+    @ApiOperation(value = "内容高频词导出")
     public void contentHighWordExport(HttpServletResponse response, @RequestBody @Valid List<OverviewContentHighWord> overviewContentHighWords) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -93,6 +100,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/newsOriginExport")
+    @BizLog(action = "声量来源分析(新闻)导出")
+    @ApiOperation(value = "声量来源分析(新闻)导出")
     public void newsOriginExport(HttpServletResponse response, @RequestBody @Valid List<OverviewNewsOrigin> overviewNewsOrigins) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -112,6 +121,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/wsOriginExport")
+    @BizLog(action = "声量来源分析(微信)导出")
+    @ApiOperation(value = "声量来源分析(微信)导出")
     public void wsOriginExport(HttpServletResponse response, @RequestBody @Valid List<OverviewWsOrigin> overviewWsOrigins) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -132,6 +143,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/voiceOrigin")
+    @BizLog(action = "声量来源导出")
+    @ApiOperation(value = "声量来源导出")
     public void voiceOrigin(HttpServletResponse response, @RequestBody @Valid List<OverviewVoiceOrigin> overviewVoiceOrigins) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -151,6 +164,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/exportVoiceTrend")
+    @BizLog(action = "声量趋势导出")
+    @ApiOperation(value = "声量趋势导出")
     public void exportVoiceTrend(HttpServletResponse response, @RequestBody @Valid List<OverviewArticleTrendExcel> overviewArticleTrendExcels) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -171,6 +186,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/topicTrendcy")
+    @BizLog(action = "行业话题趋势导出")
+    @ApiOperation(value = "行业话题趋势导出")
     public void topicTrendcy(HttpServletResponse response, @RequestBody @Valid List<OverviewTopicTrency> overviewTopicTrencies) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -191,6 +208,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/emmotionTrendcy")
+    @BizLog(action = "情感度趋势导出")
+    @ApiOperation(value = "情感度趋势导出")
     public void emmotionTrendcy(HttpServletResponse response, @RequestBody @Valid List<OverviewEmmotionTrency> overviewEmmotionTrencies) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -211,6 +230,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/emmotionPercent")
+    @BizLog(action = "情感度占比导出")
+    @ApiOperation(value = "情感度占比导出")
     public void emmotionPercent(HttpServletResponse response, @RequestBody @Valid List<OverviewEmmotionPercent> overviewEmmotionPercents) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -231,6 +252,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/tradePercent")
+    @BizLog(action = "行业话题占比导出")
+    @ApiOperation(value = "行业话题占比导出")
     public void tradePercent(HttpServletResponse response, @RequestBody @Valid List<OverviewTradePercent> overviewTradePercents) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -251,6 +274,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/compareProduct")
+    @BizLog(action = "品牌产品声量趋势对比导出")
+    @ApiOperation(value = "品牌产品声量趋势对比导出")
     public void compareProduct(HttpServletResponse response, @RequestBody @Valid List<OverviewCompareProduct> overviewCompareProducts) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -271,6 +296,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/compareProductTotal")
+    @BizLog(action = "品牌产品总声量对比导出")
+    @ApiOperation(value = "品牌产品总声量对比导出")
     public void compareProductTotal(HttpServletResponse response, @RequestBody @Valid List<OverviewCompareProductCom> overviewCompareProductComs) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -290,7 +317,9 @@ public class ExportController {
      *
      * @param response 返回excel
      */
-    @RequestMapping(value = "/overview/compareProductTotal")
+    @RequestMapping(value = "/overview/compareProductCom")
+    @BizLog(action = "品牌产品互动量趋势对比导出")
+    @ApiOperation(value = "品牌产品互动量趋势对比导出")
     public void compareProductCom(HttpServletResponse response, @RequestBody @Valid List<OverviewCompareProductTotal> overviewCompareProductTotals) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -310,6 +339,8 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/compareProductTotalCom")
+    @BizLog(action = "品牌产品总互动量对比导出")
+    @ApiOperation(value = "品牌产品总互动量对比导出")
     public void compareProductTotalCom(HttpServletResponse response, @RequestBody @Valid List<OverviewCompareProductTotalCom> overviewCompareProductTotalComs) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
@@ -322,142 +353,4 @@ public class ExportController {
             log.error("导出失败，异常信息为：", e);
         }
     }
-
-    /**
-     * 导出声量来源
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/overview/exportVoiceResource")
-    public void exportVoiceResource(HttpServletResponse response, @RequestBody @Valid List<OverviewArticleResourceExcel> overviewArticleResourceExcelList) {
-        try {
-            final ServletOutputStream outputStream = response.getOutputStream();
-            String[] headers = ExportService.getExportVoiceResource();
-//            ExcelUtils.exportExcel("name",headers,overviewArticleResourceExcelList,outputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 声量来源分析
-     * TODO
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/overview/exportVoiceResourceAnalysis")
-    public void exportVoiceResourceAnalysis(HttpServletResponse response) {
-
-    }
-
-    /**
-     * 内容高频词  TODO  我自己生成
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/contentHighLevel")
-    public void contentHighLevel(HttpServletResponse response, @RequestBody EmotionAggVO emotionAggVO) {
-
-
-    }
-    // 概览页 ==================== end
-
-    // ================= 内容分析 start
-
-    /**
-     * 情感度占比
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/contain/emotionCompare")
-    public void emotionCompare(HttpServletResponse response, @RequestBody List<ContainEmotionPercentExcel> containEmotionPercentExcelList) {
-        try {
-            final ServletOutputStream outputStream = response.getOutputStream();
-            String[] headers = ExportService.getContainEmotionPercentExcelList();
-//            ExcelUtils.exportExcel("name",headers,containEmotionPercentExcelList,outputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 情感度趋势
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/contain/emotionTrend")
-    public void emotionTrend(HttpServletResponse response) {
-        try {
-            final ServletOutputStream outputStream = response.getOutputStream();
-            String[] headers = ExportService.getContainEmotionPercentExcelList();
-//            ExcelUtils.exportExcel("name",headers,containEmotionPercentExcelList,outputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 行业话题对比
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/contain/topicCompare")
-    public void topicCompare(HttpServletResponse response) {
-
-    }
-
-    /**
-     * 行业话题趋势
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/contain/topicTrend")
-    public void topicTrend(HttpServletResponse response) {
-
-    }
-    // ================= 内容分析 end
-
-    //  ================ 品牌/产品对标 start
-
-    /**
-     * 品牌/产品总声量对比
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/compare/totalArticle")
-    public void totalArticle(HttpServletResponse response) {
-
-    }
-
-    /**
-     * 品牌/产品声量趋势对比
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/compare/totalArticleTrend")
-    public void totalArticleTrend(HttpServletResponse response) {
-
-    }
-
-    /**
-     * 品牌/产品总互动量对比
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/compare/total")
-    public void total(HttpServletResponse response) {
-
-    }
-
-    /**
-     * 行业话题趋势
-     *
-     * @param response 返回excel
-     */
-    @RequestMapping(value = "/compare/totalTrend")
-    public void totalTrend(HttpServletResponse response) {
-
-    }
-
-    //  ================ 品牌/产品对标 end
 }

@@ -1,6 +1,7 @@
 package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.search.annotation.BizLog;
 import com.search.annotation.NoNeedLogin;
 import com.search.biz.SelectValueService;
 import com.search.common.controller.BaseController;
@@ -44,9 +45,6 @@ public class SysArticleController extends BaseController {
     @Resource
     private SelectValueService selectValueService;
 
-    @Resource
-    private ElasticsearchUtils elasticsearchUtils;
-
     /**
      * 根据id查询sys_article信息
      */
@@ -54,6 +52,7 @@ public class SysArticleController extends BaseController {
     @ApiOperation("根据id查询sys_article信息")
     @ApiImplicitParams(
             @ApiImplicitParam(name = "id", value = "sys_article的id", dataType = "Integer", paramType = "Integer"))
+    @BizLog(action = "根据id查询sys_article信息")
     public R selectSysArticleById(@PathVariable(value = "id") @Valid Integer id) {
         log.info("根据id查询sys_article信息id={}", id);
         SysArticleEntity sysArticleEntity = iSysArticleService.selectSysArticleById(id);
@@ -67,6 +66,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/selectSysArticleList")
     @ApiOperation("sys_article信息查询(多条记录)")
+    @BizLog(action = "sys_article信息查询(多条记录)")
     public R selectSysArticleList(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("查询sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         List<SysArticleEntity> sysArticleEntities = iSysArticleService.selectSysArticleList(sysArticleEntity);
@@ -80,6 +80,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/selectSysArticleSingleton")
     @ApiOperation("sys_article信息查询(单条记录)")
+    @BizLog(action = "sys_article信息查询(单条记录)")
     public R selectSysArticleSingleton(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("单条记录查询sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         SysArticleEntity result = iSysArticleService.selectSysArticleOne(sysArticleEntity);
@@ -91,6 +92,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/addSysArticle")
     @ApiOperation("新增sys_article信息")
+    @BizLog(action = "新增sys_article信息")
     public R addSysArticle(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("新增sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         int result = iSysArticleService.insertSysArticle(sysArticleEntity);
@@ -102,6 +104,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/batchAddSysArticle")
     @ApiOperation("批量新增sys_article信息")
+    @BizLog(action = "批量新增sys_article信息")
     public R batchAddSysArticle(@RequestBody @Valid List<SysArticleEntity> sysArticleEntityList) {
         if (CollectionUtils.isEmpty(sysArticleEntityList)) {
             log.error("入参有误sysArticleEntityList={}", JSONObject.toJSON(sysArticleEntityList));
@@ -118,6 +121,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/updateSysArticle")
     @ApiOperation("修改sys_article")
+    @BizLog(action = "修改sys_article")
     public R updateSysArticle(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("修改sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         int result = iSysArticleService.updateSysArticle(sysArticleEntity);
@@ -129,6 +133,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/batchUpdateSysArticle")
     @ApiOperation("批量修改sys_article")
+    @BizLog(action = "批量修改sys_article")
     public R batchUpdateSysArticle(@RequestBody @Valid List<SysArticleEntity> sysArticleEntityList) {
         if (CollectionUtils.isEmpty(sysArticleEntityList)) {
             log.error("根据id批量更新sys_article入参有误sysArticleEntityList={}", JSONObject.toJSON(sysArticleEntityList));
@@ -143,33 +148,12 @@ public class SysArticleController extends BaseController {
         return result == 1 ? R.ok() : R.error("修改sys_article信息失败");
     }
 
-//    /**
-//     * 声量趋势(总声量)
-//     */
-//    @PostMapping("/sumVoiceTrendcy")
-//    @ApiOperation("声量趋势(总声量)")
-//    public R sumVoiceTrendcy() {
-//        log.info("声量趋势(总声量)查询");
-//        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
-//        return R.ok(sumVoiceResps);
-//    }
-//
-//    /**
-//     * 声量趋势(日均值)
-//     */
-//    @PostMapping("/avgVoiceTrendcy")
-//    @ApiOperation("声量趋势(日均值)")
-//    public R avgVoiceTrendcy() {
-//        log.info("声量趋势(日均值)查询");
-//        String avg = iSysArticleService.avgVoiceTrendcy();
-//        return R.ok(avg);
-//    }
-
     /**
      * 声音来源统计
      */
     @PostMapping("/statisticsVoice")
     @ApiOperation("声音来源统计")
+    @BizLog(action = "声音来源统计")
     public R statisticsVoice() {
         log.info("声音来源统计查询");
         List<StatisticsResp> statisticsResps = iSysArticleService.statisticsVoice();
@@ -201,7 +185,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/originVoice")
     @ApiOperation("声音来源分析")
-    @NoNeedLogin
+    @BizLog(action = "声音来源分析")
     public R originVoice() {
         log.info("声音来源分析");
         try {

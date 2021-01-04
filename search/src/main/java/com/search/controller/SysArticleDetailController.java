@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @Api(value = "sys_article_detail控制层", tags = "标题详情接口")
 @Slf4j
 @RequestMapping("/sysArticleDetail")
+@Deprecated
 public class SysArticleDetailController {
 
     @Resource

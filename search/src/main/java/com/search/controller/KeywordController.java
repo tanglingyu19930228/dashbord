@@ -1,8 +1,11 @@
 package com.search.controller;
 
+import com.search.annotation.BizLog;
 import com.search.common.utils.R;
 import com.search.dao.SysKeyDao;
 import com.search.entity.SysKeyEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +20,15 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/keyword")
 @Slf4j
+@Api(value = "KeywordController", tags = "KeywordController控制层")
 public class KeywordController {
 
     @Autowired
     SysKeyDao sysKeyDao;
 
     @PostMapping(value = "/getDataByKeyword")
-    @ResponseBody
+    @BizLog(action = "getDataByKeyword")
+    @ApiOperation(value = "getDataByKeyword")
     public R getDataByKeyword(@RequestBody SysKeyEntity sysKeyEntity){
         try {
             if(Objects.isNull(sysKeyEntity)||sysKeyEntity.getKeyType() ==0){

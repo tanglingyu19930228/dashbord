@@ -42,33 +42,33 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        if(handler instanceof HandlerMethod){
-//            Method targetMethod = ((HandlerMethod) handler).getMethod();
-//            //不需要登录的不校验权限
-//            if (targetMethod.getAnnotation(NoNeedLogin.class) != null || targetMethod.getDeclaringClass().getAnnotation(NoNeedLogin.class) != null) {
-//                return true;
-//            }
-//
-//            final Object token = request.getHeader("token");
-//            if(Objects.isNull(token)){
-//                BusinessResponse wr = new BusinessResponse();
-//                wr.setCode(BusinessResponseEnum.NON_LOGIN.getCode());
-//                wr.setMsg(BusinessResponseEnum.NON_LOGIN.getMsg());
-//                response.setStatus(200);
-//                response.setHeader("Content-Type", "application/json;charset=UTF-8");
-//                response.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
-//                response.getOutputStream().flush();
-//                return false;
-//            }
-//            final ConcurrentMap<String, Object> stringObjectConcurrentMap = GuavaCacheUtils.cache.asMap();
-//            for (Map.Entry<String, Object> entry:stringObjectConcurrentMap.entrySet()) {
-//                String s = "LOGIN_TOKEN_"+token.toString();
-//                if(s.equals(entry.getKey())){
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }
+        if (handler instanceof HandlerMethod) {
+            Method targetMethod = ((HandlerMethod) handler).getMethod();
+            //不需要登录的不校验权限
+            if (targetMethod.getAnnotation(NoNeedLogin.class) != null || targetMethod.getDeclaringClass().getAnnotation(NoNeedLogin.class) != null) {
+                return true;
+            }
+
+            final Object token = request.getHeader("token");
+            if (Objects.isNull(token)) {
+                BusinessResponse wr = new BusinessResponse();
+                wr.setCode(BusinessResponseEnum.NON_LOGIN.getCode());
+                wr.setMsg(BusinessResponseEnum.NON_LOGIN.getMsg());
+                response.setStatus(200);
+                response.setHeader("Content-Type", "application/json;charset=UTF-8");
+                response.getOutputStream().write(JSONObject.toJSONString(wr).getBytes(StandardCharsets.UTF_8));
+                response.getOutputStream().flush();
+                return false;
+            }
+            final ConcurrentMap<String, Object> stringObjectConcurrentMap = GuavaCacheUtils.cache.asMap();
+            for (Map.Entry<String, Object> entry : stringObjectConcurrentMap.entrySet()) {
+                String s = "LOGIN_TOKEN_" + token.toString();
+                if (s.equals(entry.getKey())) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return true;
     }
 

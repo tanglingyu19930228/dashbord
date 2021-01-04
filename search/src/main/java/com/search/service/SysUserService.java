@@ -1,7 +1,7 @@
 package com.search.service;
 
 import com.github.pagehelper.PageInfo;
-import com.search.common.page.PageDomain;
+import com.search.entity.BizLogDto;
 import com.search.common.utils.R;
 import com.search.entity.RoleQueryReq;
 import com.search.entity.UserQueryReq;
@@ -36,5 +36,7 @@ public interface SysUserService  {
     R resetPassword(SysUserEntity sysUserEntity, HttpServletResponse response);
 
     R logout(HttpServletRequest request);
+
+    void addUserOperationLog(BizLogDto operationLogDto);
 }
 

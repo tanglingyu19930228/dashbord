@@ -18,20 +18,22 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
+ *
  */
 public class ExcelUtils {
     private static final Logger log = LoggerFactory.getLogger(ExcelUtils.class);
 
     public static List<List<String>> importXls(String xlsFilePath) {
-        return importXls(xlsFilePath,0);
+        return importXls(xlsFilePath, 0);
     }
+
     /**
      * 导入excel
      *
      * @param xlsFilePath
      * @return
      */
-    public static List<List<String>> importXls(String xlsFilePath,int sheetIndex) {
+    public static List<List<String>> importXls(String xlsFilePath, int sheetIndex) {
         File file = new File(xlsFilePath);
 
         if (file == null || !file.exists()) {
@@ -39,7 +41,7 @@ public class ExcelUtils {
         }
         try {
             InputStream in = new FileInputStream(file);
-            return ExcelUtils.importXls(in,sheetIndex);
+            return ExcelUtils.importXls(in, sheetIndex);
         } catch (Exception e) {
             log.error("importXls exception.", e);
         }
@@ -47,10 +49,11 @@ public class ExcelUtils {
     }
 
     public static List<List<String>> importXls(InputStream inputStream) {
-        return importXls(inputStream,0);
+        return importXls(inputStream, 0);
     }
+
     @SuppressWarnings("resource")
-    public static List<List<String>> importXls(InputStream inputStream,int sheetIndex) {
+    public static List<List<String>> importXls(InputStream inputStream, int sheetIndex) {
         List<List<String>> resultList = null;
         Workbook hssfWorkbook = null;
         if (inputStream == null) {
@@ -59,7 +62,7 @@ public class ExcelUtils {
         try {
             hssfWorkbook = WorkbookFactory.create(inputStream);
             resultList = new ArrayList<List<String>>();
-            for (int numSheet = sheetIndex; numSheet < (sheetIndex+1); numSheet++) {
+            for (int numSheet = sheetIndex; numSheet < (sheetIndex + 1); numSheet++) {
                 Sheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
                 if (hssfSheet == null) {
                     continue;
@@ -144,34 +147,26 @@ public class ExcelUtils {
     }
 
 
-    public static void exportXSS(List<List<String>>  dataList, String filePath) {
-        try {
-            FileOutputStream out = new FileOutputStream(filePath);
-            XSSFWorkbook wb = new XSSFWorkbook ();
-            XSSFCellStyle setBorder = wb.createCellStyle();
+    public static void exportXSS(List<List<String>> dataList, String filePath) {
+        try (XSSFWorkbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(filePath)) {
+//            XSSFCellStyle setBorder = wb.createCellStyle();
             XSSFSheet sheet1 = wb.createSheet("sheet1");
 
-
-            for(int i=0; i< dataList.size();i++){
-                XSSFRow row=sheet1.createRow(i);
-                for(int j=0;j<dataList.get(i).size();j++){
-                    XSSFCell cell =row.createCell(j);
-                    String  str =dataList.get(i).get(j);
-                    if(StringUtils.isBlank(str)) {
+            for (int i = 0; i < dataList.size(); i++) {
+                XSSFRow row = sheet1.createRow(i);
+                for (int j = 0; j < dataList.get(i).size(); j++) {
+                    XSSFCell cell = row.createCell(j);
+                    String str = dataList.get(i).get(j);
+                    if (StringUtils.isBlank(str)) {
                         str = "";
                     }
                     cell.setCellValue(str);
-
                 }
-
             }
-
             wb.write(out);
             out.flush();
-            out.close();
         } catch (Exception e) {
             log.error("exprot Xls exception.", e);
         }
     }
-
 }
