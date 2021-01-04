@@ -1,6 +1,7 @@
 package com.search.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.cache.CacheLoader;
 import com.search.dao.BizLogContext;
 import com.search.entity.BizLogDto;
 import com.search.common.domain.BusinessResponse;
@@ -66,13 +67,20 @@ public class WebFilter implements Filter {
                     //ThreadLocal设置操作日志上下文
                     if (Objects.nonNull(sysUserEntity)) {
                         setBizLogEnv(sysUserEntity, request);
+                    } else {
+                        //正常情况是走不到这里的--resolveLoginUser会抛出异常--逻辑严谨性login_token不对
+                        return;
                     }
                 }
             }
         } catch (Exception e) {
             BusinessResponse wr = new BusinessResponse();
             wr.setCode(BusinessResponseEnum.SYSTEM_ERROR.getCode());
-            wr.setMsg(e.getMessage());
+            if (e instanceof CacheLoader.InvalidCacheLoadException) {
+                wr.setMsg("登录token不对");
+            } else {
+                wr.setMsg(e.getMessage());
+            }
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setStatus(200);
             httpServletResponse.setHeader("Content-Type", "application/json;charset=UTF-8");

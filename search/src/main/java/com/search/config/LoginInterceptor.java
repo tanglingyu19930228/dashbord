@@ -2,6 +2,7 @@ package com.search.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ForwardingListeningExecutorService;
+import com.search.annotation.LoginConditionAnnotation;
 import com.search.annotation.NoNeedLogin;
 import com.search.common.domain.BusinessException;
 import com.search.common.domain.BusinessResponse;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author tanglingyu
  */
 @Component
+@LoginConditionAnnotation
 public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements HandlerInterceptor {
 
     /**

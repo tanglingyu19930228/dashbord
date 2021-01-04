@@ -248,17 +248,12 @@ public class SysUserServiceImpl implements SysUserService {
     public SysUserEntity resolveUserByToken(String loginToken) throws Exception {
         log.info("没有命中缓存...loginToken={}", loginToken);
         //看缓存是否有
-        try {
-            Object result = GuavaCacheUtils.cache.get(loginToken);
-            if (result == null) {
-                return null;
-            } else {
-                SysUserEntity sysUserEntity = JSON.parseObject(JSON.toJSONString(result), SysUserEntity.class);
-                return sysUserEntity;
-            }
-        } catch (Exception e) {
-            log.error("异常{}", e);
-            throw e;
+        Object result = GuavaCacheUtils.cache.get(loginToken);
+        if (result == null) {
+            return null;
+        } else {
+            SysUserEntity sysUserEntity = JSON.parseObject(JSON.toJSONString(result), SysUserEntity.class);
+            return sysUserEntity;
         }
     }
 

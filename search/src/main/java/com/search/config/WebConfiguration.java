@@ -1,5 +1,6 @@
 package com.search.config;
 
+import com.search.annotation.LoginConditionAnnotation;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import java.util.function.Supplier;
  * @author tanglingyu
  */
 @Configuration
+@LoginConditionAnnotation
 public class WebConfiguration {
 
     @Bean

@@ -64,3 +64,5 @@ logging:
   level:
     com.search: debug # 开发环境调试
     com.baomidou: debug # 开发环境调试
+#是否开启登录校验
+checkLogin: true
