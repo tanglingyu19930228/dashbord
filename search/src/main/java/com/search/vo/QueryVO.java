@@ -35,6 +35,8 @@ public class QueryVO {
 
     private Integer pageNumber;
 
+    private Integer mediaType;
+
     /**
      * 0:按照 时间查询
      * 1：按照 声量排序；
@@ -42,5 +44,7 @@ public class QueryVO {
     private Integer orderBy;
 
     private List<Integer> titleIds;
+
+    private Boolean bannerUse;
 
 }

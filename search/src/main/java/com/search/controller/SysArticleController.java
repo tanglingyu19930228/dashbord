@@ -10,6 +10,7 @@ import com.search.entity.StatisticsResp;
 import com.search.entity.SysArticleEntity;
 import com.search.service.ISysArticleService;
 import com.search.sync.ElasticsearchUtils;
+import com.search.vo.QueryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -143,28 +144,6 @@ public class SysArticleController extends BaseController {
         return result == 1 ? R.ok() : R.error("修改sys_article信息失败");
     }
 
-//    /**
-//     * 声量趋势(总声量)
-//     */
-//    @PostMapping("/sumVoiceTrendcy")
-//    @ApiOperation("声量趋势(总声量)")
-//    public R sumVoiceTrendcy() {
-//        log.info("声量趋势(总声量)查询");
-//        List<SumVoiceResp> sumVoiceResps = iSysArticleService.sumVoiceTrendcy();
-//        return R.ok(sumVoiceResps);
-//    }
-//
-//    /**
-//     * 声量趋势(日均值)
-//     */
-//    @PostMapping("/avgVoiceTrendcy")
-//    @ApiOperation("声量趋势(日均值)")
-//    public R avgVoiceTrendcy() {
-//        log.info("声量趋势(日均值)查询");
-//        String avg = iSysArticleService.avgVoiceTrendcy();
-//        return R.ok(avg);
-//    }
-
     /**
      * 声音来源统计
      */
@@ -172,28 +151,28 @@ public class SysArticleController extends BaseController {
     @ApiOperation("声音来源统计")
     public R statisticsVoice() {
         log.info("声音来源统计查询");
-        List<StatisticsResp> statisticsResps = iSysArticleService.statisticsVoice();
+        List<StatisticsResp> statisticsResp = iSysArticleService.statisticsVoice();
         Long total = iSysArticleService.totalVoice();
         Map<Integer, Object[]> map = new HashMap<>();
-        for (int i = 0; i < statisticsResps.size(); ++i) {
-            if (i != statisticsResps.size() - 1) {
+        for (int i = 0; i < statisticsResp.size(); ++i) {
+            if (i != statisticsResp.size() - 1) {
                 Object[] obj = new Object[2];
-                obj[0] = statisticsResps.get(i).getTotal();
+                obj[0] = statisticsResp.get(i).getTotal();
                 obj[1] = BigDecimalUtils.divRound2(obj[0], total, 2);
-                map.put(statisticsResps.get(i).getMediaType(), obj);
+                map.put(statisticsResp.get(i).getMediaType(), obj);
             } else {
                 Object[] obj = new Object[2];
-                obj[0] = statisticsResps.get(i).getTotal();
+                obj[0] = statisticsResp.get(i).getTotal();
                 BigDecimal bigDecimal = new BigDecimal("0.00");
                 map.entrySet().forEach(entry -> {
                     BigDecimal b = new BigDecimal((String) entry.getValue()[1]);
                     bigDecimal.add(b);
                 });
                 obj[1] = new BigDecimal("1.00").subtract(bigDecimal).toPlainString();
-                map.put(statisticsResps.get(i).getMediaType(), obj);
+                map.put(statisticsResp.get(i).getMediaType(), obj);
             }
         }
-        return R.ok(statisticsResps);
+        return R.ok(statisticsResp);
     }
 
     /**
@@ -202,15 +181,8 @@ public class SysArticleController extends BaseController {
     @PostMapping("/originVoice")
     @ApiOperation("声音来源分析")
     @NoNeedLogin
-    public R originVoice() {
-        log.info("声音来源分析");
-        try {
-            R r = selectValueService.originVoice();
-            return r;
-        } catch (Exception e) {
-            log.error("服务器异常{}", e);
-        }
-        return R.error("服务器异常");
+    public R originVoice(@RequestBody QueryVO queryVO) {
+       return elasticsearchUtils.doOriginVoiceQuery(queryVO,"newindex8");
     }
 }
 

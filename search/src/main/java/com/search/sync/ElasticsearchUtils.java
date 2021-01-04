@@ -1,16 +1,15 @@
 package com.search.sync;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.clone.CloneSupport;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.search.biz.OriginVoiceParseService;
 import com.search.biz.SelectValueService;
-import com.search.common.domain.BusinessException;
+import com.search.common.utils.BigDecimalUtils;
 import com.search.common.utils.R;
 import com.search.entity.SysArticleEntity;
 import com.search.vo.QueryVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.CloneUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -23,15 +22,20 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filter.ParsedFilter;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.ParsedStats;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -53,6 +57,9 @@ public class ElasticsearchUtils {
 
     @Autowired
     SelectValueService selectValueService;
+
+    @Autowired
+    OriginVoiceParseService originVoiceParseService;
 
     @Autowired
     ParseResultService parseResultService;
@@ -171,7 +178,6 @@ public class ElasticsearchUtils {
         try {
 
             final BoolQueryBuilder boolQueryBuilder = buildMustFilterQuery(queryVO);
-
             SearchSourceBuilder sourceBuilder = this.aggRouter(queryVO,boolQueryBuilder);
             if(Objects.isNull(sourceBuilder)){
                 return R.error("构建查询失败");
@@ -307,7 +313,11 @@ public class ElasticsearchUtils {
     public BoolQueryBuilder buildMustFilterQuery(QueryVO queryVO){
         log.info("构建查询过滤器，原始数据为：{}",JSON.toJSONString(queryVO));
         final BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        boolQuery.must(QueryBuilders.termQuery("titleId",queryVO.getTitleId()));
+        if(Objects.nonNull(queryVO.getBannerUse())&&queryVO.getBannerUse()){
+            log.info("banner 对比不用此字段过滤");
+        }else{
+            boolQuery.must(QueryBuilders.termQuery("titleId",queryVO.getTitleId()));
+        }
         if(Objects.nonNull(queryVO.getStartDate())&&Objects.nonNull(queryVO.getEndDate())){
             boolQuery.must(QueryBuilders.rangeQuery("insertTime").gte(queryVO.getStartDate().getTime()).lte(queryVO.getEndDate().getTime()));
         }
@@ -374,69 +384,156 @@ public class ElasticsearchUtils {
         return boolQuery;
     }
 
+    public R doOriginVoiceQuery(QueryVO queryVO,String indexName) {
+        R simpleCheck = simpleCheck(queryVO);
+        if(!simpleCheck.isSuccess()){
+            return simpleCheck;
+        }
+        if(queryVO.getMediaType() == null){
+            return R.error("需要传入声量来源分析具体的媒体类型");
+        }
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices(indexName);
+        try {
 
+            final BoolQueryBuilder boolQueryBuilder = buildMustFilterQuery(queryVO);
+            boolQueryBuilder.must(QueryBuilders.termQuery("mediaType",queryVO.getMediaType()));
+            SearchSourceBuilder sourceBuilder = this.buildOriginQuery(queryVO,boolQueryBuilder);
+            searchRequest.source(sourceBuilder);
+            log.info("sourceBuilder======="+sourceBuilder);
+            log.info("boolQueryBuilder====="+sourceBuilder);
+            SearchResponse search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            JSONObject obj = originVoiceParseService.parseElasticsearchResponse(search,queryVO);
+            return R.ok(obj);
+        } catch (Exception e) {
+            JSONObject object = new JSONObject();
+            object.put("error",indexName);
+            object.put("msg","查询异常");
+            object.put("request",JSON.toJSONString(queryVO));
+            final R error = R.error();
+            error.setData(object);
+            return error;
+        }
+    }
 
-    /**
-     * {
-     * 	"aggs": {
-     * 		"messages": {
-     * 			"filter": {
-     * 				"bool": {
-     * 					"must": [
-     * 				    	{"term": {"contentId": "1" }},
-     * 						{"term": {"emotionType": "2"}},
-     * 						{"match": {"content": "的"}}
-     * 					],
-     * 					"must_not": [
-     * 				    	{"match": {"content": "是"}}
-     * 				    ]
-     * 				}
-     * 			},
-     * 			"aggs": {
-     * 				"articles_over_time": {
-     * 					"date_histogram": {
-     * 						"field": "insertTime",
-     * 						"calendar_interval": "1d"
-     * 					},
-     * 					"aggs": {
-     * 						"mediaTypes": {
-     * 							"terms": {
-     * 								"field": "mediaType"
-     * 							},
-     * 							"aggs": {
-     * 								"publisherLinkNum": {
-     * 									"stats": {
-     * 										"field": "publisherLinkNum"*
-     * 									}
-     * 								},
-     * 								"publisherPv": {
-     * 									"stats": {
-     * 										"field": "publisherPv"
-     * 									}
-     * 								},
-     * 								"publisherCommentNum": {
-     * 									"stats": {
-     * 										"field": "publisherCommentNum"
-     * 									}
-     * 								},
-     * 								"publisherCollectionNum": {
-     * 									"stats": {
-     * 										"field": "publisherCollectionNum"
-     * 									}
-     * 								},
-     * 								"publisherRepostNum": {
-     * 									"stats": {
-     * 										"field": "publisherRepostNum"
-     * 									}
-     * 								}
-     *                           }*
-     *                      }
-     * 					}
-     * 				}
-     *        }
-     * 		}
-     * 	}
-     * }
-     */
+    private SearchSourceBuilder buildOriginQuery(QueryVO queryVO, BoolQueryBuilder boolQueryBuilder) {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        final FilterAggregationBuilder aggregationBuilder = AggregationBuilders.filter("boolFilter", boolQueryBuilder);
+
+        TermsAggregationBuilder terms = AggregationBuilders.terms("publisherSiteName").field("publisherSiteName");
+
+        AggregationBuilder publisherRepostNumStatAgg = AggregationBuilders.stats("publisherRepostNum").field("publisherRepostNum");
+        AggregationBuilder publisherLinkNumStatAgg = AggregationBuilders.stats("publisherLinkNum").field("publisherLinkNum");
+        AggregationBuilder publisherPvStatAgg = AggregationBuilders.stats("publisherPv").field("publisherPv");
+        AggregationBuilder publisherCommentNumStatAgg = AggregationBuilders.stats("publisherCommentNum").field("publisherCommentNum");
+        AggregationBuilder publisherCollectionNumStatAgg = AggregationBuilders.stats("publisherCollectionNum").field("publisherCollectionNum");
+        terms.subAggregation(publisherRepostNumStatAgg);
+        terms.subAggregation(publisherLinkNumStatAgg);
+        terms.subAggregation(publisherPvStatAgg);
+        terms.subAggregation(publisherCommentNumStatAgg);
+        terms.subAggregation(publisherCollectionNumStatAgg);
+
+        TermsAggregationBuilder field = AggregationBuilders.terms("publisher").field("publisher");
+        field.subAggregation(publisherRepostNumStatAgg);
+        field.subAggregation(publisherLinkNumStatAgg);
+        field.subAggregation(publisherPvStatAgg);
+        field.subAggregation(publisherCommentNumStatAgg);
+        field.subAggregation(publisherCollectionNumStatAgg);
+        final TermsAggregationBuilder publisherUrlAgg = AggregationBuilders.terms("publisherUrl").field("publisherUrl").size(1);
+        field.subAggregation(publisherUrlAgg);
+
+        aggregationBuilder.subAggregation(terms);
+        aggregationBuilder.subAggregation(field);
+
+        sourceBuilder.aggregation(aggregationBuilder);
+        return sourceBuilder;
+    }
+
+    public R getBannerCompareData(QueryVO queryVO,String indexName){
+        JSONObject object = new JSONObject();
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices(indexName);
+        try {
+            final SearchSourceBuilder searchSourceBuilder = buildBannerCompareQuery(queryVO);
+            searchRequest.source(searchSourceBuilder);
+            final SearchResponse search = this.restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            if(search.status() != RestStatus.OK){
+                return R.error("查询失败");
+            }
+            Map<String, Aggregation> aggregations = search.getAggregations().asMap();
+            ParsedFilter parsedFilter = (ParsedFilter) aggregations.get("boolFilter");
+            if(Objects.isNull(parsedFilter)){
+                return  R.error("查询失败");
+            }
+            Map<String, Aggregation> filtered = parsedFilter.getAggregations().asMap();
+            if(Objects.isNull(filtered)){
+                return  R.error("查询失败");
+            }
+            ParsedStringTerms publisherSiteNameTerms = (ParsedStringTerms)filtered.get("titleId");
+            final List<? extends Terms.Bucket> buckets = publisherSiteNameTerms.getBuckets();
+            // 当前的titleid
+            final Integer titleId = queryVO.getTitleId();
+            // 当前id 文章数
+            long curTitleIdCount = 0L;
+            // 所有文章总数
+            long totalCount = 0L;
+            // 总声量
+            String totalSumAll = "0";
+            // 当前总声量
+            String  curTotalSumAll = "0";
+            // 平均值
+            for (Terms.Bucket bucket : buckets) {
+                if(Integer.parseInt(bucket.getKeyAsString()) == titleId){
+                    curTitleIdCount += bucket.getDocCount();
+                }
+                final Aggregations bucketAggregations = bucket.getAggregations();
+                final List<Aggregation> aggregations1 = bucketAggregations.asList();
+                for (Aggregation aggregation : aggregations1) {
+                    ParsedStats parsedStats = (ParsedStats) aggregation;
+                    final String round = BigDecimalUtils.divRound2(parsedStats.getSum(),1, 0);
+                    totalSumAll = BigDecimalUtils.add(totalSumAll,round);
+                    if(Integer.parseInt(bucket.getKeyAsString()) == titleId){
+                        curTotalSumAll = BigDecimalUtils.add(curTotalSumAll,round);
+                    }
+                }
+                totalCount += bucket.getDocCount();
+            }
+            // 声量平均值
+            final String s = BigDecimalUtils.divRound2(totalCount, buckets.size(), 5);
+            object.put("vsHigh", BigDecimalUtils.divRound2(BigDecimalUtils.reduce(curTitleIdCount,s),s,5));
+            final String s1 = BigDecimalUtils.divRound2(totalSumAll, buckets.size(), 5);
+            // 总互动量环比
+            object.put("xx",BigDecimalUtils.divRound2(BigDecimalUtils.reduce(curTitleIdCount,s1),s1,5));
+            // 上一期环比
+            object.put("xx2",curTotalSumAll);
+            return R.ok(object);
+        }catch (Exception e){
+            log.error("查询环比失败",e);
+            return R.error("查询环比失败");
+        }
+    }
+
+    private  SearchSourceBuilder buildBannerCompareQuery(QueryVO queryVO){
+        queryVO.setBannerUse(true);
+        BoolQueryBuilder boolQueryBuilder = buildMustFilterQuery(queryVO);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        final FilterAggregationBuilder aggregationBuilder = AggregationBuilders.filter("boolFilter", boolQueryBuilder);
+
+        TermsAggregationBuilder terms = AggregationBuilders.terms("titleId").field("titleId");
+        AggregationBuilder publisherRepostNumStatAgg = AggregationBuilders.stats("publisherRepostNum").field("publisherRepostNum");
+        AggregationBuilder publisherLinkNumStatAgg = AggregationBuilders.stats("publisherLinkNum").field("publisherLinkNum");
+        AggregationBuilder publisherPvStatAgg = AggregationBuilders.stats("publisherPv").field("publisherPv");
+        AggregationBuilder publisherCommentNumStatAgg = AggregationBuilders.stats("publisherCommentNum").field("publisherCommentNum");
+        AggregationBuilder publisherCollectionNumStatAgg = AggregationBuilders.stats("publisherCollectionNum").field("publisherCollectionNum");
+        terms.subAggregation(publisherRepostNumStatAgg);
+        terms.subAggregation(publisherLinkNumStatAgg);
+        terms.subAggregation(publisherPvStatAgg);
+        terms.subAggregation(publisherCommentNumStatAgg);
+        terms.subAggregation(publisherCollectionNumStatAgg);
+
+        aggregationBuilder.subAggregation(terms);
+        sourceBuilder.aggregation(aggregationBuilder);
+        return sourceBuilder;
+    }
 
 }

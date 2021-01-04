@@ -1,13 +1,13 @@
 package com.search.controller;
 
 import com.search.biz.ExportService;
+import com.search.common.utils.DateUtils;
 import com.search.common.utils.ExcelUtils;
+import com.search.common.utils.R;
 import com.search.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.IOUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -59,7 +59,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportWeiBoHeaders(overviewWeiBoAnalyses);
-            String filePath = "D:/siteName.xls";
+            String filePath = "D:/weiBoExport.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声音来源分析(微博).xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -78,7 +78,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportHighWordHeaders(overviewContentHighWords);
-            String filePath = "D:/siteName.xls";
+            String filePath = "D:/contentHighWordExport.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("内容高频词.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -97,7 +97,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportNewOriginHeaders(overviewNewsOrigins);
-            String filePath = "D:/siteName.xls";
+            String filePath = "D:/newsOriginExport.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声量来源分析(新闻).xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -112,13 +112,28 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/wsOriginExport")
-    public void wsOriginExport(HttpServletResponse response, @RequestBody @Valid List<OverviewWsOrigin> overviewWsOrigins) {
+    @ResponseBody
+    public R wsOriginExport(HttpServletResponse response, @RequestBody @Valid List<OverviewWsOrigin> overviewWsOrigins) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportWsOriginHeaders(overviewWsOrigins);
-            String filePath = "D:/siteName.xls";
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声量来源分析(微信).xls", "UTF-8"));
+            String filePath = "D:/wsOriginExport.xls";
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
+            IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
+            return R.ok(filePath);
+        } catch (Exception e) {
+            log.error("导出失败，异常信息为：", e);
+            return R.error("服务器异常");
+        }
+    }
+
+    @RequestMapping(value = "/overview/wsOriginExportGet")
+    @ResponseBody
+    public void wsOriginExportGet(HttpServletResponse response,@RequestParam("filePath") String filePath) {
+        try {
+            final ServletOutputStream outputStream = response.getOutputStream();
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声量来源分析(微信).xls", "UTF-8"));
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
         } catch (Exception e) {
             log.error("导出失败，异常信息为：", e);
@@ -132,13 +147,26 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/voiceOrigin")
-    public void voiceOrigin(HttpServletResponse response, @RequestBody @Valid List<OverviewVoiceOrigin> overviewVoiceOrigins) {
+    @ResponseBody
+    public R voiceOrigin(HttpServletResponse response, @RequestBody @Valid List<OverviewVoiceOrigin> overviewVoiceOrigins) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportVoiceOriginHeaders(overviewVoiceOrigins);
-            String filePath = "D:/siteName.xls";
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(" 声量来源.xls", "UTF-8"));
+            String filePath = "D:/voiceOrigin"+DateUtils.getNowDate()+".xls";
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
+            IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
+            return R.ok(filePath);
+        } catch (Exception e) {
+            log.error("导出失败，异常信息为：", e);
+            return R.error("服务器异常");
+        }
+    }
+    @RequestMapping(value = "/overview/voiceOriginGet")
+    public void voiceOriginGet(HttpServletResponse response,@RequestParam("filePath") String filePath) {
+        try {
+            final ServletOutputStream outputStream = response.getOutputStream();
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声量来源.xls", "UTF-8"));
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
         } catch (Exception e) {
             log.error("导出失败，异常信息为：", e);
@@ -151,13 +179,26 @@ public class ExportController {
      * @param response 返回excel
      */
     @RequestMapping(value = "/overview/exportVoiceTrend")
-    public void exportVoiceTrend(HttpServletResponse response, @RequestBody @Valid List<OverviewArticleTrendExcel> overviewArticleTrendExcels) {
+    @ResponseBody
+    public R exportVoiceTrend(HttpServletResponse response, @RequestBody @Valid List<OverviewArticleTrendExcel> overviewArticleTrendExcels) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportVoiceTrendHeaders(overviewArticleTrendExcels);
-            String filePath = "D:/a.xls";
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声量趋势.xls", "UTF-8"));
+            String filePath = "D:/exportVoiceTrend"+ DateUtils.getNowDate().getTime()+".xls";
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
+            return R.ok(filePath);
+        } catch (Exception e) {
+            log.error("导出失败，异常信息为：", e);
+            return R.error();
+        }
+    }
+
+    @RequestMapping(value = "/overview/exportVoiceTrendGet")
+    public void exportVoiceTrendGet(HttpServletResponse response,@RequestParam("filePath") String filePath) {
+        try {
+            final ServletOutputStream outputStream = response.getOutputStream();
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("声量趋势.xls", "UTF-8"));
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
         } catch (Exception e) {
             log.error("导出失败，异常信息为：", e);
@@ -175,7 +216,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportTopicTrendHeaders(overviewTopicTrencies);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/topicTrendcy.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("行业话题趋势.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -195,7 +236,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportEmmotaionTrendHeaders(overviewEmmotionTrencies);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/emmotionTrendcy.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("情感度趋势.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -215,7 +256,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportEmmotaionPercentHeaders(overviewEmmotionPercents);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/emmotionPercent.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("情感度占比.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -235,7 +276,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportTradePercentHeaders(overviewTradePercents);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/tradePercent.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("行业话题占比.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -255,7 +296,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportCompareProductHeaders(overviewCompareProducts);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/compareProduct.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("品牌产品声量趋势对比.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -275,7 +316,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportCompareProductComHeaders(overviewCompareProductComs);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/compareProductTotal.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("品牌产品总声量对比.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -290,12 +331,12 @@ public class ExportController {
      *
      * @param response 返回excel
      */
-    @RequestMapping(value = "/overview/compareProductTotal")
+    @RequestMapping(value = "/overview/compareProductCom")
     public void compareProductCom(HttpServletResponse response, @RequestBody @Valid List<OverviewCompareProductTotal> overviewCompareProductTotals) {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportCompareProductTotalHeaders(overviewCompareProductTotals);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/compareProductTotal.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("品牌产品互动量趋势对比.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);
@@ -314,7 +355,7 @@ public class ExportController {
         try {
             final ServletOutputStream outputStream = response.getOutputStream();
             final List<List<String>> exportVoiceTrendHeaders = ExportService.getExportCompareProductTotalComHeaders(overviewCompareProductTotalComs);
-            String filePath = "D:/a.xls";
+            String filePath = "D:/compareProductTotalCom.xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("品牌产品总互动量对比.xls", "UTF-8"));
             ExcelUtils.exportXSS(exportVoiceTrendHeaders, filePath);
             IOUtils.copy(new FileInputStream(new File(filePath)), outputStream);

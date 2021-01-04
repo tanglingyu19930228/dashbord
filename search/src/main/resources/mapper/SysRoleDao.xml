@@ -113,7 +113,6 @@
     <!-- 数据查询 -->
     <select id="selectSysRoleList" parameterType="com.search.entity.SysRoleEntity" resultMap="sysRoleEntityResult">
         select <include refid="baseColumns"/> from sys_role where 1=1 <include refid="baseWhere"/>
-        order by  id desc
     </select>
     <!-- 单个数据查询 -->
     <select id="selectSysRoleOne" parameterType="com.search.entity.SysRoleEntity" resultMap="sysRoleEntityResult">

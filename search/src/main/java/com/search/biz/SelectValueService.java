@@ -12,6 +12,7 @@ import com.search.service.ISysEmotionTypeService;
 import com.search.service.ISysMediaTypeService;
 import com.search.service.ISysTopicService;
 import com.search.service.impl.SysArticleServiceImpl;
+import com.search.sync.ElasticsearchUtils;
 import com.search.vo.QueryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -68,6 +69,9 @@ public class SelectValueService {
     @Autowired
     RestHighLevelClient restHighLevelClient;
 
+    @Autowired
+    ElasticsearchUtils elasticsearchUtils;
+
     public R getSelectValue() {
         try {
             return R.ok(getStaticMap());
@@ -109,7 +113,7 @@ public class SelectValueService {
 
 
     public R getOverviewData(QueryVO queryVO) {
-        Map<String, Object> returnMap = new HashMap<>();
+        Map<String, Object> returnMap = new HashMap<>(8);
         List<SumVoiceResp> overviewBanner = getOverviewBanner(queryVO);
         returnMap.put("banner", renderBannerData(overviewBanner));
         returnMap.put("voiceResource", getVoiceResource(overviewBanner));
@@ -119,7 +123,7 @@ public class SelectValueService {
     }
 
     private Map<String, Object> renderBannerData(List<SumVoiceResp> overviewBanner) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(8);
         try {
             final long sum = overviewBanner.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("total", sum);
@@ -131,30 +135,24 @@ public class SelectValueService {
             final List<SumVoiceResp> sumVoiceRespWx = collect.get(0);
             final long sumWx = sumVoiceRespWx.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("wxArticle", sumWx);
-            final long sumWxAll = sumVoiceRespWx.stream().map(item -> {
-                return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
-            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            final long sumWxAll = sumVoiceRespWx.stream().map(item -> item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum()).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("sumWxAll", sumWxAll);
 
             final List<SumVoiceResp> sumVoiceRespNews = collect.get(5);
             final long sumNews = sumVoiceRespNews.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("newsArticle", sumNews);
-            final long sumNewsAll = sumVoiceRespNews.stream().map(item -> {
-                return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
-            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            final long sumNewsAll = sumVoiceRespNews.stream().map(item -> item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum()).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("sumNewsAll", sumNewsAll);
 
             final List<SumVoiceResp> sumVoiceRespWb = collect.get(1);
             final long sumWb = sumVoiceRespWb.stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("wbArticle", sumWb);
-            final long sumWbAll = sumVoiceRespWb.stream().map(item -> {
-                return item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum();
-            }).collect(Collectors.summarizingLong(Long::longValue)).getSum();
+            final long sumWbAll = sumVoiceRespWb.stream().map(item -> item.getLinkNumAll() + item.getPvAll() + item.getCommentAll() + item.getCollectionAll() + item.getRepostNum()).collect(Collectors.summarizingLong(Long::longValue)).getSum();
             map.put("sumWbAll", sumWbAll);
             return map;
         } catch (Exception e) {
             log.error("查询banner 异常", e);
-            return new HashMap<>();
+            return new HashMap<>(8);
         }
     }
 
@@ -173,7 +171,7 @@ public class SelectValueService {
                 Map<String, List<SumVoiceResp>> collect1 = value.stream().collect(Collectors.groupingBy(SumVoiceResp::getSiteName));
                 List<Map<String, Object>> innerList = new ArrayList<>();
                 for (Map.Entry<String, List<SumVoiceResp>> inner : collect1.entrySet()) {
-                    Map<String, Object> te = new HashMap<>();
+                    Map<String, Object> te = new HashMap<>(8);
                     te.put("name", inner.getKey());
                     te.put("size", inner.getValue().stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum());
                     innerList.add(te);
@@ -198,12 +196,12 @@ public class SelectValueService {
                     otherList.addAll(value);
                 }
             }
-            Map<String, Object> otherMap = new HashMap<>();
+            Map<String, Object> otherMap = new HashMap<>(8);
             otherMap.put("otherVoice", totalAll == 0 ? 0 : BigDecimalUtils.divRound2(otherAll, totalAll, 4));
             otherMap.put("otherVoiceNumber", otherAll);
             List<Map<String, Object>> innerList = new ArrayList<>();
             for (Map.Entry<String, List<SumVoiceResp>> inner : otherList.stream().collect(Collectors.groupingBy(SumVoiceResp::getSiteName)).entrySet()) {
-                Map<String, Object> te = new HashMap<>();
+                Map<String, Object> te = new HashMap<>(8);
                 te.put("name", inner.getKey());
                 te.put("size", inner.getValue().stream().map(SumVoiceResp::getTotal).collect(Collectors.summarizingLong(Long::longValue)).getSum());
                 innerList.add(te);
@@ -213,7 +211,7 @@ public class SelectValueService {
             return send;
         } catch (Exception e) {
             log.error("查询第三层时服务器异常", e);
-            return new HashMap<>();
+            return new HashMap<>(8);
         }
     }
 
@@ -243,29 +241,30 @@ public class SelectValueService {
 
     }
 
-    public R originVoice() throws Exception {
-        SearchRequest searchRequest = new SearchRequest("newindex8");
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = new MatchAllQueryBuilder();
-        TermsAggregationBuilder terms = AggregationBuilders.terms("publisherSiteName").field("publisherSiteName");
-        sourceBuilder.aggregation(terms);
-        sourceBuilder.query(queryBuilder);
-        searchRequest.source(sourceBuilder);
-        SearchResponse search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-        Aggregations aggregations = search.getAggregations();
-        Map<String, Aggregation> map = aggregations.asMap();
-        ParsedStringTerms publisherSiteName = (ParsedStringTerms) map.get("publisherSiteName");
-        List<? extends Terms.Bucket> buckets = publisherSiteName.getBuckets();
-
-        Map<String,Long> result=new HashMap<>();
-
-        String[] news=new String[]{"腾讯网","新浪新闻","天天快报app","一点资讯"};
-        String[] weixin=new String[]{"微信"};
-        String[] weibo=new String[]{"新浪微博"};
-        for (Terms.Bucket bu : buckets) {
-            long docCount = bu.getDocCount();
-            Object key = bu.getKey();
-        }
-        return null;
-    }
+//    public R originVoice(QueryVO queryVO){
+//        elasticsearchUtils.doOriginVoiceQuery(queryVO);
+////        SearchRequest searchRequest = new SearchRequest("newindex8");
+////        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+////        QueryBuilder queryBuilder = new MatchAllQueryBuilder();
+////        TermsAggregationBuilder terms = AggregationBuilders.terms("publisherSiteName").field("publisherSiteName");
+////        sourceBuilder.aggregation(terms);
+////        sourceBuilder.query(queryBuilder);
+////        searchRequest.source(sourceBuilder);
+////        SearchResponse search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+////        Aggregations aggregations = search.getAggregations();
+////        Map<String, Aggregation> map = aggregations.asMap();
+////        ParsedStringTerms publisherSiteName = (ParsedStringTerms) map.get("publisherSiteName");
+////        List<? extends Terms.Bucket> buckets = publisherSiteName.getBuckets();
+////
+////        Map<String,Long> result=new HashMap<>();
+////
+////        String[] news=new String[]{"腾讯网","新浪新闻","天天快报app","一点资讯"};
+////        String[] weixin=new String[]{"微信"};
+////        String[] weibo=new String[]{"新浪微博"};
+////        for (Terms.Bucket bu : buckets) {
+////            long docCount = bu.getDocCount();
+////            Object key = bu.getKey();
+////        }
+//        return null;
+//    }
 }

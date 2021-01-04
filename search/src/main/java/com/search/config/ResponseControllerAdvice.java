@@ -14,16 +14,16 @@ import java.lang.reflect.Method;
 /**
  * @author tanglingyu
  */
-@RestControllerAdvice
-public class ResponseControllerAdvice implements ResponseBodyAdvice {
-    @Override
-    public boolean supports(MethodParameter methodParameter, Class aClass) {
-        Method method = methodParameter.getMethod();
-        return method.getAnnotation(ResponseBody.class) != null || method.getDeclaringClass().isAnnotationPresent(RestController.class);
-    }
-
-    @Override
-    public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        return o;
-    }
-}
+//@RestControllerAdvice
+//public class ResponseControllerAdvice implements ResponseBodyAdvice {
+//    @Override
+//    public boolean supports(MethodParameter methodParameter, Class aClass) {
+//        Method method = methodParameter.getMethod();
+//        return method.getAnnotation(ResponseBody.class) != null || method.getDeclaringClass().isAnnotationPresent(RestController.class);
+//    }
+//
+//    @Override
+//    public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+//        return o;
+//    }
+//}

@@ -42,6 +42,18 @@ public class SelectValueController extends BaseController {
 		return elasticsearchUtils.doSingleSearch(queryVO,"newindex8");
 	}
 
+	/**
+	 * 首页环比等
+	 * @param queryVO 查询条件
+	 * @return 返回结果
+	 */
+	@PostMapping("/getBannerCompareData")
+	@ResponseBody
+	public R getBannerCompareData(@RequestBody QueryVO queryVO){
+		return elasticsearchUtils.getBannerCompareData(queryVO,"newindex8");
+	}
+
+
 	@PostMapping("/getArticleShow")
 	@ResponseBody
 	public R getArticleShow(@RequestBody QueryVO queryVO){

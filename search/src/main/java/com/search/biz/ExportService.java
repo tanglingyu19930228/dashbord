@@ -158,7 +158,7 @@ public class ExportService {
         header.add("占比");
         list.add(header);
 
-        overviewVoiceOrigins.stream().forEach(entity -> {
+        overviewVoiceOrigins.forEach(entity -> {
             List<String> values = new ArrayList<>();
             values.add(entity.getDataOrigin());
             values.add(String.valueOf(entity.getTotal()));
