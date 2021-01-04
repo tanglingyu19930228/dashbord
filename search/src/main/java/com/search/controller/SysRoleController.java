@@ -1,6 +1,7 @@
 package com.search.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.search.annotation.BizLog;
 import com.search.biz.RoleService;
 import com.search.common.controller.BaseController;
 import com.search.common.page.PageDomain;
@@ -42,6 +43,7 @@ public class SysRoleController extends BaseController {
 
     @PostMapping(value = "/addUserRole")
     @ApiOperation(value = "增加权限接口", tags = {"增加权限接口"})
+    @BizLog(action = "增加权限接口")
     public R addUserRole(@RequestBody @ApiParam(value = "用户角色实体") RoleVO roleVO){
         if(Objects.isNull(roleVO)){
             return R.error("请求参数为空");
@@ -54,6 +56,7 @@ public class SysRoleController extends BaseController {
 
     @ApiOperation(value = "获取权限类别", tags = {"获取权限类别"})
     @PostMapping(value = "/getRoleList")
+    @BizLog(action = "获取权限类别")
     public R selectRoleList(@RequestBody @ApiParam(value = "用户角色实体") RoleVO roleVO){
         return roleService.selectRoleList(roleVO);
     }
@@ -62,6 +65,8 @@ public class SysRoleController extends BaseController {
      * 角色信息模糊查询
      */
     @PostMapping("/queryRoleByLike")
+    @BizLog(action = "角色信息模糊查询")
+    @ApiOperation(value = "角色信息模糊查询")
     public R queryRoleByLike(@RequestBody @Valid RoleEntity roleEntity) {
         List<RoleEntity> roleEntities = sysRoleService.queryRoleByLike(roleEntity);
         return R.ok(roleEntities);
@@ -71,6 +76,8 @@ public class SysRoleController extends BaseController {
      * 角色信息分页查询
      */
     @PostMapping("/queryRolePage")
+    @BizLog(action = "角色信息分页查询")
+    @ApiOperation(value = "角色信息分页查询")
     public R queryRolePage(@RequestBody @Valid PageDomain pageDomain) {
         PageInfo<RoleEntity> roleEntityPageInfo = sysRoleService.queryRolePage(pageDomain);
         return R.ok(roleEntityPageInfo);
@@ -80,6 +87,8 @@ public class SysRoleController extends BaseController {
      * 更新角色信息
      */
     @PostMapping("/updateRole")
+    @BizLog(action = "更新角色信息")
+    @ApiOperation(value = "更新角色信息")
     public R updateRole(@RequestBody @Valid RoleEntity roleEntity) {
         int result = sysRoleService.updateRole(roleEntity);
         if (result == 1) {
@@ -92,6 +101,8 @@ public class SysRoleController extends BaseController {
      * 批量删除角色
      */
     @PostMapping("/batchDeleteRole")
+    @BizLog(action = " 批量删除角色")
+    @ApiOperation(value = "批量删除角色")
     public R batchDeleteRole(@RequestBody @Valid Integer[] roleIds) {
         int result = sysRoleService.batchDeleteRole(roleIds);
         if (result == roleIds.length) {

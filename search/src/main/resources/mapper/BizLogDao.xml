@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.search.dao.BizLogDao">
+
+    <resultMap type="com.search.entity.BizLogDto" id="baseMap">
+        <result property="id" column="id"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="action" column="action"/>
+        <result property="userName" column="user_name"/>
+        <result property="creatorId" column="creator_id"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+    </resultMap>
+
+    <insert id="addUserOperationLog" parameterType="com.search.entity.BizLogDto">
+        insert into `user_operation_log`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            login_ip,
+            `action`,
+            creator_id,
+            user_name,
+            gmt_create,
+            gmt_modified
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{operationLogDto.loginIp},
+            #{operationLogDto.action},
+            #{operationLogDto.creatorId},
+            #{operationLogDto.userName},
+            #{operationLogDto.gmtCreate},
+            #{operationLogDto.gmtModified}
+        </trim>
+    </insert>
+</mapper>

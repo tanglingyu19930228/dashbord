@@ -2,6 +2,7 @@ package com.search.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ForwardingListeningExecutorService;
+import com.search.annotation.LoginConditionAnnotation;
 import com.search.annotation.NoNeedLogin;
 import com.search.common.domain.BusinessException;
 import com.search.common.domain.BusinessResponse;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author tanglingyu
  */
 @Component
+@LoginConditionAnnotation
 public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements HandlerInterceptor {
 
     /**
@@ -42,7 +44,7 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(handler instanceof HandlerMethod){
+        if (handler instanceof HandlerMethod) {
             Method targetMethod = ((HandlerMethod) handler).getMethod();
             //不需要登录的不校验权限
             if (targetMethod.getAnnotation(NoNeedLogin.class) != null || targetMethod.getDeclaringClass().getAnnotation(NoNeedLogin.class) != null) {
@@ -50,7 +52,7 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
             }
 
             final Object token = request.getHeader("token");
-            if(Objects.isNull(token)){
+            if (Objects.isNull(token)) {
                 BusinessResponse wr = new BusinessResponse();
                 wr.setCode(BusinessResponseEnum.NON_LOGIN.getCode());
                 wr.setMsg(BusinessResponseEnum.NON_LOGIN.getMsg());
@@ -61,9 +63,9 @@ public class LoginInterceptor extends HttpSessionHandshakeInterceptor implements
                 return false;
             }
             final ConcurrentMap<String, Object> stringObjectConcurrentMap = GuavaCacheUtils.cache.asMap();
-            for (Map.Entry<String, Object> entry:stringObjectConcurrentMap.entrySet()) {
-                String s = "LOGIN_TOKEN_"+token.toString();
-                if(s.equals(entry.getKey())){
+            for (Map.Entry<String, Object> entry : stringObjectConcurrentMap.entrySet()) {
+                String s = "LOGIN_TOKEN_" + token.toString();
+                if (s.equals(entry.getKey())) {
                     return true;
                 }
             }

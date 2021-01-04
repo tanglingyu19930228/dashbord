@@ -1,6 +1,7 @@
 package com.search.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.search.annotation.BizLog;
 import com.search.annotation.NoNeedLogin;
 import com.search.biz.SelectValueService;
 import com.search.common.controller.BaseController;
@@ -10,7 +11,6 @@ import com.search.entity.StatisticsResp;
 import com.search.entity.SysArticleEntity;
 import com.search.service.ISysArticleService;
 import com.search.sync.ElasticsearchUtils;
-import com.search.vo.QueryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -55,6 +55,7 @@ public class SysArticleController extends BaseController {
     @ApiOperation("根据id查询sys_article信息")
     @ApiImplicitParams(
             @ApiImplicitParam(name = "id", value = "sys_article的id", dataType = "Integer", paramType = "Integer"))
+    @BizLog(action = "根据id查询sys_article信息")
     public R selectSysArticleById(@PathVariable(value = "id") @Valid Integer id) {
         log.info("根据id查询sys_article信息id={}", id);
         SysArticleEntity sysArticleEntity = iSysArticleService.selectSysArticleById(id);
@@ -68,6 +69,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/selectSysArticleList")
     @ApiOperation("sys_article信息查询(多条记录)")
+    @BizLog(action = "sys_article信息查询(多条记录)")
     public R selectSysArticleList(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("查询sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         List<SysArticleEntity> sysArticleEntities = iSysArticleService.selectSysArticleList(sysArticleEntity);
@@ -81,6 +83,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/selectSysArticleSingleton")
     @ApiOperation("sys_article信息查询(单条记录)")
+    @BizLog(action = "sys_article信息查询(单条记录)")
     public R selectSysArticleSingleton(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("单条记录查询sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         SysArticleEntity result = iSysArticleService.selectSysArticleOne(sysArticleEntity);
@@ -92,6 +95,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/addSysArticle")
     @ApiOperation("新增sys_article信息")
+    @BizLog(action = "新增sys_article信息")
     public R addSysArticle(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("新增sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         int result = iSysArticleService.insertSysArticle(sysArticleEntity);
@@ -103,6 +107,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/batchAddSysArticle")
     @ApiOperation("批量新增sys_article信息")
+    @BizLog(action = "批量新增sys_article信息")
     public R batchAddSysArticle(@RequestBody @Valid List<SysArticleEntity> sysArticleEntityList) {
         if (CollectionUtils.isEmpty(sysArticleEntityList)) {
             log.error("入参有误sysArticleEntityList={}", JSONObject.toJSON(sysArticleEntityList));
@@ -119,6 +124,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/updateSysArticle")
     @ApiOperation("修改sys_article")
+    @BizLog(action = "修改sys_article")
     public R updateSysArticle(@RequestBody @Valid SysArticleEntity sysArticleEntity) {
         log.info("修改sys_article信息sysArticleEntity={}", JSONObject.toJSON(sysArticleEntity));
         int result = iSysArticleService.updateSysArticle(sysArticleEntity);
@@ -130,6 +136,7 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/batchUpdateSysArticle")
     @ApiOperation("批量修改sys_article")
+    @BizLog(action = "批量修改sys_article")
     public R batchUpdateSysArticle(@RequestBody @Valid List<SysArticleEntity> sysArticleEntityList) {
         if (CollectionUtils.isEmpty(sysArticleEntityList)) {
             log.error("根据id批量更新sys_article入参有误sysArticleEntityList={}", JSONObject.toJSON(sysArticleEntityList));
@@ -149,30 +156,31 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/statisticsVoice")
     @ApiOperation("声音来源统计")
+    @BizLog(action = "声音来源统计")
     public R statisticsVoice() {
         log.info("声音来源统计查询");
-        List<StatisticsResp> statisticsResp = iSysArticleService.statisticsVoice();
+        List<StatisticsResp> statisticsResps = iSysArticleService.statisticsVoice();
         Long total = iSysArticleService.totalVoice();
         Map<Integer, Object[]> map = new HashMap<>();
-        for (int i = 0; i < statisticsResp.size(); ++i) {
-            if (i != statisticsResp.size() - 1) {
+        for (int i = 0; i < statisticsResps.size(); ++i) {
+            if (i != statisticsResps.size() - 1) {
                 Object[] obj = new Object[2];
-                obj[0] = statisticsResp.get(i).getTotal();
+                obj[0] = statisticsResps.get(i).getTotal();
                 obj[1] = BigDecimalUtils.divRound2(obj[0], total, 2);
-                map.put(statisticsResp.get(i).getMediaType(), obj);
+                map.put(statisticsResps.get(i).getMediaType(), obj);
             } else {
                 Object[] obj = new Object[2];
-                obj[0] = statisticsResp.get(i).getTotal();
+                obj[0] = statisticsResps.get(i).getTotal();
                 BigDecimal bigDecimal = new BigDecimal("0.00");
                 map.entrySet().forEach(entry -> {
                     BigDecimal b = new BigDecimal((String) entry.getValue()[1]);
                     bigDecimal.add(b);
                 });
                 obj[1] = new BigDecimal("1.00").subtract(bigDecimal).toPlainString();
-                map.put(statisticsResp.get(i).getMediaType(), obj);
+                map.put(statisticsResps.get(i).getMediaType(), obj);
             }
         }
-        return R.ok(statisticsResp);
+        return R.ok(statisticsResps);
     }
 
     /**

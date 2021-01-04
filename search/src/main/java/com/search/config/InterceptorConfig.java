@@ -1,5 +1,6 @@
 package com.search.config;
 
+import com.search.annotation.LoginConditionAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author tanglingyu
  */
 @Configuration
+@LoginConditionAnnotation
 public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
