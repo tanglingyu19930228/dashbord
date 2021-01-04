@@ -11,6 +11,7 @@ import com.search.entity.StatisticsResp;
 import com.search.entity.SysArticleEntity;
 import com.search.service.ISysArticleService;
 import com.search.sync.ElasticsearchUtils;
+import com.search.vo.QueryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

@@ -66,12 +66,6 @@ public class SelectValueController extends BaseController {
 	}
 
 
-	@PostMapping("/getArticleShow")
-	@ResponseBody
-	public R getArticleShow(@RequestBody QueryVO queryVO){
-		return elasticsearchUtils.justForContent(queryVO,"newindex8");
-	}
-
     @PostMapping("/getStaticData")
     @BizLog(action = "getStaticData")
     @ApiOperation(value = "getStaticData")
