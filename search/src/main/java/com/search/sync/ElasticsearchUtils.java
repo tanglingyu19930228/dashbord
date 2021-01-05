@@ -64,6 +64,7 @@ public class ElasticsearchUtils {
     @Autowired
     ParseResultService parseResultService;
 
+
     public String getElasticIndexLastInsertId(String indexName,Class<?> ... classes){
         try {
             SearchRequest searchRequest = new SearchRequest(indexName);
@@ -347,7 +348,7 @@ public class ElasticsearchUtils {
         }
         if(!CollectionUtils.isEmpty(queryVO.getTopicList()) ){
             final int size = queryVO.getTopicList().size();
-            if( size!= 0 &&  size != 30){
+            if( size!= 0){
                 log.info("话题类型过滤；");
                 final BoolQueryBuilder topicBool = QueryBuilders.boolQuery();
                 List<Integer> topicList = queryVO.getTopicList();

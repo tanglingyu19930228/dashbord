@@ -93,6 +93,11 @@ public class SelectValueService {
         return map;
     }
 
+    public int getTopicSize(){
+        final List<SysTopicEntity> sysTopicEntities = sysTopicService.selectSysTopicList(new SysTopicEntity());
+        return sysTopicEntities.size();
+    }
+
     public Map<String, Integer> getSelectValueNumbers() {
 
         Map<String, Integer> map = new HashMap<>(8);
