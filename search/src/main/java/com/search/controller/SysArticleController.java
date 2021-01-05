@@ -189,9 +189,9 @@ public class SysArticleController extends BaseController {
      */
     @PostMapping("/originVoice")
     @ApiOperation("声音来源分析")
-    @NoNeedLogin
+    @BizLog(action = "声音来源分析")
     public R originVoice(@RequestBody QueryVO queryVO) {
-       return elasticsearchUtils.doOriginVoiceQuery(queryVO,"newindex8");
+        return elasticsearchUtils.doOriginVoiceQuery(queryVO, "newindex8");
     }
 }
 
