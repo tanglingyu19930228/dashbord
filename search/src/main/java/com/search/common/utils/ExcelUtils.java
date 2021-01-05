@@ -1,20 +1,15 @@
 package com.search.common.utils;
 
-import lombok.Cleanup;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -169,4 +164,44 @@ public class ExcelUtils {
             log.error("exprot Xls exception.", e);
         }
     }
+
+    /**
+     * 设置excel值
+     *
+     * @param dataList
+     * @param wb
+     */
+    public static void setExcelData(List<List<String>> dataList, XSSFWorkbook wb) {
+        XSSFSheet sheet1 = wb.createSheet("sheet1");
+        for (int i = 0; i < dataList.size(); i++) {
+            XSSFRow row = sheet1.createRow(i);
+            for (int j = 0; j < dataList.get(i).size(); j++) {
+                XSSFCell cell = row.createCell(j);
+                String str = dataList.get(i).get(j);
+                if (StringUtils.isBlank(str)) {
+                    str = "";
+                }
+                cell.setCellValue(str);
+            }
+        }
+    }
+
+    public static void setBrowser(HttpServletResponse response, XSSFWorkbook workbook, String fileName) {
+        try (OutputStream os = new BufferedOutputStream(response.getOutputStream())) {
+            //清空response
+            response.reset();
+            //设置response的Header
+            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+            //将excel写入到输出流中
+            workbook.write(os);
+            os.flush();
+            log.info("设置浏览器下载成功!");
+        } catch (Exception e) {
+            log.info("设置浏览器下载失败!");
+            e.printStackTrace();
+        }
+
+    }
+
 }

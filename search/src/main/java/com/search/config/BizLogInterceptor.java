@@ -3,6 +3,7 @@ package com.search.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.search.annotation.BizLog;
+import com.search.annotation.LoginConditionAnnotation;
 import com.search.dao.BizLogContext;
 import com.search.common.utils.R;
 import com.search.entity.BizLogDto;
@@ -25,6 +26,7 @@ import java.util.concurrent.*;
 @Aspect
 @Component
 @Slf4j
+@LoginConditionAnnotation
 public class BizLogInterceptor implements InitializingBean {
 
 
